@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { motion } from 'motion/react';
 import { Flame, CheckCircle2, Sparkles, Trophy } from 'lucide-react';
 import { Tooltip } from '../ui/Tooltip';
 
@@ -19,9 +20,9 @@ export function StudyStreakCard() {
 
   const getColorClass = (intensity: number) => {
     switch(intensity) {
-      case 1: return 'bg-indigo-900/40 border-indigo-500/20';
-      case 2: return 'bg-indigo-600/60 border-indigo-500/40';
-      case 3: return 'bg-indigo-400 border-indigo-300';
+      case 1: return 'opacity-20 theme-bg-primary theme-border-primary';
+      case 2: return 'opacity-50 theme-bg-primary theme-border-primary';
+      case 3: return 'opacity-100 theme-bg-primary theme-border-primary';
       default: return 'bg-white/5 border-white/5';
     }
   };
@@ -45,7 +46,7 @@ export function StudyStreakCard() {
           {daysOfWeek.map((day, i) => (
             <div key={i} className="flex flex-col items-center gap-3">
               {i < 5 ? (
-                <div className="w-8 h-8 rounded-full bg-indigo-500 flex items-center justify-center gold-glow shadow-indigo-500/50">
+                <div className="w-8 h-8 rounded-full theme-bg-primary flex items-center justify-center gold-glow shadow-indigo-500/50">
                   <CheckCircle2 className="w-5 h-5 text-white" />
                 </div>
               ) : (
@@ -59,13 +60,13 @@ export function StudyStreakCard() {
         </div>
         
         <p className="text-sm text-slate-400 leading-relaxed mb-6">
-          Continue assim! Mais 3 dias para desbloquear o distintivo <span className="text-indigo-300">Estudioso do Oráculo</span>.
+          Continue assim! Mais 3 dias para desbloquear o distintivo <span className="theme-text-primary brightness-125">Estudioso do Oráculo</span>.
         </p>
 
         <div className="pt-8 border-t border-white/5 space-y-6">
           <div className="flex items-center justify-between">
             <h4 className="text-sm font-semibold text-slate-300 uppercase tracking-widest flex items-center gap-2">
-              <Sparkles className="w-4 h-4 text-indigo-400" />
+              <Sparkles className="w-4 h-4 theme-text-primary" />
               Mapa de Consistência
             </h4>
             <div className="flex items-center gap-3 text-[10px] text-slate-500 uppercase tracking-tighter">
@@ -99,7 +100,10 @@ export function StudyStreakCard() {
                           initial={{ scale: 0.8, opacity: 0 }}
                           animate={{ scale: 1, opacity: 1 }}
                           transition={{ delay: dataIndex * 0.005 }}
-                          className={`w-3.5 h-3.5 rounded-sm border transition-all duration-300 hover:z-10 hover:scale-125 hover:shadow-[0_0_10px_rgba(99,102,241,0.4)] ${getColorClass(intensity)}`} 
+                          className={`w-3.5 h-3.5 rounded-sm border transition-all duration-300 hover:z-10 hover:scale-125 ${getColorClass(intensity)}`} 
+                          style={{
+                             boxShadow: intensity > 0 ? '0 0 10px rgba(var(--theme-primary-rgb), 0.3)' : 'none'
+                          }}
                         />
                       </Tooltip>
                     );
@@ -109,12 +113,12 @@ export function StudyStreakCard() {
             </div>
           </div>
           
-          <div className="bg-indigo-500/5 border border-indigo-500/10 p-4 rounded-xl flex items-center gap-4">
-            <div className="w-10 h-10 rounded-full bg-indigo-500/20 flex items-center justify-center border border-indigo-500/30">
-               <Trophy className="w-5 h-5 text-indigo-400" />
+          <div className="theme-bg-primary-soft theme-border-primary-soft border p-4 rounded-xl flex items-center gap-4">
+            <div className="w-10 h-10 rounded-full theme-bg-primary opacity-20 flex items-center justify-center border theme-border-primary">
+               <Trophy className="w-5 h-5 theme-text-primary brightness-150" />
             </div>
             <div className="flex-1">
-              <p className="text-[10px] text-indigo-400 font-black uppercase tracking-[0.2em] mb-1">Próxima Recompensa</p>
+              <p className="text-[10px] theme-text-primary brightness-125 font-black uppercase tracking-[0.2em] mb-1">Próxima Recompensa</p>
               <p className="text-sm text-slate-200">Mantenha a ofensiva por mais <span className="font-bold text-white">3 dias</span> para o Arcano II.</p>
             </div>
           </div>

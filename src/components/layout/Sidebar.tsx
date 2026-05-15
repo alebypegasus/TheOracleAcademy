@@ -59,21 +59,21 @@ export function Sidebar({ currentPath, themePreference, setThemePreference, colo
                 const isActive = currentPath === item.path;
                 const Icon = item.icon;
                 return (
-                  <button
+                   <button
                     key={item.name}
                     onClick={() => onNavigate(item.path)}
                     className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200 group relative
-                      ${isActive ? 'bg-indigo-500/10 text-indigo-100 font-medium' : 'text-slate-400 hover:bg-white/[0.03] hover:text-slate-200'}`}
+                      ${isActive ? 'theme-bg-primary-soft theme-text-primary font-medium' : 'text-slate-400 hover:bg-white/[0.03] hover:text-slate-200'}`}
                   >
                     {isActive && (
                       <motion.div 
                         layoutId="activeTabIndicator" 
-                        className="absolute left-0 top-1.5 bottom-1.5 w-1 bg-indigo-500 rounded-r-md"
+                        className="absolute left-0 top-1.5 bottom-1.5 w-1 theme-bg-primary rounded-r-md"
                         initial={false}
                         transition={{ type: "spring", stiffness: 300, damping: 30 }}
                       />
                     )}
-                    <div className={`flex items-center justify-center p-1.5 rounded-md transition-colors ${isActive ? 'text-indigo-400' : 'text-slate-500 group-hover:text-indigo-400/70'}`}>
+                    <div className={`flex items-center justify-center p-1.5 rounded-md transition-colors ${isActive ? 'theme-text-primary' : 'text-slate-500 group-hover:theme-text-primary'}`}>
                       <Icon className="w-4 h-4 flex-shrink-0" />
                     </div>
                     <span className="text-sm tracking-wide truncate">{item.name}</span>
@@ -108,7 +108,7 @@ export function Sidebar({ currentPath, themePreference, setThemePreference, colo
 
         {/* Theme Palette Picker (HeroUI inspired) */}
         <div className="flex justify-between items-center px-1">
-          {['indigo', 'rose', 'emerald', 'cyan', 'amber', 'oracle'].map((t) => (
+          {['indigo', 'purple', 'rose', 'emerald', 'cyan', 'amber', 'oracle'].map((t) => (
              <Tooltip key={t} content={`Tema ${t.charAt(0).toUpperCase() + t.slice(1)}`}>
                 <button
                    onClick={() => setColorTheme(t)}
@@ -116,6 +116,7 @@ export function Sidebar({ currentPath, themePreference, setThemePreference, colo
                    style={{ 
                      backgroundColor: 
                        t === 'indigo' ? '#6366f1' : 
+                       t === 'purple' ? '#8b5cf6' : 
                        t === 'rose' ? '#f43f5e' : 
                        t === 'emerald' ? '#10b981' : 
                        t === 'cyan' ? '#06b6d4' : 

@@ -98,6 +98,26 @@
   --theme-logo-filter: hue-rotate(-8deg);
 }
 
+:root[data-color-theme="purple"] {
+  --theme-primary-100: #f5f3ff;
+  --theme-primary-200: #ddd6fe;
+  --theme-primary-300: #c4b5fd;
+  --theme-primary-400: #a78bfa;
+  --theme-primary-500: #8b5cf6;
+  --theme-primary-600: #7c3aed;
+  --theme-primary-900: #4c1d95;
+  --theme-primary-950: #2e1065;
+  --theme-primary-rgb: 139, 92, 246;
+  --theme-logo-filter: hue-rotate(260deg);
+}
+
+.theme-bg-primary { background-color: var(--theme-primary-500); }
+.theme-text-primary { color: var(--theme-primary-500); }
+.theme-border-primary { border-color: var(--theme-primary-500); }
+
+.theme-bg-primary-soft { background-color: rgba(var(--theme-primary-rgb), 0.1); }
+.theme-border-primary-soft { border-color: rgba(var(--theme-primary-rgb), 0.2); }
+
 .theme-logo-image {
   background-color: var(--theme-primary-500);
   -webkit-mask-image: url('/imgs/TheOracleAcademyLogo.svg');
@@ -125,7 +145,7 @@
 }
 
 .theme-logo-glow {
-  filter: drop-shadow(0 0 12px rgba(var(--theme-primary-rgb), 0.5));
+  filter: drop-shadow(0 0 12px rgba(var(--theme-primary-rgb), 0.6));
 }
 
 body {
