@@ -23,6 +23,8 @@ import { CommunityView } from './components/views/CommunityView';
 import { ProfileView } from './components/views/ProfileView';
 import { CertificatesView } from './components/views/CertificatesView';
 import { CoursesView } from './components/views/CoursesView';
+import { GuidelinesView } from './components/views/GuidelinesView';
+import { SupportView } from './components/views/SupportView';
 
 function AppContent({
   isDarkMode, themePreference, setThemePreference, colorTheme, setColorTheme,
@@ -130,6 +132,18 @@ function AppContent({
             <Route path="/community" element={
               <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} transition={{ duration: 0.3 }} className="w-full">
                 <CommunityView currentUser={currentUser} />
+              </motion.div>
+            } />
+            
+            <Route path="/guidelines" element={
+              <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} transition={{ duration: 0.3 }} className="w-full">
+                <GuidelinesView />
+              </motion.div>
+            } />
+            
+            <Route path="/support" element={
+              <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} transition={{ duration: 0.3 }} className="w-full">
+                <SupportView currentUser={currentUser} />
               </motion.div>
             } />
             

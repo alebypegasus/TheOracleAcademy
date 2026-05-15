@@ -35,6 +35,8 @@ export function Sidebar({ currentPath, themePreference, setThemePreference, colo
       group: 'Extras',
       items: [
         { name: 'Comunidade', path: '/community', icon: Users },
+        { name: 'Diretrizes', path: '/guidelines', icon: Book },
+        { name: 'Ajuda & Suporte', path: '/support', icon: Sparkles },
       ]
     }
   ];
