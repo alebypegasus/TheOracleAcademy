@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { ChevronLeft, ChevronRight, Calendar as CalendarIcon, Plus, X, Star, Flame } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Tooltip } from '../ui/Tooltip';
@@ -10,6 +10,25 @@ export function CalendarWidget({ grimoireEntries = [], addGrimoireEntry }: any) 
   const [isAddingEvent, setIsAddingEvent] = useState(false);
   const [eventTitle, setEventTitle] = useState('');
   const [eventDescription, setEventDescription] = useState('');
+
+  // Google syncing states
+  const [googleToken, setGoogleToken] = useState<string | null>(null);
+  const [syncToGoogle, setSyncToGoogle] = useState(false);
+  const [isSyncing, setIsSyncing] = useState(false);
+
+  useEffect(() => {
+    const fetchToken = async () => {
+      try {
+        const { getAccessToken } = await import('../../lib/firebase');
+        const token = await getAccessToken();
+        setGoogleToken(token);
+        if (token) setSyncToGoogle(true);
+      } catch (err) {
+        console.error(err);
+      }
+    };
+    fetchToken();
+  }, [isAddingEvent]);
 
   const daysOfWeek = ['D', 'S', 'T', 'Q', 'Q', 'S', 'S'];
   const monthNames = [
@@ -94,27 +113,55 @@ export function CalendarWidget({ grimoireEntries = [], addGrimoireEntry }: any) 
     });
   }, [grimoireEntries, selectedDate, year, month]);
 
-  const handleAddEvent = () => {
+  const handleAddEvent = async () => {
     if (!eventTitle.trim() || !selectedDate) return;
     
+    setIsSyncing(true);
     const selectedDateObj = new Date(year, month, selectedDate);
+    const entryId = Date.now().toString();
     
     addGrimoireEntry({
-      id: Date.now().toString(),
+      id: entryId,
       date: selectedDateObj.toISOString(),
       question: `Evento: ${eventTitle}`, 
       interpretation: eventDescription || 'Sem detalhes.', 
       cards: ['Calendário'], 
       spreadType: 'Evento',
     });
+
+    if (syncToGoogle && googleToken) {
+      try {
+        const yearStr = selectedDateObj.getFullYear();
+        const monthStr = String(selectedDateObj.getMonth() + 1).padStart(2, '0');
+        const dayStr = String(selectedDateObj.getDate()).padStart(2, '0');
+        const dateStr = `${yearStr}-${monthStr}-${dayStr}`;
+
+        await fetch('https://www.googleapis.com/calendar/v3/calendars/primary/events', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${googleToken}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            summary: eventTitle,
+            description: eventDescription || 'Sintonizado via Oracle Academy.',
+            start: { date: dateStr },
+            end: { date: dateStr }
+          })
+        });
+      } catch (err) {
+        console.error("Erro sincronizando com calendário Google:", err);
+      }
+    }
     
     setEventTitle('');
     setEventDescription('');
     setIsAddingEvent(false);
+    setIsSyncing(false);
   };
 
   return (
-    <div className="glass-panel p-6 rounded-2xl flex flex-col items-center justify-center">
+    <div className="bg-transparent border-0 p-6 rounded-2xl flex flex-col items-center justify-center">
       <div className="flex w-full items-center justify-between mb-6">
         <div className="flex items-center gap-2 text-slate-200">
           <CalendarIcon className="w-5 h-5 text-indigo-400" />
@@ -265,12 +312,26 @@ export function CalendarWidget({ grimoireEntries = [], addGrimoireEntry }: any) 
                   onChange={(e) => setEventDescription(e.target.value)}
                   className="w-full bg-black/20 border border-white/10 rounded-lg px-3 py-2 text-xs text-slate-200 outline-none focus:border-indigo-500/50 min-h-[60px] resize-none"
                 />
+                <div className="flex items-center gap-2 py-1">
+                  <input
+                    type="checkbox"
+                    id="calendarSyncToggle"
+                    checked={syncToGoogle}
+                    onChange={(e) => setSyncToGoogle(e.target.checked)}
+                    disabled={!googleToken}
+                    className="w-3.5 h-3.5 rounded text-indigo-600 bg-black/40 border-white/10 focus:ring-indigo-500/50 cursor-pointer disabled:cursor-not-allowed"
+                  />
+                  <label htmlFor="calendarSyncToggle" className={`text-[10px] cursor-pointer select-none ${googleToken ? 'text-indigo-400 font-medium' : 'text-slate-500'}`}>
+                    {googleToken ? 'Sincronizar no Google Agenda' : 'Google Agenda desconectado'}
+                  </label>
+                </div>
+
                 <button 
                   onClick={handleAddEvent}
-                  disabled={!eventTitle.trim()}
+                  disabled={!eventTitle.trim() || isSyncing}
                   className="w-full bg-indigo-500/20 hover:bg-indigo-500/30 text-indigo-300 border border-indigo-500/30 font-medium py-2 rounded-lg text-xs transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  Salvar no Grimório
+                  {isSyncing ? 'Sincronizando...' : 'Salvar no Grimório'}
                 </button>
               </div>
             </motion.div>

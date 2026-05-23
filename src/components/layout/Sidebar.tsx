@@ -3,7 +3,7 @@ import { Tabs, TabList, Tab, TabPanel } from 'react-aria-components';
 import { motion } from 'motion/react';
 import { 
   Home, BookOpen, Library, Layers, Trophy, FileBadge, Users,
-  Eye, Book, CreditCard, ChevronDown, Sparkles, Sun, Moon, LogOut, Monitor
+  Eye, Book, CreditCard, ChevronDown, Sparkles, Sun, Moon, LogOut, Monitor, ShoppingBag
 } from 'lucide-react';
 import { Tooltip } from '../ui/Tooltip';
 
@@ -21,7 +21,7 @@ export function Sidebar({ currentPath, themePreference, setThemePreference, colo
       group: 'Aprendizado',
       items: [
         { name: 'Meus Cursos', path: '/courses', icon: BookOpen },
-        { name: 'Biblioteca', path: '/library', icon: Library },
+        { name: 'Mercado Místico', path: '/library', icon: ShoppingBag },
       ]
     },
     {
@@ -35,6 +35,7 @@ export function Sidebar({ currentPath, themePreference, setThemePreference, colo
       group: 'Extras',
       items: [
         { name: 'Comunidade', path: '/community', icon: Users },
+        { name: 'Google Workspace', path: '/workspace', icon: Layers },
         { name: 'Diretrizes', path: '/guidelines', icon: Book },
         { name: 'Ajuda & Suporte', path: '/support', icon: Sparkles },
       ]

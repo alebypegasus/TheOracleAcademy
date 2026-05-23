@@ -1,0 +1,62 @@
+{
+  "entities": {
+    "User": {
+      "title": "User",
+      "description": "User account credentials and payment status",
+      "type": "object",
+      "properties": {
+        "email": { "type": "string" },
+        "isPaid": { "type": "boolean" }
+      },
+      "required": ["email"]
+    },
+    "Profile": {
+      "title": "Profile",
+      "description": "User display profile with progression stats and personal settings",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "name": { "type": "string" },
+        "avatar": { "type": "string" },
+        "xp": { "type": "number" },
+        "nickname": { "type": "string" },
+        "phone": { "type": "string" },
+        "zipCode": { "type": "string" },
+        "address": { "type": "string" },
+        "description": { "type": "string" },
+        "location": { "type": "string" },
+        "authorTitle": { "type": "string" },
+        "grau": { "type": "string" }
+      },
+      "required": ["userId", "name"]
+    },
+    "GrimoireEntry": {
+      "title": "GrimoireEntry",
+      "description": "Magical readings, journal thoughts or saved readings from the oracle",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "title": { "type": "string" },
+        "category": { "type": "string" },
+        "type": { "type": "string" },
+        "content": { "type": "string" },
+        "date": { "type": "string" }
+      },
+      "required": ["userId", "title", "content"]
+    }
+  },
+  "firestore": {
+    "users/{userId}": {
+      "schema": "User",
+      "description": "Stores user registration and subscription details"
+    },
+    "profiles/{profileId}": {
+      "schema": "Profile",
+      "description": "Stores individual user mystical identities"
+    },
+    "grimoires/{entryId}": {
+      "schema": "GrimoireEntry",
+      "description": "Magical grimoire study records"
+    }
+  }
+}

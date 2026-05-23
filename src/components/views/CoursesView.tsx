@@ -268,9 +268,38 @@ export function CoursesView() {
                            </button>
                          ))}
                       </div>
-                      <p className="text-[10px] text-slate-500 mt-6 uppercase tracking-widest leading-relaxed">
+                      <p className="text-[10px] text-slate-500 mt-4 uppercase tracking-widest leading-relaxed">
                         Sua avaliação orienta a expansão da biblioteca oracular.
                       </p>
+                      
+                      <button 
+                        onClick={async () => {
+                          try {
+                            const res = await fetch("/api/courses/complete-step", {
+                              method: "POST",
+                              headers: {
+                                "Content-Type": "application/json",
+                                "x-user-id": "1"
+                              },
+                              body: JSON.stringify({
+                                nodeName: selectedNode.name,
+                                lessonTitle: selectedLesson.title,
+                                isQuiz: selectedLesson.type === 'prova',
+                                score: 100
+                              })
+                            });
+                            if (res.ok) {
+                              alert("Sacramento de estudo concluído com sucesso! +30 XP foram incorporados à sua essência cósmica.");
+                              setSelectedLesson(null);
+                            }
+                          } catch (err) {
+                            console.error(err);
+                          }
+                        }}
+                        className="mt-5 w-full py-3.5 bg-gradient-to-r from-emerald-500 to-teal-400 hover:from-emerald-400 hover:to-teal-300 text-[#090615] font-black rounded-xl text-[10px] uppercase tracking-wider transition-all shadow-md active:scale-95 cursor-pointer"
+                      >
+                        Consumar Lição & Receber XP ✸
+                      </button>
                    </div>
                    
                    {/* Grimoire Note */}

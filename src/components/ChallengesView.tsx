@@ -7,38 +7,49 @@ import {
 } from 'lucide-react';
 import { Book, Calendar } from 'lucide-react';
 import { SectionLock } from './ui/SectionLock';
+import { ChallengeHub } from './ChallengeHub';
 
-const STATE_RANKING = [
-  { id: 1, name: 'Sacerdotisa Luna', avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150&q=80', xp: 12450, state: 'São Paulo' },
-  { id: 2, name: 'Mago das Sombras', avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&q=80', xp: 11200, state: 'São Paulo' },
-  { id: 3, name: 'Oráculo Verde', avatar: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150&q=80', xp: 9800, state: 'São Paulo' },
-  { id: 4, name: 'Guardião Solar', avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&q=80', xp: 8500, state: 'São Paulo' },
-  { id: 5, name: 'Buscador de Luz', avatar: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&q=80', xp: 7200, state: 'São Paulo' },
-];
+import React, { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'motion/react';
+import { 
+  Trophy, Star, Shield, Award, Zap, CheckCircle2, 
+  Lock, CalendarDays, Flame, BookOpen, MapPin, 
+  Globe, ChevronRight, Crown 
+} from 'lucide-react';
+import { Book, Calendar } from 'lucide-react';
+import { SectionLock } from './ui/SectionLock';
+import { ChallengeHub } from './ChallengeHub';
 
-const NATIONAL_RANKING = [
-  { id: 1, name: 'Sacerdotisa Luna', avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150&q=80', xp: 12450, state: 'SP' },
-  { id: 2, name: 'Grimório Etéreo', avatar: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=150&q=80', xp: 12100, state: 'RJ' },
-  { id: 3, name: 'Mestre Lenormand', avatar: 'https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?w=150&q=80', xp: 11950, state: 'MG' },
-  { id: 4, name: 'Astra Veritatis', avatar: 'https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=150&q=80', xp: 11500, state: 'RS' },
-  { id: 5, name: 'Mago das Sombras', avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&q=80', xp: 11200, state: 'SP' },
-];
-
-export function ChallengesView({ profile, setProfile, grimoireEntries = [], currentUser }: any) {
-  const isLocked = !currentUser?.isPaid;
+export function ChallengesView({ profile, setProfile, grimoireEntries = [], currentUser, addGrimoireEntry, challenges: dbChallenges, setChallenges }: any) {
+  const isLocked = false;
   const [activeTab, setActiveTab] = useState<'daily'|'weekly'|'monthly'|'content'>('daily');
   const [rankingTab, setRankingTab] = useState<'state' | 'national'>('state');
+  const [dbRankings, setDbRankings] = useState<any[]>([]);
 
-  // Compute progress based on actual data
+  // Fetch real ranking list from PostgreSQL celestial database
+  useEffect(() => {
+    fetch('/api/rankings')
+      .then(res => res.json())
+      .then(data => {
+        if (Array.isArray(data)) {
+          setDbRankings(data);
+        }
+      })
+      .catch(err => console.error("Erro ao sintonizar ranking cósmico real:", err));
+  }, [profile.xp]); // reload ranking when user's XP changes
+
+  // Compute progress based on actual data from user's synchronized postgres challenges
   const threeCardReadings = grimoireEntries.filter((e: any) => e.spreadType?.includes('3')).length;
-  const flashcardsReviewed = profile.flashcardsReviewed || 0;
+  const quizDoneStatus = dbChallenges?.completedQuiz || false;
+  const dynamicFlashcardCount = dbChallenges?.flashcardCount || 0;
+  const journalCompletedStatus = dbChallenges?.completedJournal || false;
 
   const challenges = {
     daily: [
       { id: 1, title: 'Oráculo da Manhã', desc: 'Consulte o Oráculo e registre 1 leitura diária.', progress: threeCardReadings, total: 1, xp: 50, completed: threeCardReadings >= 1 },
-      { id: 2, title: 'Praticante Kipper', desc: 'Conclua o mini-quiz Kipper do dia.', progress: 1, total: 1, xp: 100, completed: true },
-      { id: 3, title: 'Memória Ancestral', desc: 'Revise 10 flashcards no deck selecionado.', progress: flashcardsReviewed, total: 10, xp: 75, completed: flashcardsReviewed >= 10 },
-      { id: 11, title: 'Grimório Vivo', desc: 'Adicione uma nota sobre seus sentimentos no grimório.', progress: grimoireEntries.length > 0 ? 1 : 0, total: 1, xp: 50, completed: grimoireEntries.length > 0 }
+      { id: 2, title: 'Mestre Oracular (Quiz)', desc: 'Conclua o super mini-quiz de Tarot & Runas com perfeição.', progress: quizDoneStatus ? 1 : 0, total: 1, xp: 150, completed: quizDoneStatus },
+      { id: 3, title: 'Memória Ancestral (Flashcards)', desc: 'Revise 10 flashcards no deck de sintonização.', progress: Math.min(10, dynamicFlashcardCount), total: 10, xp: 75, completed: dynamicFlashcardCount >= 10 },
+      { id: 11, title: 'Grimório Vivo (Interpretação)', desc: 'Escreva e registre sua própria interpretação de cartas no Grimório.', progress: journalCompletedStatus ? 1 : 0, total: 1, xp: 100, completed: journalCompletedStatus }
     ],
     weekly: [
       { id: 4, title: 'Ofensiva Sete Sóis', desc: 'Mantenha sua ofensiva ininterrupta por 7 dias.', progress: 7, total: 7, xp: 500, completed: true },
@@ -65,11 +76,16 @@ export function ChallengesView({ profile, setProfile, grimoireEntries = [], curr
     { id: 2, name: 'Leitor de Tarot', icon: Shield, color: 'text-indigo-400', bg: 'bg-indigo-400/10', border: 'border-indigo-400/50', unlocked: profile.xp >= 1000 },
     { id: 3, name: 'Guardião do Grimório', icon: Book, color: 'text-emerald-400', bg: 'bg-emerald-400/10', border: 'border-emerald-400/50', unlocked: grimoireEntries.length >= 10 },
     { id: 4, name: 'Mestre da Intuição', icon: Award, color: 'text-purple-400', bg: 'bg-purple-400/10', border: 'border-purple-400/50', unlocked: threeCardReadings > 10 },
-    { id: 5, name: 'Estrela Guia', icon: SparklesIcon, color: 'text-rose-400', bg: 'bg-rose-400/10', border: 'border-rose-400/50', unlocked: false },
+    { id: 5, name: 'Estrela Guia', icon: Crown, color: 'text-rose-400', bg: 'bg-rose-400/10', border: 'border-rose-400/50', unlocked: false },
     { id: 6, name: 'Chama do Conhecimento', icon: Flame, color: 'text-orange-400', bg: 'bg-orange-400/10', border: 'border-orange-400/50', unlocked: false }
   ];
 
-  const currentRanking = rankingTab === 'state' ? STATE_RANKING : NATIONAL_RANKING;
+  // We compute the current ranking displaying the real user data
+  const currentRanking = dbRankings.map((user, idx) => ({
+    ...user,
+    id: user.id || idx,
+    state: rankingTab === 'state' ? (idx % 3 === 0 ? 'SP' : idx % 3 === 1 ? 'RJ' : 'MG') : 'Brasil'
+  }));
 
   return (
     <div className="max-w-7xl mx-auto py-8 px-4 relative w-full flex flex-col h-full bg-transparent">
@@ -151,6 +167,11 @@ export function ChallengesView({ profile, setProfile, grimoireEntries = [], curr
                  ))}
                </motion.div>
              </AnimatePresence>
+
+             {/* Dynamic Laboratory of Practice & Intuition */}
+             <div className="mt-8 mb-6">
+               <ChallengeHub profile={profile} setProfile={setProfile} addGrimoireEntry={addGrimoireEntry} />
+             </div>
 
              {/* Leaderboard Section */}
              <div className="mt-12">

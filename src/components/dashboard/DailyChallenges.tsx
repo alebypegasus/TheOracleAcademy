@@ -3,16 +3,19 @@ import { BookOpen, Star, Layers, Sparkles, Circle, Lock } from 'lucide-react';
 import { Tooltip } from '../ui/Tooltip';
 import { SectionLock } from '../ui/SectionLock';
 
-export function DailyChallenges({ onNavigate, profile, grimoireEntries, currentUser }: { onNavigate: (path: string) => void, profile: any, grimoireEntries: any[], currentUser: any }) {
+export function DailyChallenges({ onNavigate, profile, grimoireEntries, currentUser, challenges: dbChallenges }: { onNavigate: (path: string) => void, profile: any, grimoireEntries: any[], currentUser: any, challenges: any }) {
   const isLocked = !currentUser?.isPaid;
 
-  const threeCardReadings = grimoireEntries?.filter((e: any) => e.spreadType.includes('3')).length || 0;
-  const flashcardsReviewed = profile?.flashcardsReviewed || 0;
+  const threeCardReadings = grimoireEntries?.filter((e: any) => e.spreadType?.includes('3')).length || 0;
+  const quizDoneStatus = dbChallenges?.completedQuiz || false;
+  const dynamicFlashcardCount = dbChallenges?.flashcardCount || 0;
+  const journalCompletedStatus = dbChallenges?.completedJournal || false;
 
   const challenges = [
-    { title: 'Completar uma tiragem de 3 cartas', desc: 'Consulte o Oráculo usando a tiragem de 3 cartas.', progress: `${threeCardReadings} / 1`, xp: 100, icon: BookOpen },
-    { title: 'Obter 80% no quiz de Kipper', desc: 'Teste seus conhecimentos nas cartas Kipper.', progress: '1 / 1', xp: 150, icon: Star },
-    { title: 'Revisar 10 flashcards', desc: 'Pratique a memorização do seu baralho.', progress: `${flashcardsReviewed} / 10`, xp: 50, icon: Layers },
+    { title: 'Leitura de 3 Cartas', desc: 'Realize e estude uma tiragem mística de 3 cartas.', progress: `${threeCardReadings >= 1 ? 1 : 0} / 1`, xp: 50, icon: BookOpen },
+    { title: 'Quiz Místico Perfeito', desc: 'Acerte todas as questões do quiz de Tarot & Runas.', progress: `${quizDoneStatus ? 1 : 0} / 1`, xp: 150, icon: Star },
+    { title: 'Revisar 10 Flashcards', desc: 'Pratique sintonização no deck de flashcards místico.', progress: `${Math.min(10, dynamicFlashcardCount)} / 10`, xp: 75, icon: Layers },
+    { title: 'Diário de Intuição', desc: 'Grave sua interpretação mística pessoal no Grimório.', progress: `${journalCompletedStatus ? 1 : 0} / 1`, xp: 100, icon: Sparkles }
   ];
 
   return (
@@ -40,7 +43,7 @@ export function DailyChallenges({ onNavigate, profile, grimoireEntries, currentU
           <button onClick={() => onNavigate('/challenges')} className="text-xs text-slate-400 hover:text-indigo-400 transition-colors">Ver Todos</button>
         </div>
         
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 flex-1">
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 flex-1">
           {challenges.map((c, i) => {
             const Icon = c.icon;
             return (

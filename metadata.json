@@ -1,6 +1,8 @@
 {
-  "name": "",
-  "description": "",
+  "name": "Plataforma de Estudos Oraculares",
+  "description": "Um portal interativo e gamificado egrégora para estudos de Tarot, Runas e Lenormand, apoiado por inteligência cósmica Gemini.",
   "requestFramePermissions": [],
-  "majorCapabilities": []
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
 }

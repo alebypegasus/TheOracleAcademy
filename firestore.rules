@@ -1,0 +1,44 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Global Safety Net (Strict Default Deny)
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Common helper functions
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    // 1. Users collection
+    match /users/{userId} {
+      allow read: if isOwner(userId);
+      allow create, update: if isOwner(userId) && request.resource.data.email is string;
+      allow delete: if false; // Users cannot delete their accounts directly through the client SDK
+    }
+
+    // 2. Profiles collection
+    match /profiles/{profileId} {
+      allow read: if isSignedIn();
+      allow create, update: if isSignedIn() && (request.resource.data.userId == request.auth.uid || profileId == request.auth.uid) && request.resource.data.name is string;
+      allow delete: if false;
+    }
+
+    // 3. Grimoire entries
+    match /grimoires/{entryId} {
+      allow read: if isSignedIn() && resource.data.userId == request.auth.uid;
+      allow create, update: if isSignedIn() && request.resource.data.userId == request.auth.uid && request.resource.data.title is string;
+      allow delete: if isSignedIn() && resource.data.userId == request.auth.uid;
+    }
+  }
+}

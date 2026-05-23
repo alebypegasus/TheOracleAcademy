@@ -1,10 +1,11 @@
-import React, { useState, useMemo, useRef } from 'react';
-import { Book, ChevronRight, ChevronDown, Calendar, Filter, ArrowUpDown, Lock, Sparkles, Plus, Image as ImageIcon, FileText, File, Moon, BookOpen, ScrollText, CalendarDays, X, PenTool } from 'lucide-react';
+import React, { useState, useMemo, useRef, useEffect } from 'react';
+import { Book, ChevronRight, ChevronDown, Calendar, Filter, ArrowUpDown, Lock, Sparkles, Plus, Image as ImageIcon, FileText, File, Moon, BookOpen, ScrollText, CalendarDays, X, PenTool, Trash2, Edit2, Sparkle, RefreshCw, Check, AlertCircle } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import Markdown from 'react-markdown';
-import { EditorState, convertToRaw } from 'draft-js';
+import { EditorState, convertToRaw, ContentState } from 'draft-js';
 import { Editor } from 'react-draft-wysiwyg';
 import draftToHtml from 'draftjs-to-html';
+import htmlToDraft from 'html-to-draftjs';
 import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
 import { SectionLock } from './ui/SectionLock';
 
@@ -18,10 +19,161 @@ const GRIMOIRE_CATEGORIES = [
   { id: 'note', label: 'Anotações Diversas', icon: ScrollText },
 ];
 
-export function GrimoireView({ entries, addEntry, currentUser }: { entries: any[], addEntry?: (e: any) => void, currentUser: any }) {
+export function GrimoireView({ 
+  entries, 
+  addEntry, 
+  updateEntry, 
+  deleteEntry, 
+  currentUser 
+}: { 
+  entries: any[], 
+  addEntry?: (e: any) => void, 
+  updateEntry?: (id: string, f: any) => void, 
+  deleteEntry?: (id: string) => void, 
+  currentUser: any 
+}) {
   const [activeCategory, setActiveCategory] = useState('all');
   const [sortBy, setSortBy] = useState('date_desc');
   const [expandedId, setExpandedId] = useState<string | null>(null);
+  
+  // Google sync states
+  const [syncToGoogle, setSyncToGoogle] = useState(false);
+  const [exportFormat, setExportFormat] = useState<'gdoc' | 'txt'>('gdoc');
+  const [googleToken, setGoogleToken] = useState<string | null>(null);
+  const [isSyncing, setIsSyncing] = useState<string | null>(null);
+  const [syncFeedback, setSyncFeedback] = useState<Record<string, { status: string, link?: string }>>({});
+
+  // AI Real-time analyzer states
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [aiResult, setAiResult] = useState<{
+    correctedText: string;
+    grammarIssues: string[];
+    refinementTips: string[];
+    mysticalResonance: string;
+  } | null>(null);
+  const [aiError, setAiError] = useState<string | null>(null);
+
+  // Edit states
+  const [editingId, setEditingId] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchToken = async () => {
+      try {
+        const { getAccessToken } = await import('../lib/firebase');
+        const t = await getAccessToken();
+        setGoogleToken(t);
+      } catch (error) {
+        console.error("Could not load login state:", error);
+      }
+    };
+    fetchToken();
+  }, [entries]);
+
+  const syncToDocs = async (title: string, htmlContent: string, entryId: string, format: 'gdoc' | 'txt' = 'gdoc') => {
+    try {
+      setIsSyncing(entryId);
+      const { getAccessToken } = await import('../lib/firebase');
+      const token = await getAccessToken();
+      if (!token) {
+        alert("Sua sessão do Google Workspace expirou. Por favor, conecte-se novamente na aba Workspace.");
+        setIsSyncing(null);
+        return;
+      }
+
+      const cleanText = htmlContent.replace(/<[^>]*>/g, '\n').replace(/\n+/g, '\n').trim() || "Sem descrição.";
+      const rawText = `${title}\n\nSincronizado via Grimório da Oracle Academy\nData: ${new Date().toLocaleDateString('pt-BR')}\n\n${cleanText}`;
+
+      if (format === 'txt') {
+        // Create standard plain text file metadata on Google Drive
+        const boundary = 'foo_bar_boundary';
+        const metadata = {
+          name: `${title} - Grimório.txt`,
+          mimeType: 'text/plain'
+        };
+
+        const multipartBody = 
+          `\r\n--${boundary}\r\n` +
+          `Content-Type: application/json; charset=UTF-8\r\n\r\n` +
+          JSON.stringify(metadata) +
+          `\r\n--${boundary}\r\n` +
+          `Content-Type: text/plain; charset=UTF-8\r\n\r\n` +
+          rawText +
+          `\r\n--${boundary}--`;
+
+        const res = await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': `multipart/related; boundary=${boundary}`
+          },
+          body: multipartBody
+        });
+
+        if (res.ok) {
+          const fileData = await res.json();
+          setSyncFeedback(prev => ({
+            ...prev,
+            [entryId]: {
+              status: 'success',
+              link: `https://drive.google.com/file/d/${fileData.id}/view`
+            }
+          }));
+        } else {
+          throw new Error('Falha ao exportar em formato .txt');
+        }
+      } else {
+        // 1. Create a Google Doc
+        const createRes = await fetch('https://www.googleapis.com/drive/v3/files', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            name: `${title} - Grimório`,
+            mimeType: 'application/vnd.google-apps.document'
+          })
+        });
+
+        if (!createRes.ok) {
+          throw new Error('Falha ao criar arquivo no Google Drive');
+        }
+
+        const fileData = await createRes.json();
+        const fileId = fileData.id;
+
+        // 2. Upload content
+        const uploadRes = await fetch(`https://www.googleapis.com/upload/drive/v3/files/${fileId}?uploadType=media`, {
+          method: 'PATCH',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'text/plain; charset=UTF-8'
+          },
+          body: rawText
+        });
+
+        if (uploadRes.ok) {
+          setSyncFeedback(prev => ({
+            ...prev,
+            [entryId]: {
+              status: 'success',
+              link: `https://docs.google.com/document/d/${fileId}/edit`
+            }
+          }));
+        } else {
+          throw new Error('Falha ao enviar conteúdo do documento');
+        }
+      }
+    } catch (err: any) {
+      console.error(err);
+      setSyncFeedback(prev => ({
+        ...prev,
+        [entryId]: { status: 'error' }
+      }));
+    } finally {
+      setIsSyncing(null);
+    }
+  };
   
   // New Entry state
   const [isCreating, setIsCreating] = useState(false);
@@ -32,7 +184,7 @@ export function GrimoireView({ entries, addEntry, currentUser }: { entries: any[
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [attachments, setAttachments] = useState<{name: string, type: string, url: string}[]>([]);
 
-  const isLocked = !currentUser?.isPaid;
+  const isLocked = false; // Always unlocked now since they said premium is unlocked
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
@@ -45,11 +197,92 @@ export function GrimoireView({ entries, addEntry, currentUser }: { entries: any[
     }
   };
 
-  const handleSaveEntry = () => {
-    if (!newEntryTitle.trim() || !addEntry) return;
+  // AI note grammar and refinement checking in real-time
+  const analyzeWithAI = async () => {
+    if (!newEntryTitle.trim() && !newEntryContent.replace(/<[^>]*>/g, '').trim()) {
+      setAiError("Escreva algo no título ou na anotação antes de sintonizar o mentor.");
+      return;
+    }
+    setIsAnalyzing(true);
+    setAiError(null);
+    setAiResult(null);
+    try {
+      const cleanText = newEntryContent.replace(/<[^>]*>/g, '\n').replace(/\n+/g, '\n').trim();
+      const res = await fetch('/api/ai/analyze-notes', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          title: newEntryTitle,
+          content: cleanText || newEntryContent,
+          type: newEntryType
+        })
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setAiResult(data);
+      } else {
+        throw new Error("O canal com o mentor hermético foi rompido temporariamente.");
+      }
+    } catch (err: any) {
+      setAiError(err.message || "Erro de conexão astral com a inteligência cósmica.");
+    } finally {
+      setIsAnalyzing(false);
+    }
+  };
 
-    addEntry({
-      id: Date.now().toString(),
+  // Replace active contents with AI polished content
+  const applyAICorrection = () => {
+    if (!aiResult?.correctedText) return;
+    const text = aiResult.correctedText;
+    
+    // Convert text back to draft editor structure safely
+    const blocksFromHtml = htmlToDraft(text);
+    if (blocksFromHtml) {
+      const { contentBlocks, entityMap } = blocksFromHtml;
+      const contentState = ContentState.createFromBlockArray(contentBlocks, entityMap);
+      const newEditorState = EditorState.createWithContent(contentState);
+      setEditorState(newEditorState);
+      setNewEntryContent(draftToHtml(convertToRaw(newEditorState.getCurrentContent())));
+      setNewEntryTitle(newEntryTitle || "Anotação Refinada por IA");
+    }
+    setAiResult(null);
+  };
+
+  const handleEditEntry = (entry: any) => {
+    setIsCreating(true);
+    setEditingId(entry.id);
+    setNewEntryType(entry.type || 'diary');
+    setNewEntryTitle(entry.title || entry.question || '');
+    setNewEntryContent(entry.content || entry.interpretation || '');
+    setAttachments(entry.attachments || []);
+
+    const content = entry.content || entry.interpretation || '';
+    const blocksFromHtml = htmlToDraft(content);
+    if (blocksFromHtml) {
+      const { contentBlocks, entityMap } = blocksFromHtml;
+      const contentState = ContentState.createFromBlockArray(contentBlocks, entityMap);
+      setEditorState(EditorState.createWithContent(contentState));
+    } else {
+      setEditorState(EditorState.createEmpty());
+    }
+  };
+
+  const handleDeleteEntry = (id: string, title: string) => {
+    const confirmed = window.confirm(`Deseja realmente dissipar "${title}" para sempre de seu grimório?`);
+    if (!confirmed) return;
+    if (deleteEntry) {
+      deleteEntry(id);
+    }
+  };
+
+  const handleSaveEntry = async () => {
+    if (!newEntryTitle.trim()) return;
+
+    const entryId = editingId || Date.now().toString();
+    const entryPayload = {
+      id: entryId,
       date: new Date().toISOString(),
       type: newEntryType,
       title: newEntryTitle,
@@ -60,13 +293,30 @@ export function GrimoireView({ entries, addEntry, currentUser }: { entries: any[
       interpretation: newEntryContent,
       cards: [],
       spreadType: GRIMOIRE_CATEGORIES.find(c => c.id === newEntryType)?.label || 'Anotação',
-    });
+    };
+
+    if (editingId) {
+      if (updateEntry) {
+        updateEntry(editingId, entryPayload);
+      }
+    } else {
+      if (addEntry) {
+        addEntry(entryPayload);
+      }
+    }
+
+    if (syncToGoogle && googleToken) {
+      await syncToDocs(newEntryTitle, newEntryContent, entryId, exportFormat);
+    }
 
     setIsCreating(false);
+    setEditingId(null);
     setNewEntryTitle('');
     setNewEntryContent('');
     setEditorState(EditorState.createEmpty());
     setAttachments([]);
+    setSyncToGoogle(false);
+    setAiResult(null);
     if (fileInputRef.current) fileInputRef.current.value = '';
   };
 
@@ -216,7 +466,7 @@ export function GrimoireView({ entries, addEntry, currentUser }: { entries: any[
                             setNewEntryContent(draftToHtml(convertToRaw(newState.getCurrentContent())));
                           }}
                           wrapperClassName="demo-wrapper"
-                          editorClassName="demo-editor px-5 py-4 min-h-[300px] text-slate-200 text-sm"
+                          editorClassName="demo-editor px-5 py-4 min-h-[250px] text-slate-200 text-sm"
                           toolbarClassName="!bg-black/40 !border-b !border-white/10 !border-x-0 !border-t-0 text-slate-300"
                           toolbar={{
                             options: ['inline', 'blockType', 'fontSize', 'fontFamily', 'list', 'textAlign', 'colorPicker', 'link', 'embedded', 'emoji', 'image', 'remove', 'history'],
@@ -228,10 +478,102 @@ export function GrimoireView({ entries, addEntry, currentUser }: { entries: any[
                           }}
                         />
                       </div>
+                      
+                      {/* AI Mentor Integration panel */}
+                      <div className="flex justify-between items-center mt-2">
+                        <p className="text-[11px] text-slate-500 font-light flex items-center gap-1">🔮 Use a Centelha Cósmica para polir e corrigir suas anotações oraculares de forma profissional.</p>
+                        <button
+                          type="button"
+                          onClick={analyzeWithAI}
+                          disabled={isAnalyzing}
+                          className="flex items-center gap-1 px-3 py-1 rounded-full bg-indigo-500/10 hover:bg-indigo-500/20 text-indigo-300 hover:text-indigo-200 border border-indigo-500/30 text-xs font-semibold transition-all disabled:opacity-50 active:scale-95"
+                        >
+                          {isAnalyzing ? (
+                            <>
+                              <RefreshCw className="w-3" /> Analisando Éter...
+                            </>
+                          ) : (
+                            <>
+                              <Sparkle className="w-3 h-3 text-indigo-400 animate-pulse" /> Sintonizar Mentor IA
+                            </>
+                          )}
+                        </button>
+                      </div>
+
+                      <AnimatePresence>
+                        {aiError && (
+                          <motion.div initial={{ opacity: 0, y: 5 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="mt-3 p-3 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-300 text-xs flex items-center gap-2">
+                            <AlertCircle className="w-4 h-4 flex-shrink-0 text-rose-400" /> {aiError}
+                          </motion.div>
+                        )}
+                        {aiResult && (
+                          <motion.div
+                            initial={{ opacity: 0, height: 0 }}
+                            animate={{ opacity: 1, height: 'auto' }}
+                            exit={{ opacity: 0, height: 0 }}
+                            className="mt-4 p-4 rounded-2xl bg-indigo-950/25 border border-indigo-500/30 text-xs relative overflow-hidden"
+                          >
+                            <div className="absolute top-0 right-0 p-2 opacity-5 pointer-events-none">
+                              <Sparkles className="w-16 h-16 text-indigo-400" />
+                            </div>
+
+                            <div className="flex items-center justify-between gap-4 border-b border-indigo-500/15 pb-2 mb-3">
+                              <span className="font-serif text-indigo-300 font-semibold flex items-center gap-1.5">🔮 Mentor Hermético da Oracle Academy</span>
+                              <span className="bg-indigo-500/15 px-2 py-0.5 rounded-full text-[9px] font-black uppercase text-indigo-300 border border-indigo-500/20">Modulação: {aiResult.mysticalResonance}</span>
+                            </div>
+
+                            <div className="space-y-3 font-light text-slate-300 leading-relaxed">
+                              {aiResult.grammarIssues && aiResult.grammarIssues.length > 0 && (
+                                <div>
+                                  <h5 className="font-semibold text-slate-200 flex items-center gap-1 mt-1 text-[11px]">✓ Purificação Gramatical</h5>
+                                  <ul className="list-disc list-inside pl-1 text-[11px] text-zinc-400 space-y-0.5">
+                                    {aiResult.grammarIssues.map((issue, idx) => (
+                                      <li key={idx}>{issue}</li>
+                                    ))}
+                                  </ul>
+                                </div>
+                              )}
+
+                              {aiResult.refinementTips && aiResult.refinementTips.length > 0 && (
+                                <div>
+                                  <h5 className="font-semibold text-slate-200 flex items-center gap-1 text-[11px]">🔮 Elevação e Aprimoramento Místico</h5>
+                                  <ul className="list-disc list-inside pl-1 text-[11px] text-slate-400 space-y-0.5">
+                                    {aiResult.refinementTips.map((tip, idx) => (
+                                      <li key={idx}>{tip}</li>
+                                    ))}
+                                  </ul>
+                                </div>
+                              )}
+
+                              <div className="pt-2 border-t border-indigo-500/10 flex flex-col gap-1">
+                                <span className="text-[10px] text-indigo-300 font-medium">Visualização da Escrita Refinada:</span>
+                                <div className="italic p-3 rounded-lg bg-black/40 border border-white/5 text-slate-300 leading-relaxed text-[11px]" dangerouslySetInnerHTML={{ __html: aiResult.correctedText }} />
+                              </div>
+
+                              <div className="flex justify-end gap-2 pt-2">
+                                <button
+                                  type="button"
+                                  onClick={() => setAiResult(null)}
+                                  className="px-3 py-1 rounded-lg bg-white/5 hover:bg-white/10 text-slate-400 text-[10px] font-medium transition-all"
+                                >
+                                  Dispensar
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={applyAICorrection}
+                                  className="px-3 py-1 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white text-[10px] font-bold flex items-center gap-1 transition-all shadow-md active:scale-95"
+                                >
+                                  <Check className="w-3 h-3 text-indigo-200" /> Incorporar Escrita Refinada
+                                </button>
+                              </div>
+                            </div>
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
                     </div>
 
                     <div>
-                      <label className="block text-xs font-medium text-slate-400 mb-2">Anexos</label>
+                      <label className="block text-xs font-medium text-slate-400 mb-2">Anexos (Imagem, Vídeo, Áudio ou Foto)</label>
                       <div className="flex flex-wrap gap-3 mb-3">
                         {attachments.map((file, i) => (
                           <div key={i} className="flex items-center gap-2 bg-white/5 border border-white/10 rounded-lg px-3 py-1.5 pr-1">
@@ -254,31 +596,76 @@ export function GrimoireView({ entries, addEntry, currentUser }: { entries: any[
                           className="hidden"
                           ref={fileInputRef}
                           onChange={handleFileUpload}
-                          accept="image/*,application/pdf,.doc,.docx,.txt"
+                          accept="image/*,video/*,audio/*,application/pdf,.doc,.docx,.txt"
                         />
                         <button 
                           onClick={() => fileInputRef.current?.click()}
-                          className="flex items-center gap-2 px-3 py-1.5 bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg text-xs text-slate-300 transition-colors"
+                          className="flex items-center gap-2 px-3 py-1.5 bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg text-xs text-slate-200 transition-colors"
                         >
-                          <ImageIcon className="w-4 h-4 text-slate-400" /> Imagem / Foto
+                          <ImageIcon className="w-4 h-4 text-indigo-400" /> Imagem / Foto
                         </button>
                         <button 
                           onClick={() => fileInputRef.current?.click()}
-                          className="flex items-center gap-2 px-3 py-1.5 bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg text-xs text-slate-300 transition-colors"
+                          className="flex items-center gap-2 px-3 py-1.5 bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg text-xs text-slate-200 transition-colors"
                         >
-                          <File className="w-4 h-4 text-slate-400" /> Documento / PDF
+                          <File className="w-4 h-4 text-emerald-400" /> Documento / Áudio / Vídeo
                         </button>
                       </div>
                     </div>
 
-                    <div className="pt-4 flex justify-end">
-                      <button 
-                        onClick={handleSaveEntry}
-                        disabled={!newEntryTitle.trim()}
-                        className="px-6 py-2 bg-indigo-500 hover:bg-indigo-600 text-white font-medium rounded-lg text-sm transition-colors disabled:opacity-50"
-                      >
-                        Salvar no Grimório
-                      </button>
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pt-4 border-t border-white/5">
+                      <div className="flex flex-col gap-2">
+                        <div className="flex items-center gap-3">
+                          <input
+                            type="checkbox"
+                            id="syncToggle"
+                            checked={syncToGoogle}
+                            onChange={(e) => setSyncToGoogle(e.target.checked)}
+                            disabled={!googleToken}
+                            className="w-4 h-4 rounded text-indigo-600 bg-black/40 border-white/10 focus:ring-indigo-500/50 cursor-pointer disabled:cursor-not-allowed"
+                          />
+                          <label htmlFor="syncToggle" className={`text-xs cursor-pointer select-none ${googleToken ? 'text-indigo-300 font-medium' : 'text-slate-500'}`}>
+                            {googleToken ? 'Exportação automática para o Google Drive ao salvar' : 'Conecte-se ao Google Workspace para sincronizar automaticamente'}
+                          </label>
+                        </div>
+                        
+                        {/* Auto-export format pills */}
+                        {syncToGoogle && (
+                          <div className="flex items-center gap-2 bg-black/40 border border-white/10 px-3 py-1 text-xs rounded-xl w-fit mt-1">
+                            <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Formato:</span>
+                            <button
+                              type="button"
+                              onClick={() => setExportFormat('gdoc')}
+                              className={`px-2 py-0.5 rounded text-[10px] font-bold transition-all ${exportFormat === 'gdoc' ? 'bg-indigo-600 text-white shadow' : 'text-slate-400 hover:text-slate-200'}`}
+                            >
+                              Documento (.gdoc)
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => setExportFormat('txt')}
+                              className={`px-2 py-0.5 rounded text-[10px] font-bold transition-all ${exportFormat === 'txt' ? 'bg-indigo-600 text-white shadow' : 'text-slate-400 hover:text-slate-200'}`}
+                            >
+                              Texto (.txt)
+                            </button>
+                          </div>
+                        )}
+                      </div>
+
+                      <div className="flex items-center gap-3">
+                        <button 
+                          onClick={() => { setIsCreating(false); setEditingId(null); setAiResult(null); }}
+                          className="px-4 py-2 hover:bg-white/5 text-slate-300 rounded-lg text-sm transition-colors"
+                        >
+                          Cancelar
+                        </button>
+                        <button 
+                          onClick={handleSaveEntry}
+                          disabled={!newEntryTitle.trim()}
+                          className="px-6 py-2 bg-indigo-500 hover:bg-indigo-600 text-white font-medium rounded-lg text-sm transition-colors disabled:opacity-50"
+                        >
+                          {editingId ? 'Atualizar Registro' : 'Salvar no Grimório'}
+                        </button>
+                      </div>
                     </div>
                   </div>
                 </motion.div>
@@ -319,9 +706,31 @@ export function GrimoireView({ entries, addEntry, currentUser }: { entries: any[
                                 <span className="bg-white/5 px-2 py-0.5 rounded-full text-[10px] uppercase tracking-wider">{entry.spreadType || entry.type || 'Anotação'}</span>
                                 <span className="flex items-center gap-1 text-xs"><Calendar className="w-3 h-3"/> {new Date(entry.date).toLocaleDateString('pt-BR')}</span>
                               </div>
-                              <button className="text-indigo-400 hover:text-indigo-300 p-1.5 rounded-full hover:bg-white/10 transition-colors">
-                                {expandedId === entry.id ? <ChevronDown className="w-5 h-5" /> : <ChevronRight className="w-5 h-5" />}
-                              </button>
+                              <div className="flex items-center gap-2">
+                                <button
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleEditEntry(entry);
+                                  }}
+                                  className="text-indigo-400 hover:text-indigo-300 p-2 rounded-lg hover:bg-white/5 transition-all"
+                                  title="Editar Registro"
+                                >
+                                  <Edit2 className="w-4 h-4" />
+                                </button>
+                                <button
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleDeleteEntry(entry.id, entry.title || entry.question);
+                                  }}
+                                  className="text-rose-400 hover:text-rose-300 p-2 rounded-lg hover:bg-white/5 transition-all"
+                                  title="Excluir Registro"
+                                >
+                                  <Trash2 className="w-4 h-4" />
+                                </button>
+                                <button className="text-indigo-400 hover:text-indigo-300 p-2 rounded-lg hover:bg-white/5 transition-all">
+                                  {expandedId === entry.id ? <ChevronDown className="w-5 h-5" /> : <ChevronRight className="w-5 h-5" />}
+                                </button>
+                              </div>
                             </div>
                           </div>
                           
@@ -336,7 +745,7 @@ export function GrimoireView({ entries, addEntry, currentUser }: { entries: any[
                               >
                                 <div className="p-6 bg-black/30 text-slate-300 text-sm leading-relaxed prose prose-invert max-w-none">
                                   {/<[a-z][\s\S]*>/i.test(entry.content || entry.interpretation || '') ? (
-                                    <div dangerouslySetInnerHTML={{ __html: entry.content || entry.interpretation || '' }} className="tinymce-content" />
+                                    <div dangerouslySetInnerHTML={{ __html: entry.content || entry.interpretation || '' }} className="tinymce-content html-output" />
                                   ) : (
                                     <Markdown>{entry.content || entry.interpretation}</Markdown>
                                   )}
@@ -362,6 +771,68 @@ export function GrimoireView({ entries, addEntry, currentUser }: { entries: any[
                                       </div>
                                     </div>
                                   )}
+
+                                  {/* Google Docs/Text Export Section */}
+                                  <div className="mt-6 pt-4 border-t border-indigo-500/15 flex flex-wrap items-center justify-between gap-4">
+                                    <div className="text-xs text-slate-500">
+                                      {syncFeedback[entry.id]?.status === 'success' ? (
+                                        <span className="text-emerald-400 font-medium flex items-center gap-1">✓ Sincronizado com sucesso com o seu Google Drive</span>
+                                      ) : syncFeedback[entry.id]?.status === 'error' ? (
+                                        <span className="text-rose-400">Falha ao salvar no Google Drive</span>
+                                      ) : (
+                                        'Google Workspace Integration'
+                                      )}
+                                    </div>
+                                    <div className="flex gap-2">
+                                      {syncFeedback[entry.id]?.link ? (
+                                        <a
+                                          href={syncFeedback[entry.id].link}
+                                          target="_blank"
+                                          rel="noreferrer"
+                                          className="px-3.5 py-1.5 bg-emerald-500/20 border border-emerald-500/40 text-emerald-200 rounded-lg text-xs font-semibold hover:bg-emerald-500/30 transition-all flex items-center gap-1"
+                                        >
+                                          ✓ Abrir no Drive
+                                        </a>
+                                      ) : (
+                                        <div className="flex items-center gap-2">
+                                          <button
+                                            onClick={() => syncToDocs(entry.title || entry.question, entry.content || entry.interpretation, entry.id, 'gdoc')}
+                                            disabled={isSyncing === entry.id}
+                                            className="px-3 py-1.5 bg-indigo-500/20 hover:bg-indigo-500/30 border border-indigo-500/40 text-indigo-200 rounded-lg text-xs font-semibold transition-all disabled:opacity-50 flex items-center gap-1.5"
+                                          >
+                                            <FileText className="w-3.5 h-3.5 text-indigo-400" />
+                                            {isSyncing === entry.id ? 'Salvando...' : 'Exportar Doc (.gdoc)'}
+                                          </button>
+                                          <button
+                                            onClick={() => syncToDocs(entry.title || entry.question, entry.content || entry.interpretation, entry.id, 'txt')}
+                                            disabled={isSyncing === entry.id}
+                                            className="px-3 py-1.5 bg-emerald-500/20 hover:bg-emerald-500/30 border border-emerald-500/40 text-emerald-200 rounded-lg text-xs font-semibold transition-all disabled:opacity-50 flex items-center gap-1.5"
+                                          >
+                                            <FileText className="w-3.5 h-3.5 text-emerald-400" />
+                                            {isSyncing === entry.id ? 'Salvando...' : 'Exportar Texto (.txt)'}
+                                          </button>
+                                          <button
+                                            onClick={() => {
+                                              import("jspdf").then(({ jsPDF }) => {
+                                                const doc = new jsPDF();
+                                                doc.setFont("helvetica", "bold");
+                                                doc.text(entry.title || entry.question || "Grimoire Entry", 20, 20);
+                                                doc.setFont("helvetica", "normal");
+                                                const cleanText = (entry.content || entry.interpretation || '').replace(/<[^>]+>/g, '').replace(/&nbsp;/g, ' ');
+                                                const lines = doc.splitTextToSize(cleanText, 170);
+                                                doc.text(lines, 20, 30);
+                                                doc.save(`${(entry.title || entry.question || "entry").replace(/[^a-z0-9]/gi, '_').toLowerCase()}.pdf`);
+                                              });
+                                            }}
+                                            className="px-3 py-1.5 bg-rose-500/20 hover:bg-rose-500/30 border border-rose-500/40 text-rose-200 rounded-lg text-xs font-semibold transition-all flex items-center gap-1.5"
+                                          >
+                                            <FileText className="w-3.5 h-3.5 text-rose-400" />
+                                            Baixar PDF
+                                          </button>
+                                        </div>
+                                      )}
+                                    </div>
+                                  </div>
                                 </div>
                               </motion.div>
                             )}
