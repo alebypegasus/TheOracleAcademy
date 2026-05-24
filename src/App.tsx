@@ -128,7 +128,10 @@ function AppContent({
                     colorTheme={colorTheme}
                     setColorTheme={setColorTheme}
                     profile={profile}
-                    onNavigate={(path: string) => Object.assign(navigate(path), setIsMobileMenuOpen(false))}
+                    onNavigate={(path: string) => {
+                      navigate(path);
+                      setIsMobileMenuOpen(false);
+                    }}
                     onLogout={() => {
                       setCurrentUser(null);
                       navigate('/landing');
