@@ -134,21 +134,24 @@ export function CommunityView({ currentUser }: { currentUser: any }) {
 
   // Social cycle (friends, follow states)
   const [socialCycle, setSocialCycle] = useState(() => {
-    const saved = localStorage.getItem('oracle_social_cycle');
+    const key = `oracle_social_cycle_${currentUser?.email || 'guest'}`;
+    const saved = localStorage.getItem(key);
     return saved ? JSON.parse(saved) : {
-      friends: ['Elias Thorne', 'Serena Moon'],
-      following: ['Elias Thorne', 'Serena Moon', 'Marcus Vane'],
-      covenMembers: ['Elias Thorne', 'Serena Moon', 'Marcus Vane']
+      friends: [],
+      following: [],
+      covenMembers: []
     };
   });
 
   // Wallet / Purchases simulation
   const [myTransactions, setMyTransactions] = useState<any[]>(() => {
-    const saved = localStorage.getItem('oracle_transactions');
+    const key = `oracle_transactions_${currentUser?.email || 'guest'}`;
+    const saved = localStorage.getItem(key);
     return saved ? JSON.parse(saved) : [];
   });
   const [platformBalance, setPlatformBalance] = useState(() => {
-    const saved = localStorage.getItem('oracle_balance');
+    const key = `oracle_balance_${currentUser?.email || 'guest'}`;
+    const saved = localStorage.getItem(key);
     return saved ? Number(saved) : 1250; // default starting simulated capital
   });
 
@@ -172,7 +175,8 @@ export function CommunityView({ currentUser }: { currentUser: any }) {
   // Interactive active chat overlay
   const [activeChatUser, setActiveChatUser] = useState<string | null>(null);
   const [chatMessages, setChatMessages] = useState<Record<string, any[]>>(() => {
-    const saved = localStorage.getItem('oracle_chat_messages');
+    const key = `oracle_chat_messages_${currentUser?.email || 'guest'}`;
+    const saved = localStorage.getItem(key);
     return saved ? JSON.parse(saved) : {
       'Elias Thorne': [
         { sender: 'Elias Thorne', text: 'Saudações oraculares, buscador! Como andam suas práticas no grimório?', timestamp: 'Hoje às 14:15' }
@@ -239,20 +243,24 @@ export function CommunityView({ currentUser }: { currentUser: any }) {
   }, [covens]);
 
   useEffect(() => {
-    localStorage.setItem('oracle_social_cycle', JSON.stringify(socialCycle));
-  }, [socialCycle]);
+    const key = `oracle_social_cycle_${currentUser?.email || 'guest'}`;
+    localStorage.setItem(key, JSON.stringify(socialCycle));
+  }, [socialCycle, currentUser]);
 
   useEffect(() => {
-    localStorage.setItem('oracle_transactions', JSON.stringify(myTransactions));
-  }, [myTransactions]);
+    const key = `oracle_transactions_${currentUser?.email || 'guest'}`;
+    localStorage.setItem(key, JSON.stringify(myTransactions));
+  }, [myTransactions, currentUser]);
 
   useEffect(() => {
-    localStorage.setItem('oracle_balance', platformBalance.toString());
-  }, [platformBalance]);
+    const key = `oracle_balance_${currentUser?.email || 'guest'}`;
+    localStorage.setItem(key, platformBalance.toString());
+  }, [platformBalance, currentUser]);
 
   useEffect(() => {
-    localStorage.setItem('oracle_chat_messages', JSON.stringify(chatMessages));
-  }, [chatMessages]);
+    const key = `oracle_chat_messages_${currentUser?.email || 'guest'}`;
+    localStorage.setItem(key, JSON.stringify(chatMessages));
+  }, [chatMessages, currentUser]);
 
   // Handle load Google Access Token
   useEffect(() => {
@@ -847,50 +855,57 @@ export function CommunityView({ currentUser }: { currentUser: any }) {
               <Sparkles className="w-4 h-4 text-indigo-400 animate-pulse" /> Ciclo Social Astral
             </h3>
             <div className="space-y-3">
-              {['Elias Thorne', 'Serena Moon', 'Marcus Vane'].map((friendName) => {
-                const isFriendInCycle = socialCycle.friends.includes(friendName);
-                const extra = EXTRA_PROFILES_DATA[friendName] || { grau: 'Iniciado', level: 1 };
-                const avatar = friendName === 'Elias Thorne' ? 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?fit=crop&w=150' : friendName === 'Serena Moon' ? 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?fit=crop&w=150' : 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?fit=crop&w=150';
-                
-                return (
-                  <div key={friendName} className="flex items-center justify-between p-2.5 bg-black/20 border border-white/5 rounded-2xl hover:border-indigo-500/20 transition-all">
-                    <button 
-                      onClick={() => handleOpenUserProfile(friendName, avatar)}
-                      className="flex items-center gap-3 text-left min-w-0"
-                    >
-                      <div className="relative">
-                        <img src={avatar} alt="" className="w-10 h-10 rounded-full object-cover border border-indigo-500/20" />
-                        <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-emerald-500 rounded-full border-2 border-slate-900" />
-                      </div>
-                      <div className="min-w-0">
-                        <p className="text-xs font-bold text-slate-100 truncate flex items-center gap-1">
-                          {friendName}
-                          <CheckCircle2 className="w-3 h-3 text-indigo-400" />
-                        </p>
-                        <p className="text-[10px] text-slate-400 truncate font-mono">Nível {extra.level} • {extra.grau}</p>
-                      </div>
-                    </button>
+              {socialCycle.friends.length === 0 ? (
+                <div className="p-4 text-center bg-black/10 border border-white/5 rounded-2xl">
+                  <p className="text-[11px] text-slate-500 leading-normal">
+                    Seu ciclo social astral está vazio. Encontre membros no Feed ou Covens para se conectar!
+                  </p>
+                </div>
+              ) : (
+                socialCycle.friends.map((friendName) => {
+                  const extra = EXTRA_PROFILES_DATA[friendName] || { grau: 'Iniciado', level: 1 };
+                  const avatar = friendName === 'Elias Thorne' ? 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?fit=crop&w=150' : friendName === 'Serena Moon' ? 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?fit=crop&w=150' : 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?fit=crop&w=150';
+                  
+                  return (
+                    <div key={friendName} className="flex items-center justify-between p-2.5 bg-black/20 border border-white/5 rounded-2xl hover:border-indigo-500/20 transition-all">
+                      <button 
+                        onClick={() => handleOpenUserProfile(friendName, avatar)}
+                        className="flex items-center gap-3 text-left min-w-0"
+                      >
+                        <div className="relative">
+                          <img src={avatar} alt="" className="w-10 h-10 rounded-full object-cover border border-indigo-500/20" />
+                          <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-emerald-500 rounded-full border-2 border-slate-900" />
+                        </div>
+                        <div className="min-w-0">
+                          <p className="text-xs font-bold text-slate-100 truncate flex items-center gap-1">
+                            {friendName}
+                            <CheckCircle2 className="w-3 h-3 text-indigo-400" />
+                          </p>
+                          <p className="text-[10px] text-slate-400 truncate font-mono">Nível {extra.level} • {extra.grau}</p>
+                        </div>
+                      </button>
 
-                    <div className="flex gap-1">
-                      <button 
-                        onClick={() => openChatWith(friendName)}
-                        className="p-1.5 rounded-lg bg-indigo-500/10 hover:bg-indigo-500/20 border border-indigo-500/20 text-indigo-300 hover:text-indigo-200 transition-all"
-                        title="Iniciar Chat"
-                      >
-                        <MessageSquare className="w-3.5 h-3.5" />
-                      </button>
-                      <button 
-                        onClick={() => handleStartGoogleMeet(friendName)}
-                        disabled={isMeetCreating === friendName}
-                        className="p-1.5 rounded-lg bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/20 text-emerald-300 hover:text-emerald-200 transition-all disabled:opacity-50"
-                        title="Videoconferência"
-                      >
-                        {isMeetCreating === friendName ? <RefreshCw className="w-3.5 h-3.5 animate-spin" /> : <Video className="w-3.5 h-3.5" />}
-                      </button>
+                      <div className="flex gap-1">
+                        <button 
+                          onClick={() => openChatWith(friendName)}
+                          className="p-1.5 rounded-lg bg-indigo-500/10 hover:bg-indigo-500/20 border border-indigo-500/20 text-indigo-300 hover:text-indigo-200 transition-all"
+                          title="Iniciar Chat"
+                        >
+                          <MessageSquare className="w-3.5 h-3.5" />
+                        </button>
+                        <button 
+                          onClick={() => handleStartGoogleMeet(friendName)}
+                          disabled={isMeetCreating === friendName}
+                          className="p-1.5 rounded-lg bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/20 text-emerald-300 hover:text-emerald-200 transition-all disabled:opacity-50"
+                          title="Videoconferência"
+                        >
+                          {isMeetCreating === friendName ? <RefreshCw className="w-3.5 h-3.5 animate-spin" /> : <Video className="w-3.5 h-3.5" />}
+                        </button>
+                      </div>
                     </div>
-                  </div>
-                );
-              })}
+                  );
+                })
+              )}
             </div>
           </div>
         </div>

@@ -264,8 +264,25 @@ export function LandingPage({
         }
       }
     } catch (err: any) {
-      console.error(err);
-      setError('Falha de conexão com a infraestrutura mística.');
+      console.error('[Google Auth Error]', err?.code, err?.message, err);
+      // Map Firebase error codes to friendly messages
+      const code = err?.code || '';
+      if (code === 'auth/unauthorized-domain') {
+        setError('Domínio não autorizado no Firebase. Adicione "localhost" em Authentication → Authorized Domains no Console do Firebase.');
+      } else if (code === 'auth/popup-blocked') {
+        setError('O popup de login foi bloqueado pelo navegador. Permita popups para localhost e tente novamente.');
+      } else if (code === 'auth/popup-closed-by-user') {
+        setError('Login cancelado. O popup foi fechado antes de concluir.');
+      } else if (code === 'auth/network-request-failed') {
+        setError('Sem conexão com a internet. Verifique sua rede e tente novamente.');
+      } else if (code === 'auth/operation-not-allowed') {
+        setError('Login com Google não está habilitado. Ative o provedor Google em Authentication no Console do Firebase.');
+      } else if (code === 'auth/cancelled-popup-request') {
+        // Silent — user opened multiple popups
+        return;
+      } else {
+        setError(`Erro Google Auth: ${err?.message || 'Tente novamente.'}`);
+      }
     }
   };
 
@@ -852,48 +869,30 @@ export function LandingPage({
 
                         {/* Subscription plans selection representation */}
                         <div>
-                          <label className="text-xs text-slate-400 uppercase tracking-widest mb-2 block font-bold text-center text-amber-500 flex items-center justify-center gap-1">
-                            <Crown className="w-3.5 h-3.5" /> SELECIONE SEU PLANO DE ACESSO
-                          </label>
-                          <div className="grid grid-cols-1 gap-2">
-                            {/* Option 1: Basic Free */}
-                            <button
-                              type="button"
-                              onClick={() => setSelectedPlan('free')}
-                              className={`p-3 rounded-2xl text-left border transition-all flex justify-between items-center ${selectedPlan === 'free' ? 'border-indigo-500/50 bg-indigo-500/5' : 'border-white/5 bg-white/[0.01]'}`}
-                            >
-                              <div>
-                                <span className="font-serif text-sm text-slate-200 block font-medium">Plano Acólito (Gratuito)</span>
-                                <span className="text-[10px] text-slate-400 font-light block mt-0.5">Leituras básicas, 100 XP inicial e desafios estelares.</span>
-                              </div>
-                              <span className="text-slate-300 font-mono text-xs font-black shrink-0 ml-4">R$ 0,00</span>
-                            </button>
-
-                            {/* Option 2: Premium Senior (Free for now) */}
-                            <button
-                              type="button"
-                              onClick={() => setSelectedPlan('premium')}
-                              className={`p-3 rounded-2xl text-left border transition-all flex justify-between items-center relative overflow-hidden ${selectedPlan === 'premium' ? 'border-amber-500 bg-amber-500/[0.04] shadow-[0_0_15px_rgba(245,158,11,0.15)]' : 'border-white/5 bg-white/[0.01]'}`}
-                            >
-                              <div className="absolute top-0 right-0 w-24 h-24 bg-amber-500/10 rounded-full blur-2xl pointer-events-none" />
-                              <div>
-                                <span className="font-serif text-sm text-amber-400 block font-black flex items-center gap-1.5 leading-none">
-                                  Plano Sênior (Oracle Sênior) <span className="bg-amber-500/20 text-amber-400 text-[8px] font-black uppercase px-1.5 py-0.5 rounded tracking-widest">Recomendado</span>
-                                </span>
-                                <span className="text-[10px] text-slate-300 font-light block mt-1 leading-normal">
-                                  Biblioteca liberada, tutor IA ilimitado, postagem no Mercado e comunidade premium.
-                                </span>
-                              </div>
-                              <div className="text-right shrink-0 ml-4">
-                                <span className="line-through text-slate-500 text-[9px] block">R$ 49,90</span>
-                                <span className="text-amber-430 text-xs font-black text-amber-400 font-mono">GRÁTIS</span>
-                              </div>
-                            </button>
-                          </div>
-                          <p className="text-[10px] text-slate-500 mt-2 text-center italic leading-tight">
-                            "A Oracle Academy está em fase de expansão. Aproveite o plano Premium gratuitamente hoje!"
-                          </p>
-                        </div>
+                           <label className="text-xs text-slate-400 uppercase tracking-widest mb-3 block font-bold text-center text-amber-500 flex items-center justify-center gap-1">
+                             <Crown className="w-3.5 h-3.5" /> PLANOS DISPONÍVEIS
+                           </label>
+                           <div className="grid grid-cols-3 gap-2 mb-3">
+                             {/* Free */}
+                             <div className="p-3 rounded-2xl text-center border border-white/10 bg-white/[0.01]">
+                               <span className="font-serif text-xs text-slate-300 block font-medium mb-1">Iniciado</span>
+                               <span className="text-[10px] text-slate-500 block">Gratuito</span>
+                             </div>
+                             {/* Medium */}
+                             <div className="p-3 rounded-2xl text-center border border-purple-500/30 bg-purple-500/5">
+                               <span className="font-serif text-xs text-purple-300 block font-medium mb-1">Ascendente</span>
+                               <span className="text-[10px] text-purple-400 font-bold block">R$49,90/mês</span>
+                             </div>
+                             {/* Master */}
+                             <div className="p-3 rounded-2xl text-center border border-amber-500/30 bg-amber-500/5">
+                               <span className="font-serif text-xs text-amber-300 block font-medium mb-1">Mestre</span>
+                               <span className="text-[10px] text-amber-400 font-bold block">R$109,90/mês</span>
+                             </div>
+                           </div>
+                           <p className="text-[10px] text-slate-500 text-center italic leading-tight">
+                             Você começa como Iniciado (gratuito). Faça upgrade a qualquer momento na área de assinaturas.
+                           </p>
+                         </div>
                       </motion.div>
                     )}
                   </div>
@@ -1991,72 +1990,97 @@ export function LandingPage({
       </section>
 
       {/* Pricing Section */}
-      <section className="relative py-24 px-4">
+      <section className="relative py-24 px-4" id="pricing">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-serif text-slate-100 mb-4 uppercase tracking-widest">Investimento na sua Jornada</h2>
-            <p className="text-slate-400">Planos flexíveis para cada nível de buscador.</p>
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-amber-500/30 bg-amber-500/10 mb-6">
+              <span className="text-[10px] uppercase tracking-widest font-bold text-amber-400">Transparência Total</span>
+            </div>
+            <h2 className="text-3xl md:text-5xl font-serif text-slate-100 mb-4">Sua Jornada, Seu Ritmo</h2>
+            <p className="text-slate-400 max-w-xl mx-auto">Comece gratuitamente. Evolua quando estiver pronto. Sem cobranças ocultas.</p>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-8 mb-16">
-            {/* Monthly */}
-            <div className="glass-panel p-8 rounded-[2rem] border border-white/10 hover:border-purple-500/50 transition-colors flex flex-col items-center text-center">
-              <h3 className="text-purple-400 uppercase tracking-widest text-sm mb-4">Mensal</h3>
-              <div className="flex items-start mb-6">
-                 <span className="text-sm mt-2 font-medium">R$</span>
-                 <span className="text-5xl font-serif">49</span>
-                 <span className="text-sm self-end mb-1 text-slate-500">/mês</span>
+          <div className="grid md:grid-cols-3 gap-6 mb-12">
+            {/* Free Plan */}
+            <div className="glass-panel p-8 rounded-[2rem] border border-white/10 hover:border-white/20 transition-all flex flex-col">
+              <div className="mb-6">
+                <h3 className="text-slate-300 font-serif text-xl mb-1">Iniciado</h3>
+                <p className="text-slate-500 text-xs">Para quem está começando</p>
               </div>
-              <ul className="space-y-4 mb-8 text-sm text-slate-300 text-left w-full">
-                <li className="flex gap-2"><Check className="w-4 h-4 text-purple-400 flex-shrink-0" /> Cursos Básicos</li>
-                <li className="flex gap-2"><Check className="w-4 h-4 text-purple-400 flex-shrink-0" /> Grimório com 50 espaços</li>
-                <li className="flex gap-2"><Check className="w-4 h-4 text-purple-400 flex-shrink-0" /> Tutor IA Limitado</li>
+              <div className="flex items-end gap-1 mb-8">
+                <span className="text-5xl font-serif font-bold text-white">R$0</span>
+                <span className="text-slate-500 text-sm mb-1">/mês</span>
+              </div>
+              <ul className="space-y-3 mb-8 flex-1 text-sm text-slate-400">
+                <li className="flex gap-2 items-start"><Check className="w-4 h-4 text-emerald-400 flex-shrink-0 mt-0.5" /><span>Mercado (comprar e solicitar leituras)</span></li>
+                <li className="flex gap-2 items-start"><Check className="w-4 h-4 text-emerald-400 flex-shrink-0 mt-0.5" /><span>Desafios diários e certificados</span></li>
+                <li className="flex gap-2 items-start"><Check className="w-4 h-4 text-emerald-400 flex-shrink-0 mt-0.5" /><span>Comunidade e perfil personalizado</span></li>
+                <li className="flex gap-2 items-start"><Check className="w-4 h-4 text-emerald-400 flex-shrink-0 mt-0.5" /><span>Módulo 0 dos cursos completo</span></li>
+                <li className="flex gap-2 items-start text-slate-600"><Lock className="w-4 h-4 flex-shrink-0 mt-0.5" /><span>Módulos avançados de cursos</span></li>
+                <li className="flex gap-2 items-start text-slate-600"><Lock className="w-4 h-4 flex-shrink-0 mt-0.5" /><span>Orientação Oracular com IA</span></li>
               </ul>
-              <button onClick={() => currentUser ? onEnterApp() : setShowLogin(true)} className="mt-auto w-full py-3 rounded-full border border-purple-500/50 text-purple-200 hover:bg-purple-500/10 uppercase tracking-wider text-sm font-bold">
-                Adquira Aqui
+              <button onClick={() => currentUser ? onEnterApp() : setShowLogin(true)} className="w-full py-3 rounded-xl border border-white/10 text-slate-300 hover:bg-white/5 text-sm font-bold tracking-wide transition-all">
+                Começar Gratuitamente
               </button>
             </div>
 
-            {/* Quarterly */}
-            <div className="glass-panel p-8 rounded-[2rem] border border-blue-500/30 hover:border-blue-500/60 bg-blue-900/10 transition-colors flex flex-col items-center text-center transform md:scale-105 shadow-xl shadow-blue-900/20 relative z-10">
-              <h3 className="text-blue-400 uppercase tracking-widest text-sm mb-4 font-bold">Trimestral</h3>
-              <div className="flex items-start mb-6">
-                 <span className="text-sm mt-2 font-medium">R$</span>
-                 <span className="text-5xl font-serif">129</span>
-                 <span className="text-sm self-end mb-1 text-slate-500">/trim</span>
+            {/* Medium Plan */}
+            <div className="glass-panel p-8 rounded-[2rem] border border-purple-500/50 bg-purple-900/5 hover:border-purple-400/70 transition-all flex flex-col relative transform md:scale-105 shadow-xl shadow-purple-900/20 z-10">
+              <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-gradient-to-r from-purple-600 to-purple-500 text-white text-[10px] font-black uppercase tracking-widest px-4 py-1 rounded-full">
+                Mais Popular
               </div>
-              <ul className="space-y-4 mb-8 text-sm text-slate-200 text-left w-full">
-                <li className="flex gap-2"><Check className="w-4 h-4 text-blue-400 flex-shrink-0" /> Todos os recursos Mensais</li>
-                <li className="flex gap-2"><Check className="w-4 h-4 text-blue-400 flex-shrink-0" /> Grimório Ilimitado</li>
-                <li className="flex gap-2"><Check className="w-4 h-4 text-blue-400 flex-shrink-0" /> Cursos Avançados</li>
-                <li className="flex gap-2"><Check className="w-4 h-4 text-blue-400 flex-shrink-0" /> Acesso ao Marketplace (Para Vender)</li>
+              <div className="mb-6">
+                <h3 className="text-purple-300 font-serif text-xl mb-1">Ascendente</h3>
+                <p className="text-slate-500 text-xs">Para praticantes sérios</p>
+              </div>
+              <div className="flex items-end gap-1 mb-2">
+                <span className="text-5xl font-serif font-bold text-white">R$49</span>
+                <span className="text-purple-300 text-lg font-bold">,90</span>
+                <span className="text-slate-500 text-sm mb-1">/mês</span>
+              </div>
+              <p className="text-xs text-slate-500 mb-8">ou R$419,16/ano (–30%)</p>
+              <ul className="space-y-3 mb-8 flex-1 text-sm text-slate-300">
+                <li className="flex gap-2 items-start"><Check className="w-4 h-4 text-purple-400 flex-shrink-0 mt-0.5" /><span>Tudo do plano Iniciado</span></li>
+                <li className="flex gap-2 items-start"><Check className="w-4 h-4 text-purple-400 flex-shrink-0 mt-0.5" /><span>Todos os módulos de cursos</span></li>
+                <li className="flex gap-2 items-start"><Check className="w-4 h-4 text-purple-400 flex-shrink-0 mt-0.5" /><span>Biblioteca completa</span></li>
+                <li className="flex gap-2 items-start"><Check className="w-4 h-4 text-purple-400 flex-shrink-0 mt-0.5" /><span>Flashcards e Grimório ilimitados</span></li>
+                <li className="flex gap-2 items-start text-slate-600"><Lock className="w-4 h-4 flex-shrink-0 mt-0.5" /><span>Orientação Oracular com IA</span></li>
               </ul>
-              <button onClick={() => currentUser ? onEnterApp() : setShowLogin(true)} className="mt-auto w-full py-3 rounded-full bg-blue-600 hover:bg-blue-500 text-white uppercase tracking-wider text-sm font-bold shadow-lg shadow-blue-500/25">
-                Adquira Aqui
+              <button onClick={() => currentUser ? onEnterApp() : setShowLogin(true)} className="w-full py-3 rounded-xl bg-purple-600 hover:bg-purple-500 text-white text-sm font-bold tracking-wide transition-all shadow-[0_0_20px_rgba(147,51,234,0.3)]">
+                Assinar Ascendente
               </button>
             </div>
 
-            {/* Annual */}
-            <div className="glass-panel p-8 rounded-[2rem] border border-amber-500/30 hover:border-amber-400/60 transition-colors flex flex-col items-center text-center gold-glow">
-              <div className="bg-gradient-to-r from-amber-600 to-amber-500 text-amber-950 font-bold uppercase tracking-widest text-[10px] px-3 py-1 rounded-full mb-4">Melhor Valor</div>
-              <h3 className="text-amber-400 uppercase tracking-widest text-sm mb-4">Anual</h3>
-              <div className="flex items-start mb-6">
-                 <span className="text-sm mt-2 font-medium">R$</span>
-                 <span className="text-5xl font-serif">399</span>
-                 <span className="text-sm self-end mb-1 text-slate-500">/ano</span>
+            {/* Master Plan */}
+            <div className="glass-panel p-8 rounded-[2rem] border border-amber-500/40 hover:border-amber-400/70 transition-all flex flex-col gold-glow">
+              <div className="mb-6">
+                <div className="flex items-center gap-2 mb-1">
+                  <Crown className="w-4 h-4 text-amber-400" />
+                  <h3 className="text-amber-300 font-serif text-xl">Mestre Supremo</h3>
+                </div>
+                <p className="text-slate-500 text-xs">Acesso total sem limites</p>
               </div>
-              <ul className="space-y-4 mb-8 text-sm text-slate-300 text-left w-full">
-                <li className="flex gap-2"><Check className="w-4 h-4 text-amber-400 flex-shrink-0" /> Tutor IA Ilimitado</li>
-                <li className="flex gap-2"><Check className="w-4 h-4 text-amber-400 flex-shrink-0" /> Descontos na Loja</li>
-                <li className="flex gap-2"><Check className="w-4 h-4 text-amber-400 flex-shrink-0" /> Masterclasses ao vivo exclusivas</li>
-                <li className="flex gap-2"><Check className="w-4 h-4 text-amber-400 flex-shrink-0" /> Rituais Fechados</li>
+              <div className="flex items-end gap-1 mb-2">
+                <span className="text-5xl font-serif font-bold text-white">R$109</span>
+                <span className="text-amber-300 text-lg font-bold">,90</span>
+                <span className="text-slate-500 text-sm mb-1">/mês</span>
+              </div>
+              <p className="text-xs text-slate-500 mb-8">ou R$922,56/ano (–30%)</p>
+              <ul className="space-y-3 mb-8 flex-1 text-sm text-slate-300">
+                <li className="flex gap-2 items-start"><Check className="w-4 h-4 text-amber-400 flex-shrink-0 mt-0.5" /><span>Tudo do plano Ascendente</span></li>
+                <li className="flex gap-2 items-start"><Check className="w-4 h-4 text-amber-400 flex-shrink-0 mt-0.5" /><span>Orientação Oracular com IA exclusiva</span></li>
+                <li className="flex gap-2 items-start"><Check className="w-4 h-4 text-amber-400 flex-shrink-0 mt-0.5" /><span>Selo Dourado no perfil</span></li>
+                <li className="flex gap-2 items-start"><Check className="w-4 h-4 text-amber-400 flex-shrink-0 mt-0.5" /><span>Acesso antecipado a novos cursos</span></li>
               </ul>
-              <button onClick={() => currentUser ? onEnterApp() : setShowLogin(true)} className="mt-auto w-full py-3 rounded-full bg-gradient-to-r from-amber-600 to-amber-500 hover:from-amber-500 hover:to-amber-400 text-amber-950 font-bold uppercase tracking-wider text-sm shadow-[0_0_15px_rgba(245,158,11,0.3)]">
-                Adquira Aqui
+              <button onClick={() => currentUser ? onEnterApp() : setShowLogin(true)} className="w-full py-3 rounded-xl bg-gradient-to-r from-amber-600 to-amber-500 hover:from-amber-500 hover:to-amber-400 text-amber-950 font-bold text-sm tracking-wide transition-all shadow-[0_0_20px_rgba(245,158,11,0.3)]">
+                Assinar Mestre Supremo
               </button>
             </div>
           </div>
-          
+
+          <p className="text-center text-slate-600 text-xs">
+            Pagamento via PIX, Cartão de Crédito ou Débito · Cancele quando quiser · Planos trimestrais disponíveis
+          </p>
         </div>
       </section>
 

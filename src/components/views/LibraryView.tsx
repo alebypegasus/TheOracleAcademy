@@ -1,8 +1,10 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useCart } from '../../hooks/useCart';
 import { 
   Search, ShoppingBag, Plus, Upload, X, Sparkles, 
   ChevronRight, Zap, Shield, CheckCircle2, Star, BookOpen, 
-  RefreshCw, Gem, Wallet, Tag, Info, AlertCircle, ArrowUpRight
+  RefreshCw, Gem, Wallet, Tag, Info, AlertCircle, ArrowUpRight, ShoppingCart
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { SectionLock } from '../ui/SectionLock';
@@ -51,6 +53,9 @@ interface MarketplaceItem {
 }
 
 export function LibraryView({ currentUser }: { currentUser: any }) {
+  const navigate = useNavigate();
+  const { addToCart, cartItems } = useCart();
+  const { isFree } = usePlan(currentUser);
   const [items, setItems] = useState<MarketplaceItem[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
@@ -78,7 +83,7 @@ export function LibraryView({ currentUser }: { currentUser: any }) {
 
   // Load items and balance on mount
   useEffect(() => {
-    if (currentUser?.isPaid) {
+    if (currentUser) {
       fetchItems();
       fetchBalance();
     }
@@ -110,7 +115,7 @@ export function LibraryView({ currentUser }: { currentUser: any }) {
         const data = await res.json();
         setBalance(data.balance);
         // Sync with community view
-        localStorage.setItem('oracle_balance', data.balance.toString());
+        localStorage.setItem(`oracle_balance_${currentUser?.email || 'guest'}`, data.balance.toString());
       }
     } catch (err) {
       console.error("Erro ao sintonizar saldo:", err);
@@ -139,7 +144,7 @@ export function LibraryView({ currentUser }: { currentUser: any }) {
 
       if (res.ok && data.success) {
         setBalance(data.newBalance);
-        localStorage.setItem('oracle_balance', data.newBalance.toString());
+        localStorage.setItem(`oracle_balance_${currentUser?.email || 'guest'}`, data.newBalance.toString());
         setPurchaseStep('success');
       } else {
         setPurchaseError(data.error || 'Falha inexplicável nas leis cósmicas.');
@@ -278,12 +283,23 @@ export function LibraryView({ currentUser }: { currentUser: any }) {
             </div>
 
             {/* List Item Button */}
+            {!isFree && (
+              <button 
+                onClick={() => setIsListingModalOpen(true)}
+                className="px-6 py-4 bg-indigo-600 hover:bg-indigo-500 text-white rounded-2xl text-xs font-black uppercase tracking-widest transition-all duration-300 hover:shadow-[0_0_20px_rgba(99,102,241,0.3)] hover:-translate-y-0.5 flex items-center justify-center gap-2 cursor-pointer shadow-lg active:scale-95"
+              >
+                <Plus className="w-4 h-4" /> 
+                Ofertar Item
+              </button>
+            )}
+
+            {/* View Cart Button */}
             <button 
-              onClick={() => setIsListingModalOpen(true)}
-              className="px-6 py-4 bg-indigo-600 hover:bg-indigo-500 text-white rounded-2xl text-xs font-black uppercase tracking-widest transition-all duration-300 hover:shadow-[0_0_20px_rgba(99,102,241,0.3)] hover:-translate-y-0.5 flex items-center justify-center gap-2 cursor-pointer shadow-lg active:scale-95"
+              onClick={() => navigate('/cart')}
+              className="px-6 py-4 bg-emerald-600 hover:bg-emerald-500 text-white rounded-2xl text-xs font-black uppercase tracking-widest transition-all duration-300 hover:shadow-[0_0_20px_rgba(16,185,129,0.3)] hover:-translate-y-0.5 flex items-center justify-center gap-2 cursor-pointer shadow-lg active:scale-95"
             >
-              <Plus className="w-4 h-4" /> 
-              Ofertar Item
+              <ShoppingCart className="w-4 h-4" /> 
+              Carrinho ({cartItems.length})
             </button>
           </div>
         </div>
@@ -433,11 +449,17 @@ export function LibraryView({ currentUser }: { currentUser: any }) {
 
                   {/* Pricing and Creator row */}
                   <div className="px-5 pb-5 pt-4 border-t border-white/5 flex items-center justify-between gap-2 mt-2 bg-black/10">
-                    <div className="flex items-center gap-2 min-w-0">
-                      <div className="w-6 h-6 rounded-full bg-indigo-500/15 border border-indigo-500/30 flex items-center justify-center text-indigo-300 text-[10px] font-bold shrink-0">
+                    <div 
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        navigate(`/seller/${item.authorName}`);
+                      }}
+                      className="flex items-center gap-2 min-w-0 hover:text-indigo-300 transition-colors cursor-pointer group/author"
+                    >
+                      <div className="w-6 h-6 rounded-full bg-indigo-500/15 border border-indigo-500/30 flex items-center justify-center text-indigo-300 text-[10px] font-bold shrink-0 group-hover/author:border-indigo-400">
                         {item.authorName?.charAt(0) || 'A'}
                       </div>
-                      <span className="text-[10px] text-zinc-400 font-mono truncate">{item.authorName}</span>
+                      <span className="text-[10px] text-zinc-400 group-hover/author:text-indigo-300 font-mono truncate">{item.authorName}</span>
                     </div>
 
                     <div className="shrink-0 text-right">
@@ -701,13 +723,19 @@ export function LibraryView({ currentUser }: { currentUser: any }) {
                         </div>
 
                         {/* Producer Meta */}
-                        <div className="flex items-center gap-3 bg-black/20 p-3 rounded-xl border border-white/5">
-                          <div className="w-8 h-8 rounded-lg bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center font-bold text-indigo-300 text-xs shrink-0">
+                        <div 
+                          onClick={() => {
+                            setIsDetailModalOpen(false);
+                            navigate(`/seller/${selectedItem.authorName}`);
+                          }}
+                          className="flex items-center gap-3 bg-black/20 hover:bg-black/35 p-3 rounded-xl border border-white/5 hover:border-indigo-500/30 cursor-pointer transition-all group/detauthor"
+                        >
+                          <div className="w-8 h-8 rounded-lg bg-indigo-500/10 border border-indigo-500/20 group-hover/detauthor:border-indigo-400 flex items-center justify-center font-bold text-indigo-300 text-xs shrink-0">
                             {selectedItem.authorName?.charAt(0) || 'A'}
                           </div>
                           <div className="min-w-0">
                             <p className="text-[8px] font-black uppercase text-slate-500 tracking-wider">Autor / Artesão</p>
-                            <p className="text-xs font-bold text-slate-300 truncate">{selectedItem.authorName}</p>
+                            <p className="text-xs font-bold text-slate-300 group-hover/detauthor:text-indigo-300 truncate">{selectedItem.authorName}</p>
                           </div>
                         </div>
 
@@ -769,14 +797,41 @@ export function LibraryView({ currentUser }: { currentUser: any }) {
                           </div>
                         )}
 
-                        <button
-                          onClick={handlePurchase}
-                          disabled={selectedItem.price > 0 && balance < selectedItem.price}
-                          className="w-full py-4 bg-indigo-600 hover:bg-indigo-500 disabled:bg-slate-800 disabled:text-slate-500 text-white font-black text-xs uppercase tracking-widest rounded-xl transition-all shadow-lg shadow-indigo-950/50 flex justify-center items-center gap-2 cursor-pointer"
-                        >
-                          <ShoppingBag className="w-4 h-4" />
-                          {selectedItem.price > 0 ? 'Concluir Aquisição' : 'Obter Ensinamento'}
-                        </button>
+                        <div className="flex flex-col sm:flex-row gap-3">
+                          <button
+                            onClick={handlePurchase}
+                            disabled={selectedItem.price > 0 && balance < selectedItem.price}
+                            className="flex-1 py-4 bg-indigo-600 hover:bg-indigo-500 disabled:bg-slate-800 disabled:text-slate-500 text-white font-black text-xs uppercase tracking-widest rounded-xl transition-all shadow-lg shadow-indigo-950/50 flex justify-center items-center gap-2 cursor-pointer"
+                          >
+                            <ShoppingBag className="w-4 h-4" />
+                            {selectedItem.price > 0 ? 'Comprar com Saldo' : 'Obter Ensinamento'}
+                          </button>
+
+                          {selectedItem.price > 0 && (
+                            <button
+                              onClick={() => {
+                                const inCart = cartItems.some(i => i.id === Number(selectedItem.id));
+                                if (!inCart) {
+                                  addToCart({
+                                    id: Number(selectedItem.id),
+                                    title: selectedItem.title,
+                                    subtitle: selectedItem.subtitle,
+                                    price: selectedItem.price,
+                                    category: selectedItem.category,
+                                    cover_image: selectedItem.coverImage,
+                                    author_name: selectedItem.authorName
+                                  });
+                                }
+                                setIsDetailModalOpen(false);
+                                navigate('/cart');
+                              }}
+                              className="flex-1 py-4 bg-emerald-600 hover:bg-emerald-500 text-white font-black text-xs uppercase tracking-widest rounded-xl transition-all shadow-lg flex justify-center items-center gap-2 cursor-pointer"
+                            >
+                              <ShoppingCart className="w-4 h-4" />
+                              {cartItems.some(i => i.id === Number(selectedItem.id)) ? 'Ver no Carrinho' : 'Colocar no Carrinho'}
+                            </button>
+                          )}
+                        </div>
                       </div>
                     </motion.div>
                   )}

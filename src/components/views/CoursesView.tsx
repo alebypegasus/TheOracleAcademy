@@ -1,8 +1,11 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { BookOpen, Star, Crown, Lock, Feather, Flame, Sparkles, Droplets, Wind, Infinity, CircleDot, Eye, ChevronLeft, Check, Trophy, Calendar, PlayCircle, BookMarked, Shield, ArrowRight, Heart, Bot } from 'lucide-react';
+import { BookOpen, Star, Crown, Lock, Feather, Flame, Sparkles, Droplets, Wind, Infinity as InfinityIcon, CircleDot, Eye, ChevronLeft, Check, Trophy, Calendar, PlayCircle, BookMarked, Shield, ArrowRight, Heart, Bot, Loader2, Zap } from 'lucide-react';
 import TextareaAutosize from 'react-textarea-autosize';
 import { Tooltip } from '../ui/Tooltip';
+import Markdown from 'react-markdown';
+import { api } from '../../services/api';
+import { usePlan } from '../../hooks/usePlan';
 
 const MODULES = [
   {
@@ -60,7 +63,7 @@ const MODULES = [
     unlocked: false,
     bgGlow: 'bg-emerald-500',
     nodes: [
-      { id: 'iching', name: 'I Ching', desc: '64 hexagramas, filosofia taoísta profunda', icon: Infinity, color: 'text-emerald-500', tailwindColor: 'bg-emerald-600' },
+      { id: 'iching', name: 'I Ching', desc: '64 hexagramas, filosofia taoísta profunda', icon: InfinityIcon, color: 'text-emerald-500', tailwindColor: 'bg-emerald-600' },
       { id: 'astrologias', name: 'Astrologias', desc: 'Ocidental, Chinesa, Védica (esforço de cálculo)', icon: Star, color: 'text-cyan-500', tailwindColor: 'bg-cyan-600' },
       { id: 'numerologia', name: 'Numerologia e Qi Men', desc: 'Estrutura matemática e estratégia chinesa', icon: BookOpen, color: 'text-indigo-500', tailwindColor: 'bg-indigo-600' },
     ]
@@ -97,10 +100,12 @@ const INNER_PATH = [
   { id: 3, type: 'lição', title: 'Erros Comuns', isCompleted: false, locked: false, isCurrent: true },
   { id: 4, type: 'lição', title: 'Visão Crítica', isCompleted: false, locked: false },
   { id: 5, type: 'desafio', title: 'Exercícios Práticos', isCompleted: false, locked: false },
-  { id: 6, type: 'prova', title: 'Avaliação com IA (Professor)', isCompleted: false, locked: false },
+  { id: 6, type: 'prova', title: 'Avaliação com IA', isCompleted: false, locked: false },
 ];
 
-export function CoursesView() {
+export function CoursesView({ currentUser }: { currentUser?: any }) {
+  const isAdmin = currentUser?.email === 'admin@admin.com';
+  const { canAccess } = usePlan(currentUser);
   const [selectedNode, setSelectedNode] = useState<any>(null);
   const [selectedLesson, setSelectedLesson] = useState<any>(null);
   const [rating, setRating] = useState<number>(0);
@@ -108,18 +113,45 @@ export function CoursesView() {
   const [notes, setNotes] = useState('');
   const [savedNote, setSavedNote] = useState(false);
   const [favorites, setFavorites] = useState<string[]>([]);
-  const [aiChat, setAiChat] = useState<{role: string, content: string}[]>([
-    { role: 'assistant', content: 'Olá, aprendiz. Sou seu Mestre Oracular. Baseado na sua avaliação e anotações, preparei um desafio interpretativo. Qual arcano representa melhor o "Caminho do Louco" no contexto sociológico atual?' }
-  ]);
+  const [completedLessons, setCompletedLessons] = useState<string[]>(() => {
+    const saved = localStorage.getItem(`oracle_completed_lessons_${currentUser?.email || 'guest'}`);
+    return saved ? JSON.parse(saved) : [];
+  });
+  const [aiChat, setAiChat] = useState<{role: string, content: string}[]>([]);
   const [chatInput, setChatInput] = useState('');
+  const [chatLoading, setChatLoading] = useState(false);
 
-  const handleSendChat = () => {
-    if (!chatInput.trim()) return;
-    setAiChat(prev => [...prev, { role: 'user', content: chatInput }]);
+  const handleSendChat = async () => {
+    if (!chatInput.trim() || chatLoading) return;
+    const userMsg = chatInput.trim();
     setChatInput('');
-    setTimeout(() => {
-      setAiChat(prev => [...prev, { role: 'assistant', content: 'Sua percepção demonstra evolução. O Louco nos tempos modernos transcende o arquétipo do ingênuo para se tornar o nômade existencial — adaptável, livre, mas sempre à beira do abismo digital. Você demonstrou intuição afiada.' }]);
-    }, 1500);
+    setAiChat(prev => [...prev, { role: 'user', content: userMsg }]);
+    setChatLoading(true);
+    try {
+      const res = await fetch('/api/ai/evaluate-module', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('oracle_jwt_token') || ''}`,
+          'x-user-id': currentUser?.id?.toString() || ''
+        },
+        body: JSON.stringify({
+          nodeName: selectedNode?.name || 'Módulo',
+          message: userMsg,
+          history: aiChat
+        })
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setAiChat(prev => [...prev, { role: 'assistant', content: data.reply || 'Sua resposta foi registrada na egrégora.' }]);
+      } else {
+        setAiChat(prev => [...prev, { role: 'assistant', content: 'O portal astral encontrou uma névoa. Tente novamente.' }]);
+      }
+    } catch (err) {
+      setAiChat(prev => [...prev, { role: 'assistant', content: 'Conexão com o plano astral interrompida. Verifique sua sintonia.' }]);
+    } finally {
+      setChatLoading(false);
+    }
   };
 
   const toggleFavorite = (e: React.MouseEvent, id: string) => {
@@ -129,17 +161,185 @@ export function CoursesView() {
     );
   };
 
-  const handleNodeClick = (node: any, levelInfo: any) => {
-    if (!levelInfo.unlocked) return;
+  const [markdownContent, setMarkdownContent] = useState('');
+  const [loadingContent, setLoadingContent] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editedText, setEditedText] = useState('');
+  const [savingEdit, setSavingEdit] = useState(false);
+  const [improvingAi, setImprovingAi] = useState(false);
+
+  // Text-To-Speech (TTS) Voice Reader States
+  const [isPlayingVoice, setIsPlayingVoice] = useState(false);
+  const [isPausedVoice, setIsPausedVoice] = useState(false);
+  const [voiceRate, setVoiceRate] = useState(1);
+  const [utteranceInstance, setUtteranceInstance] = useState<SpeechSynthesisUtterance | null>(null);
+
+  const handleNodeClick = async (node: any, levelInfo: any) => {
+    const levelUnlocked = levelInfo.level === 0 || canAccess('medium');
+    if (!levelUnlocked) return;
     setSelectedNode({ ...node, levelTitle: levelInfo.title });
+    setMarkdownContent('');
+    setLoadingContent(true);
+    setIsEditing(false);
+    try {
+      const data = await api.courses.getNodeContent(node.id);
+      setMarkdownContent(data.markdown_content);
+      setEditedText(data.markdown_content);
+    } catch (e) {
+      console.error("Failed to load dynamic lesson content:", e);
+    } finally {
+      setLoadingContent(false);
+    }
+  };
+
+  const handleSaveEdit = async () => {
+    if (!editedText.trim()) return;
+    setSavingEdit(true);
+    try {
+      const data = await api.courses.saveNodeContent(selectedNode.id, editedText);
+      setMarkdownContent(data.markdown_content);
+      setIsEditing(false);
+    } catch (err) {
+      console.error("Failed to save edited lesson:", err);
+    } finally {
+      setSavingEdit(false);
+    }
+  };
+
+  const handleImproveWithAi = async () => {
+    setImprovingAi(true);
+    try {
+      const analysisRes = await fetch("/api/ai/analyze-notes", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${localStorage.getItem('oracle_jwt_token') || ''}`,
+          "x-user-id": currentUser?.id?.toString() || ""
+        },
+        body: JSON.stringify({
+          title: selectedNode.name,
+          content: markdownContent,
+          type: "Lição Teológica"
+        })
+      });
+      
+      if (analysisRes.ok) {
+        const data = await analysisRes.json();
+        if (data && data.correctedText) {
+          const saved = await api.courses.saveNodeContent(selectedNode.id, data.correctedText);
+          setMarkdownContent(saved.markdown_content);
+          setEditedText(saved.markdown_content);
+          alert("A inteligência artificial sintonizou e poliu a lição! O tom espiritual foi elevado para " + (data.mysticalResonance || "Solene") + ".");
+        }
+      }
+    } catch (err) {
+      console.error("Failed to improve lesson with AI:", err);
+    } finally {
+      setImprovingAi(false);
+    }
   };
   
-  const handleStartLesson = (step: any) => {
-    if (step.locked) return;
+  const handleStartLesson = async (step: any, isStepLocked: boolean) => {
+    if (isStepLocked) return;
+    window.speechSynthesis.cancel();
+    setIsPlayingVoice(false);
+    setIsPausedVoice(false);
+    setUtteranceInstance(null);
+
     setSelectedLesson(step);
     setRating(0);
     setNotes('');
     setSavedNote(false);
+
+    // Make aiChat dynamic for Step 6 Evaluation — start with empty chat and auto-trigger first question
+    if (step.type === 'prova') {
+      setAiChat([]);
+      setChatLoading(true);
+      // Auto-generate the first evaluation question from the AI
+      fetch('/api/ai/evaluate-module', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('oracle_jwt_token') || ''}`,
+          'x-user-id': currentUser?.id?.toString() || ''
+        },
+        body: JSON.stringify({
+          nodeName: selectedNode?.name || 'Módulo',
+          message: '__INIT__',
+          history: []
+        })
+      }).then(r => r.ok ? r.json() : null).then(data => {
+        if (data?.reply) {
+          setAiChat([{ role: 'assistant', content: data.reply }]);
+        } else {
+          setAiChat([{ role: 'assistant', content: `Saudações, buscador. Sou o Guardião do Templo. Agora que você estudou os mistérios de "${selectedNode?.name || 'este módulo'}", vamos avaliar sua compreensão. Como você descreveria a essência principal do que aprendeu?` }]);
+        }
+      }).catch(() => {
+        setAiChat([{ role: 'assistant', content: `Saudações, buscador. Sou o Guardião do Templo. Descreva o que você aprendeu sobre "${selectedNode?.name || 'este módulo'}" e como aplicaria na sua prática oracular.` }]);
+      }).finally(() => setChatLoading(false));
+    }
+
+    // Fetch step-specific markdown content
+    setMarkdownContent('');
+    setLoadingContent(true);
+    setIsEditing(false);
+    try {
+      const nodeId = `${selectedNode.id}-step-${step.id}`;
+      const data = await api.courses.getNodeContent(nodeId);
+      if (data?.markdown_content) {
+        setMarkdownContent(data.markdown_content);
+        setEditedText(data.markdown_content);
+      } else {
+        console.warn("[CoursesView] API returned empty markdown_content for", nodeId, data);
+        setMarkdownContent('');
+      }
+    } catch (e: any) {
+      console.error("[CoursesView] Failed to load lesson content:", e?.message || e);
+      setMarkdownContent(`> ⚠️ **Erro ao carregar conteúdo:** ${e?.message || 'Tente novamente'}\n\nVerifique se o servidor está rodando e tente clicar na lição novamente.`);
+    } finally {
+      setLoadingContent(false);
+    }
+  };
+
+  const handleToggleVoice = () => {
+    if (isPlayingVoice) {
+      if (isPausedVoice) {
+        window.speechSynthesis.resume();
+        setIsPausedVoice(false);
+      } else {
+        window.speechSynthesis.pause();
+        setIsPausedVoice(true);
+      }
+    } else {
+      window.speechSynthesis.cancel();
+      const cleanText = (markdownContent || `Nesta lição, aprenderemos os mistérios e a conduta oracular.`)
+        .replace(/[#*`>_\-~]/g, '')
+        .trim();
+      const utterance = new SpeechSynthesisUtterance(cleanText);
+      utterance.lang = 'pt-BR';
+      utterance.rate = voiceRate;
+      utterance.onend = () => {
+        setIsPlayingVoice(false);
+        setIsPausedVoice(false);
+        setUtteranceInstance(null);
+      };
+      utterance.onerror = () => {
+        setIsPlayingVoice(false);
+        setIsPausedVoice(false);
+        setUtteranceInstance(null);
+      };
+      setUtteranceInstance(utterance);
+      setIsPlayingVoice(true);
+      setIsPausedVoice(false);
+      window.speechSynthesis.speak(utterance);
+    }
+  };
+
+  const handleStopVoice = () => {
+    window.speechSynthesis.cancel();
+    setIsPlayingVoice(false);
+    setIsPausedVoice(false);
+    setUtteranceInstance(null);
   };
   
   const handleSaveNotes = () => {
@@ -152,7 +352,7 @@ export function CoursesView() {
   };
 
   return (
-    <AnimatePresence mode="wait">
+    <AnimatePresence mode="sync">
       {selectedLesson ? (
         <motion.div 
           key="lesson-view"
@@ -164,15 +364,24 @@ export function CoursesView() {
         <div className="w-full max-w-7xl mx-auto flex flex-col min-h-screen relative">
           
           <div className="flex justify-between items-center py-4 px-6 border-b border-white/10 sticky top-0 bg-black/40 backdrop-blur-xl z-30">
-            <button onClick={() => setSelectedLesson(null)} className="text-slate-400 hover:text-white flex items-center pr-4 border-r border-white/10 transition-colors group">
+            <button 
+              onClick={() => {
+                setSelectedLesson(null);
+                window.speechSynthesis.cancel();
+                setIsPlayingVoice(false);
+                setIsPausedVoice(false);
+                setUtteranceInstance(null);
+              }} 
+              className="text-slate-400 hover:text-white flex items-center pr-4 border-r border-white/10 transition-colors group"
+            >
                <div className="w-8 h-8 rounded-full flex items-center justify-center bg-white/5 group-hover:bg-white/10 transition-colors mr-3">
                  <ChevronLeft className="w-4 h-4" />
                </div>
                <span className="hidden sm:inline font-bold uppercase tracking-widest text-xs">Menu do Módulo</span>
             </button>
             <div className="text-right">
-               <div className="text-[10px] text-slate-500 uppercase tracking-widest font-bold">{selectedNode.name}</div>
-               <h2 className="text-sm text-slate-200 font-bold">{selectedLesson.title}</h2>
+               <div className="text-[10px] text-slate-500 uppercase tracking-widest font-bold">{selectedNode?.name || 'Módulo'}</div>
+               <h2 className="text-sm text-slate-200 font-bold">{selectedLesson?.title || 'Lição'}</h2>
             </div>
           </div>
           
@@ -182,21 +391,91 @@ export function CoursesView() {
                 {/* Header Section */}
                 <div className="flex flex-col gap-4">
                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-indigo-500/30 bg-indigo-500/10 w-fit">
-                      <span className="text-[10px] uppercase tracking-widest font-bold text-indigo-400">{selectedLesson.type}</span>
+                      <span className="text-[10px] uppercase tracking-widest font-bold text-indigo-400">{selectedLesson?.type || 'Lição'}</span>
                    </div>
-                   <h1 className="text-4xl md:text-5xl font-serif text-slate-100">{selectedLesson.title}</h1>
-                   <p className="text-lg text-slate-400 leading-relaxed font-light">
-                     Nesta sessão, você aprenderá as bases teóricas e as armadilhas comuns associadas a esta prática.
-                     A preparação mental e a intencionalidade formam a estrutura central do seu sucesso.
-                   </p>
-                </div>
+                    <h1 className="text-4xl md:text-5xl font-serif text-slate-100">{selectedLesson?.title || 'Carregando...'}</h1>
+                    
+                    {/* Dynamic lesson content rendering with Markdown */}
+                    <div className="glass-panel p-8 rounded-[2rem] border border-white/10 bg-black/40 text-slate-300 text-sm leading-relaxed prose prose-invert max-w-none shadow-2xl mt-4 relative overflow-hidden">
+                      {isAdmin && (
+                        <div className="absolute top-4 right-4 z-20 flex gap-2">
+                          <button 
+                            onClick={handleImproveWithAi}
+                            disabled={improvingAi}
+                            className="px-3 py-1.5 rounded-lg bg-indigo-500/20 border border-indigo-500/30 text-indigo-300 hover:bg-indigo-500/30 text-[9px] uppercase font-black tracking-wider transition-all disabled:opacity-50 cursor-pointer"
+                          >
+                            {improvingAi ? 'Sintonizando...' : '✨ Melhorar com IA'}
+                          </button>
+                          <button 
+                            onClick={() => {
+                              setIsEditing(!isEditing);
+                              setEditedText(markdownContent);
+                            }}
+                            className="px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 text-slate-300 hover:bg-white/10 text-[9px] uppercase font-black tracking-wider transition-all cursor-pointer"
+                          >
+                            {isEditing ? 'Cancelar' : '✍️ Editar'}
+                          </button>
+                        </div>
+                      )}
 
-                {/* Dynamic Content Area: Video or AI Assessment */}
-                {selectedLesson.type === 'prova' ? (
-                  <div className="w-full h-[600px] bg-black/40 rounded-[2rem] border border-indigo-500/30 overflow-hidden relative shadow-2xl flex flex-col group">
-                     <div className={`absolute inset-0 opacity-10 blur-[80px] ${selectedNode.bgGlow || 'bg-indigo-500'} rounded-full scale-150 mix-blend-screen transition-all duration-700 pointer-events-none`} />
-                     
-                     <div className="flex-1 overflow-y-auto p-6 space-y-6 custom-scrollbar relative z-10 flex flex-col pt-10">
+                      {isEditing ? (
+                        <div className="flex flex-col gap-4 mt-6">
+                          <textarea
+                            value={editedText}
+                            onChange={(e) => setEditedText(e.target.value)}
+                            rows={12}
+                            className="w-full bg-black/60 border border-white/10 rounded-2xl p-4 text-sm text-slate-300 focus:outline-none focus:border-indigo-500/50 resize-y"
+                          />
+                          <button
+                            onClick={handleSaveEdit}
+                            disabled={savingEdit}
+                            className="self-end px-6 py-2.5 bg-gradient-to-r from-emerald-500 to-teal-400 text-black font-black text-[10px] uppercase tracking-wider rounded-xl hover:from-emerald-400 hover:to-teal-300 transition-all active:scale-95 disabled:opacity-50 cursor-pointer"
+                          >
+                            {savingEdit ? 'Salvando...' : 'Salvar Alterações'}
+                          </button>
+                        </div>
+                      ) : (
+                        <div className="mt-6 overflow-y-auto max-h-[400px] pr-2 custom-scrollbar">
+                          {loadingContent ? (
+                            <div className="flex flex-col items-center justify-center py-20 gap-4">
+                              <div className="w-8 h-8 border-2 border-indigo-500 border-t-transparent rounded-full animate-spin" />
+                              <p className="text-xs uppercase tracking-widest text-indigo-400 animate-pulse">Sintonizando sabedoria milenar...</p>
+                            </div>
+                          ) : (
+                            <div className="prose prose-invert max-w-none text-slate-300">
+                              <Markdown>
+                                {markdownContent || `Nesta sessão, você aprenderá as bases teóricas e as armadilhas comuns associadas a esta prática. A preparação mental e a intencionalidade formam a estrutura central do seu sucesso.`}
+                              </Markdown>
+                            </div>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                 {/* Dynamic Content Area: AI Assessment or Voice Reader */}
+                 {selectedLesson?.type === 'prova' ? (
+                   <div className="w-full h-[600px] bg-black/40 rounded-[2rem] border border-indigo-500/30 overflow-hidden relative shadow-2xl flex flex-col group">
+                      <div className={`absolute inset-0 opacity-10 blur-[80px] ${selectedNode?.bgGlow || 'bg-indigo-500'} rounded-full scale-150 mix-blend-screen transition-all duration-700 pointer-events-none`} />
+                      
+                      <div className="flex-1 overflow-y-auto p-6 space-y-6 custom-scrollbar relative z-10 flex flex-col pt-10">
+                        {aiChat.length === 0 && chatLoading && (
+                          <div className="flex justify-start w-full">
+                            <div className="flex gap-4 max-w-[85%]">
+                              <div className="w-10 h-10 rounded-full flex items-center justify-center shrink-0 border bg-indigo-500/20 border-indigo-500/30 text-indigo-400">
+                                <Bot className="w-5 h-5" />
+                              </div>
+                              <div className="p-4 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 flex items-center gap-2">
+                                <div className="flex gap-1">
+                                  {[0,1,2].map(i => (
+                                    <motion.div key={i} animate={{ opacity: [0.3, 1, 0.3] }} transition={{ duration: 1.2, repeat: Infinity, delay: i * 0.2 }} className="w-2 h-2 bg-indigo-400 rounded-full" />
+                                  ))}
+                                </div>
+                                <span className="text-xs text-indigo-400 ml-1">O Guardião está meditando...</span>
+                              </div>
+                            </div>
+                          </div>
+                        )}
                         {aiChat.map((msg, idx) => (
                            <div key={idx} className={`flex w-full ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
                               <div className={`flex gap-4 max-w-[85%] ${msg.role === 'user' ? 'flex-row-reverse' : 'flex-row'}`}>
@@ -209,6 +488,22 @@ export function CoursesView() {
                               </div>
                            </div>
                         ))}
+                        {chatLoading && aiChat.length > 0 && (
+                          <div className="flex justify-start w-full">
+                            <div className="flex gap-4 max-w-[85%]">
+                              <div className="w-10 h-10 rounded-full flex items-center justify-center shrink-0 border bg-indigo-500/20 border-indigo-500/30 text-indigo-400">
+                                <Bot className="w-5 h-5" />
+                              </div>
+                              <div className="p-4 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 flex items-center gap-2">
+                                <div className="flex gap-1">
+                                  {[0,1,2].map(i => (
+                                    <motion.div key={i} animate={{ opacity: [0.3, 1, 0.3] }} transition={{ duration: 1.2, repeat: Infinity, delay: i * 0.2 }} className="w-2 h-2 bg-indigo-400 rounded-full" />
+                                  ))}
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        )}
                      </div>
                      
                      <div className="p-4 bg-[#0a0a0a]/80 border-t border-white/5 relative z-10">
@@ -217,12 +512,13 @@ export function CoursesView() {
                               type="text" 
                               value={chatInput}
                               onChange={e => setChatInput(e.target.value)}
-                              onKeyDown={e => e.key === 'Enter' && handleSendChat()}
-                              placeholder="Fale com o seu mentor oracular..."
-                              className="flex-1 bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-slate-200 outline-none focus:border-indigo-500/50"
+                              onKeyDown={e => e.key === 'Enter' && !chatLoading && handleSendChat()}
+                              disabled={chatLoading}
+                              placeholder={chatLoading ? "O Guardião está refletindo..." : "Fale com o seu mentor oracular..."}
+                              className="flex-1 bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-slate-200 outline-none focus:border-indigo-500/50 disabled:opacity-50"
                            />
-                           <button onClick={handleSendChat} className="bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl px-6 py-3 font-bold transition-all shadow-[0_0_15px_rgba(79,70,229,0.4)]">
-                              Enviar
+                           <button onClick={handleSendChat} disabled={chatLoading || !chatInput.trim()} className="bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl px-6 py-3 font-bold transition-all shadow-[0_0_15px_rgba(79,70,229,0.4)] disabled:opacity-40 disabled:cursor-not-allowed flex items-center gap-2">
+                              {chatLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Enviar'}
                            </button>
                         </div>
                         <p className="text-[10px] text-center text-slate-500 mt-3 uppercase tracking-widest">
@@ -231,16 +527,101 @@ export function CoursesView() {
                      </div>
                   </div>
                 ) : (
-                  <div className="w-full aspect-video bg-black/40 rounded-[2rem] border border-white/10 overflow-hidden relative group shadow-2xl">
-                     <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-80 z-10" />
+                  <div className="w-full aspect-video bg-black/40 rounded-[2rem] border border-white/10 overflow-hidden relative group shadow-2xl flex flex-col items-center justify-center p-8">
+                     <div className={`absolute inset-0 opacity-20 blur-[80px] ${selectedNode?.bgGlow || 'bg-indigo-500'} rounded-full scale-150 mix-blend-screen transition-all duration-700`} />
                      
-                     <div className={`absolute inset-0 opacity-20 blur-[80px] ${selectedNode.bgGlow || 'bg-indigo-500'} rounded-full scale-150 mix-blend-screen transition-all duration-700 group-hover:opacity-40`} />
-                     
-                     <div className="absolute inset-0 flex flex-col items-center justify-center z-20">
-                       <button className="w-24 h-24 rounded-full bg-white/10 backdrop-blur-md flex items-center justify-center text-white transition-all border border-white/20 group-hover:border-white/40 group-hover:scale-110 shadow-[0_0_40px_rgba(255,255,255,0.1)] group-hover:shadow-[0_0_60px_rgba(255,255,255,0.2)]">
-                          <PlayCircle className="w-12 h-12 ml-2" />
-                       </button>
-                       <p className="mt-6 font-bold uppercase tracking-widest text-xs text-white/70 tracking-[0.2em]">Assistir à Aula</p>
+                     {/* Mystic Audio Visualizer Bars */}
+                     <div className="flex items-end gap-1.5 h-16 mb-8 relative z-10">
+                       {[...Array(12)].map((_, i) => (
+                         <motion.div
+                           key={i}
+                           animate={isPlayingVoice && !isPausedVoice ? {
+                             height: [16, Math.random() * 48 + 16, 16]
+                           } : { height: 16 }}
+                           transition={{
+                             duration: 0.8 + (i * 0.05),
+                             repeat: Infinity,
+                             ease: "easeInOut"
+                           }}
+                           className={`w-1.5 rounded-full ${selectedNode?.tailwindColor || 'bg-indigo-500'}`}
+                         />
+                       ))}
+                     </div>
+
+                     <div className="relative z-10 text-center space-y-4">
+                       <h3 className="text-xl font-serif text-slate-100 font-bold">Guia Auditivo Oracular</h3>
+                       <p className="text-xs text-slate-400 max-w-sm mx-auto">
+                         {isPlayingVoice 
+                           ? (isPausedVoice ? "Leitura pausada. Clique para continuar." : "O mentor oracular está narrando a sabedoria da lição...") 
+                           : "Clique abaixo para invocar a voz da Inteligência Artificial e ouvir os ensinamentos."}
+                       </p>
+
+                       <div className="flex items-center justify-center gap-4 pt-4">
+                         <button 
+                           onClick={handleToggleVoice}
+                           className={`w-16 h-16 rounded-full flex items-center justify-center border text-white transition-all hover:scale-105 active:scale-95 shadow-lg
+                             ${isPlayingVoice && !isPausedVoice 
+                               ? 'bg-indigo-600 border-indigo-500 shadow-indigo-500/20' 
+                               : 'bg-white/10 border-white/20 hover:bg-white/20'}`}
+                         >
+                           {isPlayingVoice && !isPausedVoice ? (
+                             <div className="flex gap-1.5 justify-center items-center">
+                               <div className="w-1.5 h-5 bg-white rounded-full" />
+                               <div className="w-1.5 h-5 bg-white rounded-full" />
+                             </div>
+                           ) : (
+                             <PlayCircle className="w-8 h-8 ml-1" />
+                           )}
+                         </button>
+
+                         {isPlayingVoice && (
+                           <button 
+                             onClick={handleStopVoice}
+                             className="px-5 py-3 rounded-xl bg-rose-500/20 border border-rose-500/30 text-rose-300 text-xs uppercase font-bold tracking-widest hover:bg-rose-500/30 transition-all active:scale-95"
+                           >
+                             Silenciar
+                           </button>
+                         )}
+                       </div>
+
+                       {/* Speed Control */}
+                       <div className="flex items-center justify-center gap-3 pt-6 relative z-10">
+                         <span className="text-[10px] uppercase tracking-widest text-slate-500 font-bold">Velocidade da Voz:</span>
+                         {[0.8, 1.0, 1.2].map((rate) => (
+                           <button
+                             key={rate}
+                             onClick={() => {
+                               setVoiceRate(rate);
+                               if (utteranceInstance) {
+                                 window.speechSynthesis.cancel();
+                                 const cleanText = (markdownContent || `Nesta lição, aprenderemos os mistérios e a conduta oracular.`).replace(/[#*`>_\-~]/g, '').trim();
+                                 const utterance = new SpeechSynthesisUtterance(cleanText);
+                                 utterance.lang = 'pt-BR';
+                                 utterance.rate = rate;
+                                 utterance.onend = () => {
+                                   setIsPlayingVoice(false);
+                                   setIsPausedVoice(false);
+                                   setUtteranceInstance(null);
+                                 };
+                                 utterance.onerror = () => {
+                                   setIsPlayingVoice(false);
+                                   setIsPausedVoice(false);
+                                   setUtteranceInstance(null);
+                                 };
+                                 setUtteranceInstance(utterance);
+                                 window.speechSynthesis.speak(utterance);
+                                 setIsPausedVoice(false);
+                               }
+                             }}
+                             className={`px-2.5 py-1 rounded-md text-[10px] font-bold border transition-all
+                               ${voiceRate === rate 
+                                 ? 'bg-indigo-500/20 border-indigo-500/50 text-indigo-300' 
+                                 : 'bg-white/5 border-white/5 text-slate-400 hover:text-white'}`}
+                           >
+                             {rate.toFixed(1)}x
+                           </button>
+                         ))}
+                       </div>
                      </div>
                   </div>
                 )}
@@ -275,21 +656,29 @@ export function CoursesView() {
                       <button 
                         onClick={async () => {
                           try {
+                            const token = localStorage.getItem('oracle_jwt_token') || '';
                             const res = await fetch("/api/courses/complete-step", {
                               method: "POST",
                               headers: {
                                 "Content-Type": "application/json",
-                                "x-user-id": "1"
+                                "Authorization": `Bearer ${token}`,
+                                "x-user-id": currentUser?.id?.toString() || ""
                               },
                               body: JSON.stringify({
-                                nodeName: selectedNode.name,
-                                lessonTitle: selectedLesson.title,
-                                isQuiz: selectedLesson.type === 'prova',
+                                nodeName: selectedNode?.name || '',
+                                lessonTitle: selectedLesson?.title || '',
+                                isQuiz: selectedLesson?.type === 'prova',
                                 score: 100
                               })
                             });
                             if (res.ok) {
                               alert("Sacramento de estudo concluído com sucesso! +30 XP foram incorporados à sua essência cósmica.");
+                              const stepId = `${selectedNode.id}-step-${selectedLesson.id}`;
+                              if (!completedLessons.includes(stepId)) {
+                                const updated = [...completedLessons, stepId];
+                                setCompletedLessons(updated);
+                                localStorage.setItem(`oracle_completed_lessons_${currentUser?.email || 'guest'}`, JSON.stringify(updated));
+                              }
                               setSelectedLesson(null);
                             }
                           } catch (err) {
@@ -332,61 +721,72 @@ export function CoursesView() {
              
              {/* Dynamic Sidebar Modules Map */}
              <div className="w-full lg:w-96 shrink-0 flex flex-col gap-3">
-                <div className="p-6 rounded-3xl bg-white/[0.02] border border-white/5 mb-2">
-                   <h3 className="text-xl font-serif text-slate-200 mb-2">Trilha do Módulo</h3>
-                   <div className="w-full bg-white/5 h-2 rounded-full overflow-hidden mt-4">
-                      <div className="bg-gradient-to-r from-indigo-500 to-purple-500 w-1/3 h-full rounded-full" />
-                   </div>
-                   <p className="text-xs text-slate-500 mt-3 text-right">33% Concluído</p>
-                </div>
-                
-                {INNER_PATH.map((step, index) => {
-                   const isCurrent = selectedLesson.id === step.id;
-                   
-                   let IconToRender = BookOpen;
-                   let tooltipText = "Lição";
-                   if (step.isCompleted) { IconToRender = Check; tooltipText = "Concluída"; }
-                   else if (step.locked) { IconToRender = Lock; tooltipText = "Bloqueada"; }
-                   else if (step.type === 'desafio') { IconToRender = Calendar; tooltipText = "Desafio Prático"; }
-                   else if (step.type === 'prova') { IconToRender = Bot; tooltipText = "Avaliação Inteligente com IA"; }
-                   
-                   return (
-                     <button 
-                       key={step.id}
-                       onClick={() => handleStartLesson(step)}
-                       disabled={step.locked}
-                       className={`
-                         flex items-center gap-5 p-5 rounded-3xl w-full text-left transition-all border relative overflow-hidden group
-                         ${isCurrent ? 'bg-indigo-950/20 border-indigo-500/30 shadow-[0_0_30px_rgba(99,102,241,0.1)]' : 'bg-transparent border-transparent hover:bg-white/[0.02] hover:border-white/5'}
-                         ${step.locked ? 'opacity-40 cursor-not-allowed' : 'cursor-pointer'}
-                       `}
-                     >
-                        {isCurrent && (
-                          <motion.div layoutId="active-lesson-indicator" className="absolute left-0 top-0 bottom-0 w-1 theme-bg-primary shadow-[0_0_10px_rgba(var(--theme-primary-rgb),0.8)]" />
-                        )}
-                        
-                        <div className="text-lg font-serif text-slate-600 font-light w-6 text-center">
-                           0{index + 1}
-                        </div>
-
-                        <Tooltip content={tooltipText}>
-                          <div className={`
-                            w-12 h-12 rounded-full flex items-center justify-center shrink-0 border border-white/10 transition-transform group-hover:scale-105
-                            ${step.isCompleted ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' : ''}
-                            ${isCurrent && !step.isCompleted ? 'theme-bg-primary-soft theme-text-primary theme-border-primary' : ''}
-                            ${!isCurrent && !step.isCompleted ? 'bg-white/5 text-slate-500' : ''}
-                          `}>
-                             <IconToRender className="w-5 h-5" />
+                 <div className="p-6 rounded-3xl bg-white/[0.02] border border-white/5 mb-2">
+                    <h3 className="text-xl font-serif text-slate-200 mb-2">Trilha do Módulo</h3>
+                    {(() => {
+                      const completedCount = INNER_PATH.filter(step => completedLessons.includes(`${selectedNode.id}-step-${step.id}`)).length;
+                      const progressPercent = Math.round((completedCount / INNER_PATH.length) * 100);
+                      return (
+                        <>
+                          <div className="w-full bg-white/5 h-2 rounded-full overflow-hidden mt-4">
+                             <div className="bg-gradient-to-r from-indigo-500 to-purple-500 h-full rounded-full" style={{ width: `${progressPercent}%` }} />
                           </div>
-                        </Tooltip>
-                        <div className="flex-1">
-                           <div className="text-[9px] text-slate-500 uppercase tracking-widest font-bold mb-1">{step.type}</div>
-                           <div className={`text-base font-medium ${isCurrent ? 'text-indigo-100' : 'text-slate-300'}`}>{step.title}</div>
-                        </div>
-                     </button>
-                   );
-                })}
-             </div>
+                          <p className="text-xs text-slate-500 mt-3 text-right">{progressPercent}% Concluído</p>
+                        </>
+                      );
+                    })()}
+                 </div>
+                 
+                 {INNER_PATH.map((step, index) => {
+                    const stepId = `${selectedNode.id}-step-${step.id}`;
+                    const isStepCompleted = completedLessons.includes(stepId);
+                    const isStepLocked = index > 0 && !completedLessons.includes(`${selectedNode.id}-step-${INNER_PATH[index - 1].id}`);
+                    const isCurrent = selectedLesson?.id === step.id;
+                    
+                    let IconToRender = BookOpen;
+                    let tooltipText = "Lição";
+                    if (isStepCompleted) { IconToRender = Check; tooltipText = "Concluída"; }
+                    else if (isStepLocked) { IconToRender = Lock; tooltipText = "Bloqueada"; }
+                    else if (step.type === 'desafio') { IconToRender = Calendar; tooltipText = "Desafio Prático"; }
+                    else if (step.type === 'prova') { IconToRender = Bot; tooltipText = "Avaliação Inteligente com IA"; }
+                    
+                    return (
+                      <button 
+                        key={step.id}
+                        onClick={() => handleStartLesson(step, isStepLocked)}
+                        disabled={isStepLocked}
+                        className={`
+                          flex items-center gap-5 p-5 rounded-3xl w-full text-left transition-all border relative overflow-hidden group
+                          ${isCurrent ? 'bg-indigo-950/20 border-indigo-500/30 shadow-[0_0_30px_rgba(99,102,241,0.1)]' : 'bg-transparent border-transparent hover:bg-white/[0.02] hover:border-white/5'}
+                          ${isStepLocked ? 'opacity-40 cursor-not-allowed' : 'cursor-pointer'}
+                        `}
+                      >
+                         {isCurrent && (
+                           <motion.div layoutId="active-lesson-indicator" className="absolute left-0 top-0 bottom-0 w-1 theme-bg-primary shadow-[0_0_10px_rgba(var(--theme-primary-rgb),0.8)]" />
+                         )}
+                         
+                         <div className="text-lg font-serif text-slate-600 font-light w-12 text-center">
+                            {selectedNode?.level}.{step.id}
+                         </div>
+ 
+                         <Tooltip content={tooltipText}>
+                           <div className={`
+                             w-12 h-12 rounded-full flex items-center justify-center shrink-0 border border-white/10 transition-transform group-hover:scale-105
+                             ${isStepCompleted ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' : ''}
+                             ${isCurrent && !isStepCompleted ? 'theme-bg-primary-soft theme-text-primary theme-border-primary' : ''}
+                             ${!isCurrent && !isStepCompleted ? 'bg-white/5 text-slate-500' : ''}
+                           `}>
+                              <IconToRender className="w-5 h-5" />
+                           </div>
+                         </Tooltip>
+                         <div className="flex-1">
+                            <div className="text-[9px] text-slate-500 uppercase tracking-widest font-bold mb-1">{step.type}</div>
+                            <div className={`text-base font-medium ${isCurrent ? 'text-indigo-100' : 'text-slate-300'}`}>{step.title}</div>
+                         </div>
+                      </button>
+                    );
+                 })}
+              </div>
           </div>
         </div>
       </motion.div>
@@ -399,7 +799,7 @@ export function CoursesView() {
           className="w-full flex-1 flex flex-col h-full relative z-20 min-h-screen"
         >
          <div className="sticky top-0 z-40 bg-black/40 backdrop-blur-xl border-b border-white/10 py-4 px-6 md:px-12 flex justify-between items-center">
-            <button onClick={() => setSelectedNode(null)} className="flex items-center gap-3 text-slate-400 hover:text-white transition-colors group">
+            <button onClick={() => { setSelectedNode(null); setSelectedLesson(null); }} className="flex items-center gap-3 text-slate-400 hover:text-white transition-colors group">
                <div className="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center group-hover:bg-white/10 transition-colors">
                   <ChevronLeft className="w-5 h-5" />
                </div>
@@ -481,9 +881,9 @@ export function CoursesView() {
                                 <IconToRender className="w-6 h-6" />
                              </div>
                            </Tooltip>
-                           <div className="text-4xl font-serif text-white/5 font-bold">
-                              0{index + 1}
-                           </div>
+                            <div className="text-4xl font-serif text-white/5 font-bold">
+                               {selectedNode?.level}.{step.id}
+                            </div>
                         </div>
                         
                         <div className="relative z-10">
@@ -541,102 +941,130 @@ export function CoursesView() {
       </div>
 
       <div className="w-full max-w-7xl mx-auto px-4 lg:px-10 py-12 flex flex-col gap-10">
-        {MODULES.map((levelBlock) => (
-          <div key={levelBlock.level} className={`
-             relative w-full rounded-[2.5rem] overflow-hidden border transition-all duration-700 group
-             ${levelBlock.unlocked ? 'border-white/10 bg-white/[0.01] hover:theme-border-primary-soft' : 'border-white/5 bg-black/40 grayscale opacity-60'}
-          `}>
-             <div className="absolute inset-0 bg-gradient-to-br from-indigo-950/20 via-transparent to-purple-950/20 transition-opacity duration-1000 group-hover:opacity-100 opacity-60" />
-             
-             {/* Dynamic Level Glow */}
-             {levelBlock.unlocked && (
-                <div className={`absolute -top-1/2 -right-1/4 w-[600px] h-full ${levelBlock.bgGlow} opacity-[0.05] group-hover:opacity-[0.12] blur-[100px] rounded-full transition-opacity duration-1000 pointer-events-none`} />
-             )}
-             
-             <div className="relative z-20 flex flex-col lg:flex-row p-8 lg:p-14 gap-12 lg:gap-24">
-                
-                {/* Level Title Part */}
-                <div className="lg:w-1/4 flex flex-col justify-center">
-                   <div className="text-[10px] sm:text-xs font-black uppercase tracking-[0.3em] theme-text-primary mb-6 drop-shadow-[0_0_10px_rgba(var(--theme-primary-rgb),0.3)]">
-                      {levelBlock.title.split('—')[0]}
-                   </div>
-                   <h3 className="text-3xl md:text-5xl font-serif text-slate-100 mb-8 leading-[1.1] tracking-tight">
-                      {levelBlock.title.split('—')[1]}
-                   </h3>
-                   <div className="w-12 h-0.5 theme-bg-primary-soft mb-8" />
-                   <p className="text-slate-400 text-sm md:text-base leading-relaxed font-light italic">
-                      {levelBlock.desc}
-                   </p>
-                   
-                   {!levelBlock.unlocked && (
-                     <Tooltip content="Módulo trancado. Complete os anteriores para desbloqueá-lo.">
-                        <div className="mt-10 flex items-center gap-3 text-slate-500 border border-white/5 bg-white/5 px-6 py-4 rounded-2xl w-fit backdrop-blur-md">
-                           <Lock className="w-4 h-4" /> 
-                           <span className="text-[10px] uppercase tracking-widest font-bold">Arcano Bloqueado</span>
-                        </div>
-                     </Tooltip>
-                   )}
-                </div>
-
-                {/* Nodes Grid */}
-                <div className="lg:w-3/4 grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
-                   {levelBlock.nodes.map((node) => {
-                     const isFav = favorites.includes(node.id);
-                     return (
-                      <motion.div 
-                        layoutId={`course-card-${node.id}`}
-                        key={node.id}
-                        onClick={() => handleNodeClick(node, levelBlock)}
-                        className={`
-                          cursor-pointer p-8 sm:p-10 rounded-[2rem] border flex flex-col items-start gap-8 transition-all text-left relative overflow-hidden group/node
-                          ${levelBlock.unlocked 
-                            ? 'bg-white/[0.02] hover:bg-white/[0.04] border-white/5 hover:border-white/20 hover:-translate-y-2' 
-                            : 'bg-transparent border-white/[0.02] cursor-not-allowed'}
-                        `}
-                      >
-                         <div className="flex justify-between w-full relative z-10 items-start">
-                           <Tooltip content={`Abrir ${node.name}`}>
-                             <div className={`w-16 h-16 rounded-2xl flex items-center justify-center ${node.tailwindColor} bg-opacity-10 border border-current ${node.color} shadow-2xl transition-transform duration-500 group-hover/node:rotate-6`}>
-                                {node.icon && React.createElement(node.icon, { className: `w-8 h-8 ${node.color}` })}
-                             </div>
-                           </Tooltip>
-                           
-                           {levelBlock.unlocked && (
-                             <Tooltip content={isFav ? "Remover favorito" : "Favoritar Arquétipo"}>
-                               <button 
-                                 onClick={(e) => toggleFavorite(e, node.id)} 
-                                 className="w-10 h-10 rounded-full flex items-center justify-center text-slate-500 hover:text-rose-400 hover:bg-white/5 transition-all focus:outline-none hover:scale-110 active:scale-95"
-                               >
-                                  <Heart className={`w-5 h-5 transition-colors duration-300 ${isFav ? 'fill-rose-400 text-rose-400' : ''}`} />
-                               </button>
+        {MODULES.map((levelBlock) => {
+          const levelUnlocked = levelBlock.level === 0 || canAccess('medium');
+          return (
+            <div key={levelBlock.level} className={`
+               relative w-full rounded-[2.5rem] overflow-hidden border transition-all duration-700 group
+               ${levelUnlocked ? 'border-white/10 bg-white/[0.01] hover:theme-border-primary-soft' : 'border-white/5 bg-black/40 grayscale opacity-60'}
+            `}>
+               <div className="absolute inset-0 bg-gradient-to-br from-indigo-950/20 via-transparent to-purple-950/20 transition-opacity duration-1000 group-hover:opacity-100 opacity-60" />
+               
+               {/* Dynamic Level Glow */}
+               {levelUnlocked && (
+                  <div className={`absolute -top-1/2 -right-1/4 w-[600px] h-full ${levelBlock.bgGlow} opacity-[0.05] group-hover:opacity-[0.12] blur-[100px] rounded-full transition-opacity duration-1000 pointer-events-none`} />
+               )}
+               
+               <div className="relative z-20 flex flex-col lg:flex-row p-8 lg:p-14 gap-12 lg:gap-24">
+                  
+                  {/* Level Title Part */}
+                  <div className="lg:w-1/4 flex flex-col justify-center">
+                     <div className="text-[10px] sm:text-xs font-black uppercase tracking-[0.3em] theme-text-primary mb-6 drop-shadow-[0_0_10px_rgba(var(--theme-primary-rgb),0.3)]">
+                        {levelBlock.title.split('—')[0]}
+                     </div>
+                     <h3 className="text-3xl md:text-5xl font-serif text-slate-100 mb-8 leading-[1.1] tracking-tight">
+                        {levelBlock.title.split('—')[1]}
+                     </h3>
+                     <div className="w-12 h-0.5 theme-bg-primary-soft mb-8" />
+                     <p className="text-slate-400 text-sm md:text-base leading-relaxed font-light italic">
+                        {levelBlock.desc}
+                     </p>
+                     
+                     {!levelUnlocked && (
+                       <Tooltip content="Módulo trancado. Complete os anteriores para desbloqueá-lo.">
+                          <div className="mt-10 flex items-center gap-3 text-slate-500 border border-white/5 bg-white/5 px-6 py-4 rounded-2xl w-fit backdrop-blur-md">
+                             <Lock className="w-4 h-4" /> 
+                             <span className="text-[10px] uppercase tracking-widest font-bold">Arcano Bloqueado</span>
+                          </div>
+                       </Tooltip>
+                     )}
+                  </div>
+  
+                  {/* Nodes Grid */}
+                  <div className="lg:w-3/4 grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
+                     {levelBlock.nodes.map((node) => {
+                       const isFav = favorites.includes(node.id);
+                       // Modules level >= 1 require at least 'medium' plan
+                       const requiresPlan = levelBlock.level >= 1;
+                       const isPlanLocked = requiresPlan && !canAccess('medium');
+                       return (
+                        <motion.div 
+                          layoutId={`course-card-${node.id}`}
+                          key={node.id}
+                          onClick={() => !isPlanLocked && handleNodeClick(node, levelBlock)}
+                          className={`
+                            p-8 sm:p-10 rounded-[2rem] border flex flex-col items-start gap-8 transition-all text-left relative overflow-hidden group/node
+                            ${isPlanLocked ? 'cursor-default' : 'cursor-pointer'}
+                            ${levelUnlocked 
+                              ? 'bg-white/[0.02] hover:bg-white/[0.04] border-white/5 hover:border-white/20 hover:-translate-y-2' 
+                              : 'bg-transparent border-white/[0.02] cursor-not-allowed'}
+                          `}
+                        >
+                           <div className="flex justify-between w-full relative z-10 items-start">
+                             <Tooltip content={`Abrir ${node.name}`}>
+                               <div className={`w-16 h-16 rounded-2xl flex items-center justify-center ${node.tailwindColor} bg-opacity-10 border border-current ${node.color} shadow-2xl transition-transform duration-500 group-hover/node:rotate-6`}>
+                                  {node.icon && React.createElement(node.icon, { className: `w-8 h-8 ${node.color}` })}
+                               </div>
                              </Tooltip>
+                             
+                             {levelUnlocked && (
+                               <Tooltip content={isFav ? "Remover favorito" : "Favoritar Arquétipo"}>
+                                 <button 
+                                   onClick={(e) => toggleFavorite(e, node.id)} 
+                                   className="w-10 h-10 rounded-full flex items-center justify-center text-slate-500 hover:text-rose-400 hover:bg-white/5 transition-all focus:outline-none hover:scale-110 active:scale-95"
+                                 >
+                                    <Heart className={`w-5 h-5 transition-colors duration-300 ${isFav ? 'fill-rose-400 text-rose-400' : ''}`} />
+                                 </button>
+                               </Tooltip>
+                             )}
+                           </div>
+  
+                           <div>
+                              <h4 className={`font-serif text-xl mb-3 tracking-wide transition-colors ${levelUnlocked ? 'text-slate-100 group-hover/node:theme-text-primary' : 'text-slate-500'}`}>
+                                 {node.name}
+                              </h4>
+                              <p className="text-xs text-slate-500 leading-relaxed font-light">
+                                 {node.desc}
+                              </p>
+                           </div>
+                           
+                           {levelUnlocked && (
+                              <div className="absolute right-8 bottom-8 w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center opacity-0 group-hover/node:opacity-100 group-hover/node:translate-x-0 -translate-x-4 transition-all">
+                                 <ArrowRight className={`w-5 h-5 ${node.color}`} />
+                              </div>
                            )}
-                         </div>
-
-                         <div>
-                            <h4 className={`font-serif text-xl mb-3 tracking-wide transition-colors ${levelBlock.unlocked ? 'text-slate-100 group-hover/node:theme-text-primary' : 'text-slate-500'}`}>
-                               {node.name}
-                            </h4>
-                            <p className="text-xs text-slate-500 leading-relaxed font-light">
-                               {node.desc}
-                            </p>
-                         </div>
-                         
-                         {levelBlock.unlocked && (
-                            <div className="absolute right-8 bottom-8 w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center opacity-0 group-hover/node:opacity-100 group-hover/node:translate-x-0 -translate-x-4 transition-all">
-                               <ArrowRight className={`w-5 h-5 ${node.color}`} />
-                            </div>
-                         )}
-                      </motion.div>
-                     );
-                   })}
-                </div>
-             </div>
-          </div>
-        ))}
-      </div>
-        </motion.div>
-      )}
+  
+                           {/* Plan-lock overlay — only for modules that require medium+ */}
+                           {isPlanLocked && (
+                             <div className="absolute inset-0 rounded-[2rem] flex flex-col items-center justify-center gap-3 bg-black/70 backdrop-blur-sm z-20 p-6 text-center">
+                               <div className="w-12 h-12 rounded-full border-2 border-purple-500/60 bg-purple-900/30 flex items-center justify-center">
+                                 <Zap className="w-5 h-5 text-purple-400" />
+                               </div>
+                               <div>
+                                 <p className="text-[10px] uppercase tracking-widest text-slate-400 mb-1">Requer Plano</p>
+                                 <h4 className="text-base font-serif font-bold text-purple-300">Ascendente</h4>
+                                 <p className="text-xs text-slate-500 mt-1">R$ 49,90/mês</p>
+                               </div>
+                               <a
+                                  href="#/subscription"
+                                  onClick={e => e.stopPropagation()}
+                                  className="px-5 py-2 rounded-xl text-xs font-bold bg-purple-600 hover:bg-purple-500 text-white shadow-[0_0_15px_rgba(147,51,234,0.3)] transition-all mt-1"
+                               >
+                                 Fazer Upgrade →
+                               </a>
+                             </div>
+                           )}
+                         </motion.div>
+                        );
+                      })}
+                    </div>
+                 </div>
+              </div>
+            );
+          })}
+        </div>
+         </motion.div>
+       )}
     </AnimatePresence>
   );
 }

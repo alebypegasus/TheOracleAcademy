@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Info, ChevronRight, Lock, ChevronDown, User, Star, PlayCircle } from 'lucide-react';
+import { Info, ChevronRight, Lock, ChevronDown, User, Star, PlayCircle, CheckCircle2 } from 'lucide-react';
 import { Tooltip } from '../ui/Tooltip';
 import { SectionLock } from '../ui/SectionLock';
 
-export function CurrentCourseCard({ searchQuery, currentUser }: { searchQuery: string, currentUser: any }) {
+export function CurrentCourseCard({ searchQuery, currentUser, onNavigate }: { searchQuery: string, currentUser: any, onNavigate?: (path: string) => void }) {
   const [isExpanded, setIsExpanded] = useState(false);
 
   const allCourses = [
@@ -160,7 +160,9 @@ export function CurrentCourseCard({ searchQuery, currentUser }: { searchQuery: s
           </div>
           
           <div className="flex flex-wrap items-center gap-4">
-            <button className="px-8 py-3 bg-indigo-600 hover:bg-indigo-500 rounded-xl text-white font-bold tracking-wide uppercase text-xs transition-colors shadow-[0_0_15px_rgba(79,70,229,0.3)] hover:shadow-[0_0_25px_rgba(79,70,229,0.5)] flex items-center gap-2">
+            <button 
+              onClick={() => onNavigate?.('/courses')}
+              className="px-8 py-3 bg-indigo-600 hover:bg-indigo-500 rounded-xl text-white font-bold tracking-wide uppercase text-xs transition-colors shadow-[0_0_15px_rgba(79,70,229,0.3)] hover:shadow-[0_0_25px_rgba(79,70,229,0.5)] flex items-center gap-2">
               Continuar Aprendendo <ChevronRight className="w-4 h-4" />
             </button>
             <button 

@@ -2,10 +2,11 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
   Sparkles, Save, Book, Loader2, Play, ThumbsUp, ThumbsDown, 
-  Lock, BookOpen, Brain, Compass, HelpCircle, Trophy, RefreshCw 
+  Lock, BookOpen, Brain, Compass, HelpCircle, Trophy, RefreshCw, Crown 
 } from 'lucide-react';
 import Markdown from 'react-markdown';
 import { SectionLock } from './ui/SectionLock';
+import { usePlan } from '../hooks/usePlan';
 
 export function OracleReader({ profile, setProfile, addGrimoireEntry, currentUser }: any) {
   const [activeMode, setActiveMode] = useState<'normal' | 'study'>('study');
@@ -26,7 +27,8 @@ export function OracleReader({ profile, setProfile, addGrimoireEntry, currentUse
   const [reading, setReading] = useState<any | null>(null);
   const [feedback, setFeedback] = useState<'up' | 'down' | null>(null);
 
-  const isLocked = !currentUser?.isPaid;
+  const { canAccess } = usePlan(currentUser);
+  const isLocked = !canAccess('master');
 
   const handleAskNormal = async () => {
     if (!question.trim() || isLocked) return;
@@ -137,7 +139,7 @@ export function OracleReader({ profile, setProfile, addGrimoireEntry, currentUse
 
   return (
     <div className="max-w-5xl mx-auto py-8 px-4 relative">
-      <SectionLock isPaid={currentUser?.isPaid} className="absolute top-8 right-4" />
+      <SectionLock isPaid={canAccess('master')} className="absolute top-8 right-4" />
       
       <div className="mb-10 text-center pt-8">
         <div className="flex items-center justify-center gap-2 mb-3">

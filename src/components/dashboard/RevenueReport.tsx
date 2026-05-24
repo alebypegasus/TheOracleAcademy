@@ -92,8 +92,58 @@ export function RevenueReport() {
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [timeRange, setTimeRange] = useState<'7d' | '30d'>('30d');
   
+  const [salesRecords, setSalesRecords] = useState<SaleTransaction[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
   const [aiSummary, setAiSummary] = useState<string>('');
   const [loadingSummary, setLoadingSummary] = useState<boolean>(false);
+
+  useEffect(() => {
+    const loadRealTransactions = async () => {
+      try {
+        setLoading(true);
+        const token = localStorage.getItem('oracle_jwt_token') || '';
+        const res = await fetch('/api/payments/transactions', {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+        if (res.ok) {
+          const data = await res.json();
+          const txs = data.transactions || [];
+          const mapped: SaleTransaction[] = txs
+            .filter((t: any) => t.type === 'compra' || t.type === 'venda')
+            .map((t: any) => ({
+              id: `TXT-${t.id}`,
+              title: t.title,
+              category: t.title.toLowerCase().includes('grim') || t.title.toLowerCase().includes('livro') ? 'books' : 
+                        t.title.toLowerCase().includes('amulet') || t.title.toLowerCase().includes('joia') ? 'jewelry' :
+                        t.title.toLowerCase().includes('orác') || t.title.toLowerCase().includes('ferramenta') ? 'instruments' :
+                        t.title.toLowerCase().includes('consult') || t.title.toLowerCase().includes('mapa') ? 'consultations' :
+                        t.title.toLowerCase().includes('perfume') || t.title.toLowerCase().includes('alquim') ? 'alchemy' : 'other',
+              timestamp: t.date || new Date().toISOString(),
+              price: parseFloat(t.amount_seller || t.amount || '0'),
+              buyerName: 'Comprador Astral',
+              platform: 'Mercado Pago' as const,
+              status: t.status === 'concluído' ? 'Aprovado' as const : 'Pendente' as const
+            }));
+          
+          if (mapped.length > 0) {
+            setSalesRecords(mapped);
+          } else {
+            setSalesRecords(MOCK_SALES_RECORDS);
+          }
+        } else {
+          setSalesRecords(MOCK_SALES_RECORDS);
+        }
+      } catch (err) {
+        console.error("Error loading transactions for RevenueReport:", err);
+        setSalesRecords(MOCK_SALES_RECORDS);
+      } finally {
+        setLoading(false);
+      }
+    };
+    loadRealTransactions();
+  }, []);
   
   // Exclude today for stability, calculate boundary
   const daysBoundary = timeRange === '7d' ? 7 : 30;
@@ -103,13 +153,13 @@ export function RevenueReport() {
     const boundaryDate = new Date();
     boundaryDate.setDate(boundaryDate.getDate() - daysBoundary);
 
-    return MOCK_SALES_RECORDS.filter(sale => {
+    return salesRecords.filter(sale => {
       const saleDate = new Date(sale.timestamp);
       const isWithinTime = saleDate >= boundaryDate;
       const isWithinCategory = selectedCategory === 'all' || sale.category === selectedCategory;
       return isWithinTime && isWithinCategory;
     });
-  }, [selectedCategory, daysBoundary]);
+  }, [salesRecords, selectedCategory, daysBoundary]);
 
   // Automatic trigger of Gemini Analysis
   const generateAiSummary = async () => {
