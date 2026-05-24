@@ -8,6 +8,7 @@ import {
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { SectionLock } from '../ui/SectionLock';
+import { usePlan } from '../../hooks/usePlan';
 
 const CATEGORIES = [
   { id: 'all', label: 'Todos os Artefatos', description: 'Todas as energias e matérias combinadas' },
@@ -91,7 +92,13 @@ export function LibraryView({ currentUser }: { currentUser: any }) {
 
   const fetchItems = async () => {
     try {
-      const res = await fetch('/api/marketplace/items');
+      const token = localStorage.getItem('oracle_jwt_token') || '';
+      const res = await fetch('/api/marketplace/items', {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'x-user-id': currentUser?.id?.toString() || ''
+        }
+      });
       if (res.ok) {
         const data = await res.json();
         setItems(data);
@@ -106,8 +113,10 @@ export function LibraryView({ currentUser }: { currentUser: any }) {
   const fetchBalance = async () => {
     try {
       setBalanceLoading(true);
+      const token = localStorage.getItem('oracle_jwt_token') || '';
       const res = await fetch('/api/payments/balance', {
         headers: {
+          'Authorization': `Bearer ${token}`,
           'x-user-id': currentUser?.id?.toString() || ''
         }
       });
@@ -131,10 +140,12 @@ export function LibraryView({ currentUser }: { currentUser: any }) {
     setPurchaseError('');
 
     try {
+      const token = localStorage.getItem('oracle_jwt_token') || '';
       const res = await fetch('/api/marketplace/purchase', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
           'x-user-id': currentUser?.id?.toString() || ''
         },
         body: JSON.stringify({ itemId: selectedItem.id })
@@ -170,10 +181,12 @@ export function LibraryView({ currentUser }: { currentUser: any }) {
       .filter(t => t);
     
     try {
+      const token = localStorage.getItem('oracle_jwt_token') || '';
       const res = await fetch('/api/marketplace/items', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
           'x-user-id': currentUser?.id?.toString() || ''
         },
         body: JSON.stringify({
@@ -222,15 +235,6 @@ export function LibraryView({ currentUser }: { currentUser: any }) {
       return matchesSearch && matchesCategory;
     });
   }, [items, searchQuery, selectedCategory]);
-
-  if (!currentUser?.isPaid) {
-    return (
-      <SectionLock 
-        title="Mercado Místico" 
-        description="Acesso exclusivo ao comércio hermético e oracular. Faça o upgrade de assinatura para comprar, vender e trocar itens sagrados com mestres de todo o país." 
-      />
-    );
-  }
 
   return (
     <div className="space-y-8 animate-fade-in pb-20 max-w-7xl mx-auto px-4 sm:px-6">
