@@ -778,14 +778,16 @@ export function WorkspaceView({ currentUser }: WorkspaceViewProps) {
                     setErrorMessage(null);
                     setSuccessMessage(null);
                   }}
-                  className={`flex items-center gap-3 px-4 py-3 rounded-2xl w-full text-left transition-all duration-200 ${
+                  className={`group flex items-center gap-3 px-4 py-3 rounded-2xl w-full text-left transition-all duration-200 ${
                     isActive 
-                      ? 'bg-indigo-600/20 text-indigo-200 border-l-4 border-indigo-500 font-medium' 
-                      : 'text-slate-400 hover:bg-white/[0.02] hover:text-slate-200'
+                      ? 'bg-indigo-600/20 text-indigo-200 border-l-4 border-indigo-500 font-bold tracking-widest uppercase text-xs shadow-md' 
+                      : 'text-slate-400 hover:bg-white/[0.02] hover:text-slate-200 uppercase text-[11px] tracking-wider font-semibold'
                   }`}
                 >
-                  <Icon className={`w-4 h-4 ${tab.color}`} />
-                  <span className="text-sm tracking-wide">{tab.label}</span>
+                  <motion.div animate={isActive ? { scale: [1, 1.2, 1], rotate: [0, 5, -5, 0] } : {}} transition={{ repeat: isActive ? Infinity : 0, duration: 2, ease: "easeInOut" }}>
+                    <Icon className={`w-4 h-4 transition-transform group-hover:scale-110 ${tab.color}`} />
+                  </motion.div>
+                  <span>{tab.label}</span>
                 </button>
               );
             })}

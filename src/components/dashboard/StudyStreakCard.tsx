@@ -52,10 +52,10 @@ export function StudyStreakCard() {
         <div className="relative z-10">
           <div className="flex items-center justify-between mb-10">
             <div className="flex items-center gap-4">
-              <div className="w-12 h-12 rounded-2xl bg-orange-500/10 border border-orange-500/20 flex items-center justify-center shadow-[0_0_20px_rgba(249,115,22,0.1)]">
+              <div className="w-14 h-14 premium-icon-container flex items-center justify-center">
                 <motion.div
                   animate={{ 
-                    scale: [1, 1.1, 1],
+                    scale: [1, 1.15, 1],
                     rotate: [0, 5, -5, 0]
                   }}
                   transition={{ 
@@ -64,7 +64,7 @@ export function StudyStreakCard() {
                     ease: "easeInOut"
                   }}
                 >
-                  <Flame className="w-6 h-6 text-orange-400 fill-orange-400/20" />
+                  <Flame className="w-7 h-7 text-orange-400 fill-orange-400/20 icon-glow" strokeWidth={1.5} />
                 </motion.div>
               </div>
               <div>

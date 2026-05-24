@@ -281,14 +281,16 @@ export function OracleReader({ profile, setProfile, addGrimoireEntry, currentUse
               </div>
 
               <div className="pt-4 flex justify-end">
-                <button
+                <motion.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
                   onClick={handleGenerateStudySpread}
                   disabled={loading}
-                  className="px-8 py-4 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white rounded-2xl font-black text-xs uppercase tracking-widest transition-all shadow-xl shadow-indigo-500/25 flex items-center gap-2"
+                  className="px-8 py-4 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-2xl font-black text-xs uppercase tracking-widest transition-shadow hover:shadow-[0_0_25px_rgba(99,102,241,0.4)] flex items-center gap-2"
                 >
-                  {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
+                  {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <motion.div animate={{ rotate: [0, 15, -15, 0] }} transition={{ repeat: Infinity, duration: 2, repeatDelay: 1 }}><Sparkles className="w-4 h-4" /></motion.div>}
                   Gerar Tiragem Educativa
-                </button>
+                </motion.button>
               </div>
             </div>
           ) : (
@@ -320,14 +322,16 @@ export function OracleReader({ profile, setProfile, addGrimoireEntry, currentUse
                 </div>
 
                 <div className="self-end w-full sm:w-auto pt-2">
-                  <button 
+                  <motion.button 
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
                     onClick={handleAskNormal}
                     disabled={loading || !question.trim()}
-                    className="w-full sm:w-auto px-8 py-3.5 bg-gradient-to-r from-indigo-500 to-indigo-600 hover:from-indigo-400 hover:to-indigo-500 text-white rounded-xl font-bold text-xs uppercase tracking-widest transition-all shadow-lg flex items-center justify-center gap-2 disabled:opacity-50"
+                    className="w-full sm:w-auto px-8 py-3.5 bg-gradient-to-r from-indigo-500 to-indigo-600 text-white rounded-xl font-bold text-xs uppercase tracking-widest transition-shadow hover:shadow-[0_0_20px_rgba(99,102,241,0.4)] flex items-center justify-center gap-2 disabled:opacity-50 disabled:grayscale"
                   >
-                    {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
+                    {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <motion.div animate={{ rotate: [0, 15, -15, 0] }} transition={{ repeat: Infinity, duration: 2, repeatDelay: 1 }}><Sparkles className="w-4 h-4" /></motion.div>}
                     Consultar Oráculo
-                  </button>
+                  </motion.button>
                 </div>
               </div>
             </div>

@@ -364,14 +364,16 @@ export function GrimoireView({
               <button
                 key={category.id}
                 onClick={() => { setActiveCategory(category.id); setIsCreating(false); }}
-                className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all text-left w-full
+                className={`group flex items-center gap-3 px-4 py-3 rounded-xl transition-all text-left w-full
                   ${isActive 
-                    ? 'bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 font-medium' 
-                    : 'text-slate-400 hover:bg-white/[0.03] hover:text-slate-200 border border-transparent'
+                    ? 'bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 font-bold uppercase tracking-widest text-xs shadow-md shadow-indigo-500/10' 
+                    : 'text-slate-400 hover:bg-white/[0.03] hover:text-slate-200 border border-transparent font-semibold uppercase tracking-wider text-[11px]'
                   }`}
               >
-                <Icon className={`w-5 h-5 ${isActive ? 'text-indigo-400' : 'text-slate-500'}`} />
-                <span className="text-sm">{category.label}</span>
+                <motion.div animate={isActive ? { scale: [1, 1.2, 1], rotate: [0, 5, -5, 0] } : {}} transition={{ repeat: isActive ? Infinity : 0, duration: 2, ease: "easeInOut" }}>
+                  <Icon className={`w-4 h-4 transition-transform group-hover:scale-110 ${isActive ? 'text-indigo-400' : 'text-slate-500 group-hover:text-slate-400'}`} />
+                </motion.div>
+                <span>{category.label}</span>
               </button>
             )
           })}

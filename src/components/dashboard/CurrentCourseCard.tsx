@@ -52,7 +52,7 @@ export function CurrentCourseCard({ searchQuery, currentUser }: { searchQuery: s
   return (
     <div className="glass-panel p-1 rounded-2xl relative overflow-hidden group border border-indigo-500/20 hover:border-indigo-500/40 transition-colors shadow-2xl shadow-indigo-900/10">
       <SectionLock isPaid={currentUser?.isPaid} className="absolute top-4 right-4" />
-      <div className="absolute inset-0 bg-gradient-to-br from-indigo-900/40 via-[#0c0816] to-purple-900/20 z-0" />
+      <div className="absolute inset-0 theme-bg-gradient opacity-60 z-0 pointer-events-none" />
       
       {isLocked && (
         <div className="absolute inset-0 z-30 bg-black/60 backdrop-blur-[2px] flex flex-col items-center justify-center rounded-2xl">

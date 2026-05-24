@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Compass, Bell } from 'lucide-react';
+import { Compass, Bell, Menu } from 'lucide-react';
 import { HashRouter, Routes, Route, Navigate, useLocation, useNavigate } from 'react-router-dom';
 
 import { OracleReader } from './components/OracleReader';
@@ -47,6 +47,7 @@ function AppContent({
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState('');
   const [isZenMode, setIsZenMode] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [dashboardTab, setDashboardTab] = useState<'overview' | 'revenue'>('overview');
   
   const [prevXp, setPrevXp] = useState(profile.xp);
@@ -76,7 +77,7 @@ function AppContent({
   }, [currentUser, location.pathname, navigate]);
 
   return (
-    <div className={`flex relative h-screen ${isZenMode ? 'bg-[#0B0A10]' : 'bg-transparent'} overflow-hidden text-slate-200 transition-colors duration-500 w-full`}>
+    <div className={`flex relative h-screen ${isZenMode ? 'bg-slate-50 dark:bg-[#0B0A10]' : 'bg-transparent'} overflow-hidden text-slate-800 dark:text-slate-200 transition-colors duration-500 w-full`}>
       {showLevelUp && (
         <LevelUpModal 
           xp={profile.xp} 
@@ -85,34 +86,95 @@ function AppContent({
         />
       )}
       {location.pathname !== '/landing' && currentUser && !isZenMode && (
-        <Sidebar 
-          currentPath={location.pathname} 
-          isDarkMode={isDarkMode}
-          themePreference={themePreference}
-          setThemePreference={setThemePreference}
-          colorTheme={colorTheme}
-          setColorTheme={setColorTheme}
-          profile={profile}
-          onNavigate={(path: string) => navigate(path)}
-          onLogout={() => {
-            setCurrentUser(null);
-            navigate('/landing');
-          }}
-          currentUser={currentUser}
-        />
+        <>
+          {/* Desktop Sidebar */}
+          <Sidebar 
+            className="hidden xl:flex"
+            currentPath={location.pathname} 
+            isDarkMode={isDarkMode}
+            themePreference={themePreference}
+            setThemePreference={setThemePreference}
+            colorTheme={colorTheme}
+            setColorTheme={setColorTheme}
+            profile={profile}
+            onNavigate={(path: string) => navigate(path)}
+            onLogout={() => {
+              setCurrentUser(null);
+              navigate('/landing');
+            }}
+            currentUser={currentUser}
+          />
+          
+          {/* Mobile Sidebar Overlay */}
+          <AnimatePresence>
+            {isMobileMenuOpen && (
+              <>
+                <motion.div 
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 xl:hidden"
+                />
+                <motion.div 
+                  initial={{ x: "-100%" }}
+                  animate={{ x: 0 }}
+                  exit={{ x: "-100%" }}
+                  transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                  className="fixed inset-y-0 left-0 z-50 xl:hidden"
+                >
+                  <Sidebar 
+                    className="flex xl:hidden"
+                    onMobileClose={() => setIsMobileMenuOpen(false)}
+                    currentPath={location.pathname} 
+                    isDarkMode={isDarkMode}
+                    themePreference={themePreference}
+                    setThemePreference={setThemePreference}
+                    colorTheme={colorTheme}
+                    setColorTheme={setColorTheme}
+                    profile={profile}
+                    onNavigate={(path: string) => Object.assign(navigate(path), setIsMobileMenuOpen(false))}
+                    onLogout={() => {
+                      setCurrentUser(null);
+                      navigate('/landing');
+                    }}
+                    currentUser={currentUser}
+                  />
+                </motion.div>
+              </>
+            )}
+          </AnimatePresence>
+        </>
       )}
       
       {location.pathname !== '/landing' && currentUser && (
         <button 
           onClick={() => setIsZenMode(!isZenMode)}
-          className={`fixed bottom-6 right-6 p-3 rounded-full z-[100] transition-all duration-500 hover:scale-110 ${isZenMode ? 'bg-[#15151A] text-indigo-400 border border-indigo-500/20 shadow-[0_0_40px_rgba(99,102,241,0.2)]' : 'bg-slate-800 text-slate-400 hover:text-white border border-white/10 shadow-lg'}`}
+          className={`fixed bottom-6 right-6 p-3 rounded-full z-40 transition-all duration-500 hover:scale-110 ${isZenMode ? 'bg-[#15151A] text-indigo-400 border border-indigo-500/20 shadow-[0_0_40px_rgba(99,102,241,0.2)]' : 'bg-slate-800 text-slate-400 hover:text-white border border-white/10 shadow-lg'}`}
           title={isZenMode ? "Sair do Modo Zen" : "Entrar no Modo Zen"}
         >
           {isZenMode ? <Compass className="w-5 h-5 animate-pulse" /> : <Compass className="w-5 h-5" />}
         </button>
       )}
 
-      <main className={`flex-1 overflow-y-auto w-full relative hide-scrollbar ${location.pathname === '/landing' ? 'p-0' : 'p-6 lg:p-10'} ${isZenMode ? 'bg-[#0B0A10] inset-0 fixed z-50 p-6 lg:p-10' : ''}`}>
+      <div className="flex flex-col flex-1 w-full h-full relative overflow-hidden">
+        {/* Global Mobile Top Bar */}
+        {location.pathname !== '/landing' && currentUser && !isZenMode && (
+          <div className="xl:hidden flex items-center justify-between p-4 border-b border-indigo-500/10 bg-slate-50/80 dark:bg-[#080510]/80 backdrop-blur-md z-30 flex-shrink-0">
+            <div className="flex items-center gap-2 theme-logo-glow">
+              <div className="h-10 w-10 theme-logo-image" />
+              <div className="h-5 w-[80px] theme-logo-text" />
+            </div>
+            <button 
+              onClick={() => setIsMobileMenuOpen(true)}
+              className="p-2 rounded-xl bg-white/5 border border-indigo-500/10 text-slate-500 hover:text-indigo-400 transition-colors"
+            >
+              <Menu className="w-6 h-6" />
+            </button>
+          </div>
+        )}
+
+        <main className={`flex-1 overflow-y-auto w-full relative hide-scrollbar ${location.pathname === '/landing' ? 'p-0' : 'p-4 sm:p-6 lg:p-10'} ${isZenMode ? 'bg-[#0B0A10] inset-0 fixed z-50 p-6 lg:p-10' : ''}`}>
         <AnimatePresence mode="wait">
           <Routes location={location} key={location.pathname}>
             {/* Landing Page Route */}
@@ -132,7 +194,7 @@ function AppContent({
             <Route path="/" element={<Navigate to="/dashboard" replace />} />
                         <Route path="/dashboard" element={
               <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} transition={{ duration: 0.3 }} className="max-w-7xl mx-auto w-full">
-                {!isZenMode && <Header searchQuery={searchQuery} setSearchQuery={setSearchQuery} profile={profile} currentUser={currentUser} />}
+                {!isZenMode && <Header searchQuery={searchQuery} setSearchQuery={setSearchQuery} profile={profile} currentUser={currentUser} onMenuClick={() => setIsMobileMenuOpen(true)} />}
                 
                 {/* Tab selector for general overview or revenue reports */}
                 {!isZenMode && (
@@ -313,7 +375,8 @@ function AppContent({
             } />
           </Routes>
         </AnimatePresence>
-      </main>
+        </main>
+      </div>
       
       <div className="fixed top-[-20%] left-[-10%] w-[50%] h-[50%] rounded-full bg-purple-900/10 blur-[120px] pointer-events-none z-0" />
       <div className="fixed bottom-[-10%] right-[-10%] w-[40%] h-[40%] rounded-full bg-indigo-900/10 blur-[100px] pointer-events-none z-0" />

@@ -200,20 +200,24 @@ export function ProfileView({
   };
 
   return (
-    <div className="max-w-5xl mx-auto py-10 w-full">
-      <div className="mb-8">
-        <h2 className="text-4xl font-serif text-slate-100 uppercase tracking-wider mb-2">
-          Seu Perfil
+    <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, ease: "easeOut" }} className="max-w-5xl mx-auto py-10 w-full">
+      <div className="mb-10 text-center lg:text-left relative">
+        <h2 className="text-4xl font-serif text-slate-100 uppercase tracking-widest mb-3 flex items-center justify-center lg:justify-start gap-4">
+          <Sparkles className="w-8 h-8 text-indigo-400 animate-pulse" />
+          Seu Perfil Místico
         </h2>
-        <p className="text-slate-400">
-          Configure suas informações pessoais, redes sociais e portfólio.
+        <p className="text-slate-400 max-w-xl text-sm font-light">
+          Configure suas informações dimensionais, assinaturas energéticas, links celestiais e portfólio.
         </p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div className="col-span-1 space-y-6">
           {/* Avatar Section */}
-          <div className="glass-panel p-6 rounded-2xl flex flex-col items-center text-center">
+          <motion.div 
+            whileHover={{ y: -5 }}
+            className="glass-panel p-6 rounded-3xl flex flex-col items-center text-center border-indigo-500/10 shadow-[0_0_40px_rgba(99,102,241,0.08)] hover:shadow-indigo-500/20 transition-all duration-500"
+          >
             <input
               type="file"
               id="avatar-uploader-file"
@@ -230,9 +234,10 @@ export function ProfileView({
                 }
               }}
             />
-            <div 
+            <motion.div 
+              whileHover={{ scale: 1.05 }}
               onClick={() => document.getElementById("avatar-uploader-file")?.click()}
-              className="w-32 h-32 rounded-full overflow-hidden border-4 border-indigo-500/20 mb-4 relative group cursor-pointer"
+              className="w-36 h-36 rounded-full overflow-hidden border-4 border-indigo-500/20 shadow-xl mb-5 relative group cursor-pointer"
             >
               <img
                 src={
@@ -240,13 +245,13 @@ export function ProfileView({
                   "https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=300&auto=format&fit=crop"
                 }
                 alt="Avatar"
-                className="w-full h-full object-cover"
+                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
               />
-              <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+              <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center backdrop-blur-sm">
                 <Camera className="w-8 h-8 text-white" />
               </div>
-            </div>
-            <h3 className="text-xl font-medium text-slate-200">
+            </motion.div>
+            <h3 className="text-2xl font-serif text-slate-100 font-bold tracking-wide">
               {formData.name || "Seu Nome"}
             </h3>
             <p className="text-sm text-slate-400 mb-4">
@@ -259,7 +264,7 @@ export function ProfileView({
             >
               Alterar Foto
             </button>
-          </div>
+          </motion.div>
 
           {/* Plan Section */}
           <div className="glass-panel p-6 rounded-2xl relative overflow-hidden group">
@@ -457,16 +462,22 @@ export function ProfileView({
               ].map((badge) => {
                 const Icon = badge.icon;
                 return (
-                  <div 
+                  <motion.div 
+                    whileHover={{ scale: 1.05 }}
                     key={badge.id}
-                    className={`p-3 rounded-2xl flex flex-col items-center text-center border transition-all ${badge.unlocked ? `bg-gradient-to-br ${badge.color} scale-100` : 'bg-black/20 border-white/5 opacity-40 grayscale group-hover:grayscale-0'}`}
+                    className={`p-3 rounded-2xl flex flex-col items-center text-center border transition-all ${badge.unlocked ? `bg-gradient-to-br ${badge.color} scale-100 shadow-md` : 'bg-black/20 border-white/5 opacity-40 grayscale group-hover:grayscale-0'}`}
                   >
                     <div className={`p-2 rounded-xl mb-2 ${badge.unlocked ? 'bg-black/20' : 'bg-white/5'}`}>
-                      <Icon className="w-5 h-5" />
+                      <motion.div 
+                        animate={badge.unlocked ? { rotate: [0, 10, -10, 0] } : {}} 
+                        transition={{ repeat: Infinity, duration: 3, ease: "easeInOut" }}
+                      >
+                        <Icon className="w-5 h-5" />
+                      </motion.div>
                     </div>
                     <span className="text-xs font-bold text-slate-200 block truncate w-full">{badge.title}</span>
                     <span className="text-[9px] text-slate-500 mt-0.5 leading-snug hidden sm:block lines-clamp-2">{badge.desc}</span>
-                  </div>
+                  </motion.div>
                 );
               })}
             </div>
@@ -850,6 +861,6 @@ export function ProfileView({
           </div>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 }

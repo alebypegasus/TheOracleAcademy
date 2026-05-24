@@ -231,21 +231,21 @@ export function LibraryView({ currentUser }: { currentUser: any }) {
     <div className="space-y-8 animate-fade-in pb-20 max-w-7xl mx-auto px-4 sm:px-6">
       
       {/* Visual Header Banner - Ultra Clean and Mistical */}
-      <div className="relative rounded-[2rem] p-8 sm:p-12 overflow-hidden bg-gradient-to-br from-[#0c091f] via-[#04030a] to-[#0d0a1b] border border-indigo-500/10 shadow-2xl">
-        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-violet-600 via-indigo-500 to-emerald-400" />
-        <div className="absolute -right-16 -top-16 w-80 h-80 bg-indigo-500/10 rounded-full blur-[100px] pointer-events-none" />
-        <div className="absolute -left-16 -bottom-16 w-80 h-80 bg-violet-600/10 rounded-full blur-[100px] pointer-events-none" />
+      <div className="relative rounded-[2.5rem] p-8 sm:p-14 overflow-hidden theme-bg-gradient border border-white/5 shadow-2xl">
+        <div className="absolute top-0 left-0 w-full h-1 theme-bg-gradient-strong" />
+        <div className="absolute -right-16 -top-16 w-80 h-80 bg-white/5 rounded-full blur-[100px] pointer-events-none" />
+        <div className="absolute -left-16 -bottom-16 w-80 h-80 bg-black/10 rounded-full blur-[100px] pointer-events-none" />
 
-        <div className="relative flex flex-col md:flex-row md:items-center justify-between gap-6">
-          <div className="space-y-3 max-w-2xl">
-            <div className="inline-flex items-center gap-2 bg-indigo-500/10 border border-indigo-500/20 px-3 py-1 rounded-full">
-              <Sparkles className="w-3.5 h-3.5 text-indigo-400" />
-              <span className="text-[10px] font-mono font-black uppercase tracking-wider text-indigo-300">Mercado Aberto</span>
+        <div className="relative flex flex-col md:flex-row md:items-center justify-between gap-6 z-10">
+          <div className="space-y-4 max-w-2xl">
+            <div className="inline-flex items-center gap-2 bg-white/10 px-4 py-1.5 rounded-full backdrop-blur-md border border-white/10 shadow-lg">
+              <Sparkles className="w-4 h-4 theme-text-primary" />
+              <span className="text-[11px] font-mono font-black uppercase tracking-widest text-slate-200">Mercado Aberto</span>
             </div>
-            <h1 className="text-3xl sm:text-4xl font-black font-serif text-slate-100 tracking-tight">
+            <h1 className="text-4xl sm:text-5xl font-black font-serif text-slate-100 tracking-tight drop-shadow-md">
               Mercado Místico
             </h1>
-            <p className="text-slate-400 text-xs sm:text-sm leading-relaxed font-light">
+            <p className="text-slate-400 text-sm sm:text-base leading-relaxed font-light">
               Canal comercial espiritual. Adquira grimórios autorais, sintonias de pêndulos, leituras personalizadas e artefatos transmutadores produzidos pela própria egrégora.
             </p>
           </div>

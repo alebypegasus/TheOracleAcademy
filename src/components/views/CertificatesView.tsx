@@ -233,13 +233,13 @@ ID: OC-${id}-${Date.now()}
   };
 
   return (
-    <div className="max-w-6xl mx-auto py-10 w-full h-full flex flex-col" id="certificates-view-root">
-      <div className="mb-8">
-        <h2 className="text-4xl font-serif text-slate-100 uppercase tracking-wider mb-2 flex items-center gap-3">
-          <Award className="w-8 h-8 text-amber-400" />
+    <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, ease: "easeOut" }} className="max-w-6xl mx-auto py-10 w-full h-full flex flex-col" id="certificates-view-root">
+      <div className="mb-10 text-center lg:text-left relative">
+        <h2 className="text-4xl font-serif text-slate-100 uppercase tracking-widest mb-3 flex items-center justify-center lg:justify-start gap-4">
+          <Award className="w-8 h-8 text-amber-400 animate-pulse" />
           Seus Certificados
         </h2>
-        <p className="text-slate-400 font-sans">O histórico de todas as suas formações, conquistas profissionais e aprendizados.</p>
+        <p className="text-slate-400 font-light max-w-2xl text-sm">O histórico luminoso de todas as suas formações esotéricas, conquistas profissionais e selos divinos.</p>
       </div>
 
       {/* Grid of Course Certificates */}
@@ -550,6 +550,6 @@ ID: OC-${id}-${Date.now()}
           </div>
         )}
       </AnimatePresence>
-    </div>
+    </motion.div>
   );
 }

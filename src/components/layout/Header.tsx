@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Search, Bell, Sparkles, X, BookOpen, MessageSquare, BookMarked, Award, ArrowRight, Heart, Flame } from 'lucide-react';
+import { Search, Bell, Sparkles, X, BookOpen, MessageSquare, BookMarked, Award, ArrowRight, Heart, Flame, Menu } from 'lucide-react';
 import { Tooltip } from '../ui/Tooltip';
 import { motion, AnimatePresence } from 'motion/react';
 import { useNavigate } from 'react-router-dom';
@@ -19,7 +19,7 @@ const SEARCHABLE_COURSES = [
   { id: 'oniromancia', name: 'Oniromancia e Geomancia', desc: 'Sonhos e 16 figuras astrológicas na terra', level: 'Nível 3 — Oráculos Interpretativos' }
 ];
 
-export function Header({ searchQuery, setSearchQuery, profile, currentUser }: any) {
+export function Header({ searchQuery, setSearchQuery, profile, currentUser, onMenuClick }: any) {
   const navigate = useNavigate();
   const [notifications, setNotifications] = useState<any[]>([]);
   const [showNotifications, setShowNotifications] = useState(false);
@@ -119,27 +119,32 @@ export function Header({ searchQuery, setSearchQuery, profile, currentUser }: an
 
   return (
     <header className="flex flex-col md:flex-row md:items-end w-full justify-between gap-6 relative z-50">
-      <div>
-        <h2 className="text-3xl font-serif font-medium text-slate-100 flex items-center gap-2">
-          Bem-vindo de volta, {profile.name?.split(' ')[0] || 'Usuário'} <Sparkles className="w-6 h-6 text-indigo-400" />
-        </h2>
-        <p className="text-slate-400 mt-2">Continue sua jornada de conhecimento místico.</p>
+      <div className="flex items-center gap-4">
+        <div>
+          <h2 className="text-2xl pt-2 sm:pt-0 sm:text-3xl font-serif font-medium text-slate-100 flex items-center gap-2">
+            Bem-vindo, {profile.name?.split(' ')[0] || 'Usuário'} <Sparkles className="w-5 h-5 sm:w-6 sm:h-6 text-indigo-400" />
+          </h2>
+          <p className="text-sm sm:text-base text-slate-400 mt-1 sm:mt-2">Continue sua jornada de conhecimento místico.</p>
+        </div>
       </div>
       
       <div className="flex items-center flex-wrap gap-4">
         {/* Search Input click opens the cosmic search modal */}
-        <div 
+        <motion.div 
+          whileHover={{ scale: 1.02 }}
           onClick={() => setShowSearchModal(true)}
           className="glass-panel px-4 py-3 rounded-xl flex items-center cursor-pointer hover:bg-white/5 border border-indigo-500/10 hover:border-indigo-400/35 transition-all duration-300 shadow-[0_0_15px_rgba(99,102,241,0.05)] w-full md:w-auto"
         >
-          <Search className="w-4 h-4 text-slate-400 mr-2" />
+          <motion.div animate={{ rotate: [0, 5, -5, 0] }} transition={{ repeat: Infinity, duration: 2.5, ease: "easeInOut" }}>
+            <Search className="w-4 h-4 text-slate-400 mr-2" />
+          </motion.div>
           <span className="text-sm text-slate-400 font-sans w-48 text-left truncate">
             Buscar na plataforma...
           </span>
           <span className="ml-auto text-[10px] bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 px-2 py-0.5 rounded font-mono hidden md:inline">
             BUSCAR
           </span>
-        </div>
+        </motion.div>
 
         {/* Notifications Button & Dropdown */}
         <div className="relative">
