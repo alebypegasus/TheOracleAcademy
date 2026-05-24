@@ -20,6 +20,7 @@ import CertificatesView from './pages/Certificates';
 import WorkspaceView from './pages/Workspace';
 import SellerPage from './pages/SellerPage';
 import CartPage from './pages/CartPage';
+import AdminDashboard from './pages/AdminDashboard';
 
 // Standard Views still in components
 import { ChallengesView } from './components/ChallengesView';
@@ -205,6 +206,12 @@ function AppContent({
               />
             } />
 
+            <Route path="/admin/*" element={
+              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="h-full w-full">
+                <AdminDashboard currentUser={currentUser} />
+              </motion.div>
+            } />
+
             <Route path="/cart" element={
               <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} transition={{ duration: 0.3 }} className="py-6">
                 <CartPage />
@@ -330,7 +337,7 @@ export default function App() {
   const [themePreference, setThemePreference] = useState('dark');
   const [isDarkMode, setIsDarkMode] = useState(true);
   const [colorTheme, setColorTheme] = useState('oracle');
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [savedBirthChart, setSavedBirthChart] = useState<any>(null);
 
   const [profile, setProfile] = useState({
@@ -347,6 +354,27 @@ export default function App() {
     flashcardCompleted: false,
     completedJournal: false
   });
+
+  // Fetch Global Settings first
+  useEffect(() => {
+    fetch('/api/system/global')
+      .then(r => r.json())
+      .then(data => {
+        if (data && data.site_name) {
+          document.title = data.site_name;
+          
+          let link = document.querySelector("link[rel~='icon']") as HTMLLinkElement;
+          if (!link) {
+            link = document.createElement('link');
+            link.rel = 'icon';
+            document.getElementsByTagName('head')[0].appendChild(link);
+          }
+          if (data.favicon_url) link.href = data.favicon_url;
+        }
+      })
+      .catch(err => console.warn("Erro ao carregar configurações globais do sistema", err))
+      .finally(() => setIsLoading(false));
+  }, []);
 
   // Fetch all separated states from backend when user logs in
   useEffect(() => {

@@ -3,6 +3,8 @@ import authRoutes from "./auth.routes";
 import courseRoutes from "./course.routes";
 import marketplaceRoutes from "./marketplace.routes";
 import paymentRoutes from "./payment.routes";
+import adminRoutes from "./admin.routes";
+import globalSettingsRoutes from "./settings.routes";
 
 import { authMiddleware, AuthenticatedRequest } from "../middlewares/auth.middleware";
 import { GrimoireController } from "../controllers/grimoire.controller";
@@ -19,6 +21,8 @@ apiRouter.use("/auth", authRoutes);
 apiRouter.use("/courses", courseRoutes);
 apiRouter.use("/marketplace", marketplaceRoutes);
 apiRouter.use("/payments", paymentRoutes);
+apiRouter.use("/admin", adminRoutes);
+apiRouter.use("/system", globalSettingsRoutes);
 
 // Direct aliases under /api to match frontend fetches perfectly
 apiRouter.get("/user/sync", authMiddleware, AuthController.syncUserState);

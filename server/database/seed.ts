@@ -27,6 +27,8 @@ export async function initDB() {
           email TEXT UNIQUE NOT NULL,
           password TEXT NOT NULL,
           role TEXT NOT NULL DEFAULT 'aluno',
+          status TEXT DEFAULT 'ativo',
+          strikes INT DEFAULT 0,
           plan TEXT NOT NULL DEFAULT 'free',
           plan_expires_at TIMESTAMPTZ,
           is_paid BOOLEAN DEFAULT FALSE,
@@ -35,6 +37,9 @@ export async function initDB() {
         -- Add plan columns to existing tables if upgrading
         ALTER TABLE users ADD COLUMN IF NOT EXISTS plan TEXT NOT NULL DEFAULT 'free';
         ALTER TABLE users ADD COLUMN IF NOT EXISTS plan_expires_at TIMESTAMPTZ;
+        ALTER TABLE users ADD COLUMN IF NOT EXISTS status TEXT DEFAULT 'ativo';
+        ALTER TABLE users ADD COLUMN IF NOT EXISTS strikes INT DEFAULT 0;
+        
         CREATE TABLE IF NOT EXISTS profiles (
           id SERIAL PRIMARY KEY,
           user_id INT UNIQUE NOT NULL REFERENCES users(id) ON DELETE CASCADE,
@@ -106,8 +111,11 @@ export async function initDB() {
           likes INT DEFAULT 0,
           comments INT DEFAULT 0,
           date TIMESTAMPTZ DEFAULT NOW(),
-          tags TEXT DEFAULT '[]'
+          tags TEXT DEFAULT '[]',
+          status TEXT DEFAULT 'aprovado'
         );
+        ALTER TABLE community_posts ADD COLUMN IF NOT EXISTS status TEXT DEFAULT 'aprovado';
+        
         CREATE TABLE IF NOT EXISTS post_comments (
           id SERIAL PRIMARY KEY,
           post_id INT NOT NULL REFERENCES community_posts(id) ON DELETE CASCADE,
@@ -168,8 +176,11 @@ export async function initDB() {
           cover_image TEXT,
           hashtags TEXT DEFAULT '[]',
           file_url TEXT DEFAULT '',
+          status TEXT DEFAULT 'aprovado',
           date TIMESTAMPTZ DEFAULT NOW()
         );
+        ALTER TABLE marketplace_items ADD COLUMN IF NOT EXISTS status TEXT DEFAULT 'aprovado';
+        
         CREATE TABLE IF NOT EXISTS product_reviews (
           id SERIAL PRIMARY KEY,
           item_id INT NOT NULL REFERENCES marketplace_items(id) ON DELETE CASCADE,
@@ -219,6 +230,35 @@ export async function initDB() {
           expires_at TIMESTAMPTZ,
           created_at TIMESTAMPTZ DEFAULT NOW()
         );
+        CREATE TABLE IF NOT EXISTS global_settings (
+          id INT PRIMARY KEY DEFAULT 1,
+          site_name TEXT DEFAULT 'The Oracle Academy',
+          system_name TEXT DEFAULT 'Oracle System',
+          cnpj TEXT DEFAULT '',
+          company_info TEXT DEFAULT '',
+          favicon_url TEXT DEFAULT '/favicon.svg',
+          logo_url TEXT DEFAULT '/logo.svg',
+          sublogo_url TEXT DEFAULT '',
+          partners JSONB DEFAULT '[]',
+          ad_companies JSONB DEFAULT '[]',
+          updated_at TIMESTAMPTZ DEFAULT NOW()
+        );
+        CREATE TABLE IF NOT EXISTS ai_prompts (
+          id SERIAL PRIMARY KEY,
+          feature TEXT UNIQUE NOT NULL,
+          prompt_text TEXT NOT NULL,
+          description TEXT,
+          updated_at TIMESTAMPTZ DEFAULT NOW()
+        );
+        CREATE TABLE IF NOT EXISTS moderation_logs (
+          id SERIAL PRIMARY KEY,
+          admin_id INT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+          target_user_id INT REFERENCES users(id) ON DELETE SET NULL,
+          action TEXT NOT NULL,
+          reason TEXT,
+          details JSONB DEFAULT '{}',
+          created_at TIMESTAMPTZ DEFAULT NOW()
+        );
       `;
     }
 
@@ -234,6 +274,24 @@ export async function initDB() {
     console.log("[Database] Relational tables loaded successfully!");
 
     // --- SEED SECTIONS ---
+    
+    // 0. Seed Global Settings & Prompts
+    const settingsCount = await client.query("SELECT COUNT(*) FROM global_settings");
+    if (parseInt(settingsCount.rows[0].count, 10) === 0) {
+      await client.query(`
+        INSERT INTO global_settings (id, site_name, system_name, cnpj, company_info, favicon_url, logo_url, sublogo_url, partners, ad_companies)
+        VALUES (1, 'The Oracle Academy', 'Sistema Oráculo', '00.000.000/0001-00', 'The Oracle Academy LLC.', '/favicon.svg', '/logo.svg', '', '[]', '[]')
+      `);
+    }
+
+    const promptsCount = await client.query("SELECT COUNT(*) FROM ai_prompts");
+    if (parseInt(promptsCount.rows[0].count, 10) === 0) {
+      await client.query(`
+        INSERT INTO ai_prompts (feature, prompt_text, description) VALUES
+        ('oracle_reading', 'Você é o Oráculo, um mestre tarólogo. Responda com sabedoria...', 'Prompt principal de leitura de cartas do oráculo.'),
+        ('grimoire_assistant', 'Ajude o usuário a aprofundar suas anotações místicas.', 'Assistente do grimório para estudantes.')
+      `);
+    }
 
     // 1. Seed Admin User
     const adminCheck = await client.query("SELECT * FROM users WHERE email = 'admin@admin.com'");

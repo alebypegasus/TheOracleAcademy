@@ -3,7 +3,7 @@ import { Tabs, TabList, Tab, TabPanel } from 'react-aria-components';
 import { motion } from 'motion/react';
 import { 
   Home, BookOpen, Library, Layers, Trophy, FileBadge, Users,
-  Eye, Book, CreditCard, ChevronDown, Sparkles, Sun, Moon, LogOut, Monitor, ShoppingBag, X
+  Eye, Book, CreditCard, ChevronDown, Sparkles, Sun, Moon, LogOut, Monitor, ShoppingBag, X, ShieldAlert
 } from 'lucide-react';
 import { Tooltip } from '../ui/Tooltip';
 
@@ -38,6 +38,7 @@ export function Sidebar({ currentPath, themePreference, setThemePreference, colo
         { name: 'Google Workspace', path: '/workspace', icon: Layers },
         { name: 'Diretrizes', path: '/guidelines', icon: Book },
         { name: 'Ajuda & Suporte', path: '/support', icon: Sparkles },
+        ...(currentUser?.role === 'admin' ? [{ name: 'Administração', path: '/admin', icon: ShieldAlert }] : [])
       ]
     }
   ];
@@ -105,13 +106,13 @@ export function Sidebar({ currentPath, themePreference, setThemePreference, colo
             className="w-full"
           >
             <TabList className="flex w-full bg-slate-100 dark:bg-zinc-800/50 rounded-2xl h-12 p-1.5 shadow-inner" aria-label="Theme selection">
-              <Tab id="light" className="flex-1 h-full rounded-xl flex justify-center items-center text-slate-500 cursor-pointer outline-none data-[selected]:bg-white data-[selected]:dark:bg-zinc-700 data-[selected]:text-slate-900 data-[selected]:dark:text-zinc-100 data-[selected]:shadow transition-all" title="Modo Claro">
+              <Tab id="light" className="flex-1 h-full rounded-xl flex justify-center items-center text-slate-500 cursor-pointer outline-none data-[selected]:bg-white data-[selected]:dark:bg-zinc-700 data-[selected]:text-slate-900 data-[selected]:dark:text-zinc-100 data-[selected]:shadow transition-all">
                 <Sun className="w-4 h-4" />
               </Tab>
-              <Tab id="auto" className="flex-1 h-full rounded-xl flex justify-center items-center text-slate-500 cursor-pointer outline-none data-[selected]:bg-white data-[selected]:dark:bg-zinc-700 data-[selected]:text-slate-900 data-[selected]:dark:text-zinc-100 data-[selected]:shadow transition-all" title="Modo Automático">
+              <Tab id="auto" className="flex-1 h-full rounded-xl flex justify-center items-center text-slate-500 cursor-pointer outline-none data-[selected]:bg-white data-[selected]:dark:bg-zinc-700 data-[selected]:text-slate-900 data-[selected]:dark:text-zinc-100 data-[selected]:shadow transition-all">
                 <Monitor className="w-4 h-4" />
               </Tab>
-              <Tab id="dark" className="flex-1 h-full rounded-xl flex justify-center items-center text-slate-500 cursor-pointer outline-none data-[selected]:bg-white data-[selected]:dark:bg-zinc-700 data-[selected]:text-slate-900 data-[selected]:dark:text-zinc-100 data-[selected]:shadow transition-all" title="Modo Escuro">
+              <Tab id="dark" className="flex-1 h-full rounded-xl flex justify-center items-center text-slate-500 cursor-pointer outline-none data-[selected]:bg-white data-[selected]:dark:bg-zinc-700 data-[selected]:text-slate-900 data-[selected]:dark:text-zinc-100 data-[selected]:shadow transition-all">
                 <Moon className="w-4 h-4" />
               </Tab>
             </TabList>

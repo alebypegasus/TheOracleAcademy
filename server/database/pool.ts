@@ -21,9 +21,9 @@ export function getPool(): pg.Pool {
 
 // pool is used throughout the codebase - proxy it so existing code doesn't need changes
 export const pool = {
-  connect: (...args: any[]) => getPool().connect(...args),
-  query: (...args: any[]) => getPool().query(...args),
-  end: (...args: any[]) => getPool().end(...args),
+  connect: () => getPool().connect(),
+  query: (text: string, params?: any[]) => getPool().query(text, params),
+  end: () => getPool().end(),
 };
 
 export let useFallback = false;

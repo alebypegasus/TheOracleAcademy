@@ -4,9 +4,14 @@ CREATE TABLE IF NOT EXISTS users (
   email TEXT UNIQUE NOT NULL,
   password TEXT NOT NULL,
   role TEXT NOT NULL DEFAULT 'aluno', -- admin, aluno, vendedor
+  status TEXT DEFAULT 'ativo', -- ativo, suspenso, banido
+  strikes INT DEFAULT 0,
   is_paid BOOLEAN DEFAULT FALSE,
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
+
+ALTER TABLE users ADD COLUMN IF NOT EXISTS status TEXT DEFAULT 'ativo';
+ALTER TABLE users ADD COLUMN IF NOT EXISTS strikes INT DEFAULT 0;
 
 -- 2. Profiles Table
 CREATE TABLE IF NOT EXISTS profiles (
@@ -90,8 +95,11 @@ CREATE TABLE IF NOT EXISTS community_posts (
   likes INT DEFAULT 0,
   comments INT DEFAULT 0,
   date TIMESTAMPTZ DEFAULT NOW(),
-  tags TEXT DEFAULT '[]'
+  tags TEXT DEFAULT '[]',
+  status TEXT DEFAULT 'aprovado' -- aprovado, pendente, rejeitado
 );
+
+ALTER TABLE community_posts ADD COLUMN IF NOT EXISTS status TEXT DEFAULT 'aprovado';
 
 -- 8. Post Comments Table
 CREATE TABLE IF NOT EXISTS post_comments (
@@ -166,8 +174,11 @@ CREATE TABLE IF NOT EXISTS marketplace_items (
   cover_image TEXT,
   hashtags TEXT DEFAULT '[]',
   file_url TEXT DEFAULT '',
+  status TEXT DEFAULT 'aprovado', -- aprovado, pendente, rejeitado
   date TIMESTAMPTZ DEFAULT NOW()
 );
+
+ALTER TABLE marketplace_items ADD COLUMN IF NOT EXISTS status TEXT DEFAULT 'aprovado';
 
 -- 16. Product Reviews Table
 CREATE TABLE IF NOT EXISTS product_reviews (
@@ -211,5 +222,40 @@ CREATE TABLE IF NOT EXISTS purchases (
   amount NUMERIC(10,2) NOT NULL,
   transaction_id INT REFERENCES transactions(id) ON DELETE SET NULL,
   status TEXT NOT NULL DEFAULT 'pendente',
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- 20. Global System Settings Table (Singleton)
+CREATE TABLE IF NOT EXISTS global_settings (
+  id INT PRIMARY KEY DEFAULT 1,
+  site_name TEXT DEFAULT 'The Oracle Academy',
+  system_name TEXT DEFAULT 'Oracle System',
+  cnpj TEXT DEFAULT '',
+  company_info TEXT DEFAULT '',
+  favicon_url TEXT DEFAULT '/favicon.svg',
+  logo_url TEXT DEFAULT '/logo.svg',
+  sublogo_url TEXT DEFAULT '',
+  partners JSONB DEFAULT '[]',
+  ad_companies JSONB DEFAULT '[]',
+  updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- 21. AI Prompts Table
+CREATE TABLE IF NOT EXISTS ai_prompts (
+  id SERIAL PRIMARY KEY,
+  feature TEXT UNIQUE NOT NULL,
+  prompt_text TEXT NOT NULL,
+  description TEXT,
+  updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- 22. Moderation Logs Table
+CREATE TABLE IF NOT EXISTS moderation_logs (
+  id SERIAL PRIMARY KEY,
+  admin_id INT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  target_user_id INT REFERENCES users(id) ON DELETE SET NULL,
+  action TEXT NOT NULL,
+  reason TEXT,
+  details JSONB DEFAULT '{}',
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
