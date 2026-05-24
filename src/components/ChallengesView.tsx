@@ -1,14 +1,3 @@
-import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
-import { 
-  Trophy, Star, Shield, Award, Zap, CheckCircle2, 
-  Lock, CalendarDays, Flame, BookOpen, MapPin, 
-  Globe, ChevronRight, Crown 
-} from 'lucide-react';
-import { Book, Calendar } from 'lucide-react';
-import { SectionLock } from './ui/SectionLock';
-import { ChallengeHub } from './ChallengeHub';
-
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
@@ -170,7 +159,7 @@ export function ChallengesView({ profile, setProfile, grimoireEntries = [], curr
 
              {/* Dynamic Laboratory of Practice & Intuition */}
              <div className="mt-8 mb-6">
-               <ChallengeHub profile={profile} setProfile={setProfile} addGrimoireEntry={addGrimoireEntry} />
+               <ChallengeHub profile={profile} setProfile={setProfile} addGrimoireEntry={addGrimoireEntry} challenges={dbChallenges} setChallenges={setChallenges} />
              </div>
 
              {/* Leaderboard Section */}

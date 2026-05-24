@@ -57,6 +57,69 @@ const FLASHCARDS = [
   { id: 10, name: "A Casa (Lenormand)", type: "Família", detail: "Estabilidade, lar seguro, vida privada confortável e proteção." }
 ];
 
+const LENORMAND_QUIZ_QUESTIONS = [
+  {
+    id: 1,
+    question: "Qual carta do baralho Lenormand representa notícias velozes e a chegada de um mensageiro ou visitas?",
+    options: [
+      "O Cavaleiro (The Rider)",
+      "A Âncora (The Anchor)",
+      "O Caixão (The Coffin)",
+      "A Cruz (The Cross)"
+    ],
+    answer: 0,
+    explanation: "O Cavaleiro é a primeira carta de Lenormand. Ele rege a pressa, a velocidade, a entrega de mensagens rápidas e a chegada de novidades."
+  },
+  {
+    id: 2,
+    question: "Se a carta 'As Flores' (The Bouquet) for combinada com 'O Sol' (The Sun), qual atmosfera é revelada?",
+    options: [
+      "Notícias de perda de reputação e falência iminente.",
+      "Imensa felicidade, cura emocional primorosa, sucesso social e presentes abençoados.",
+      "A estagnação total nos estudos e traição no lar.",
+      "Viagem dolorosa para regiões isoladas."
+    ],
+    answer: 1,
+    explanation: "As Flores representam beleza, presentes e contentamento. O Sol irradia vitalidade e força vitoriosa. Combinadas, simbolizam o pico de satisfação e celebrações alegres."
+  },
+  {
+    id: 3,
+    question: "A carta mística 'O Chicote' (The Whip) carrega tradicionalmente qual vibração nas leituras de Lenormand?",
+    options: [
+      "Estabilidade profissional inabalável.",
+      "Silêncio absoluto e isolamento meditativo.",
+      "Discussões acaloradas, tensões físicas, disciplina, conflitos ou atividades repetitivas.",
+      "Abertura espontânea de novos contratos comerciais estáveis."
+    ],
+    answer: 2,
+    explanation: "O Chicote rege as forças de combate, debates acalorados, estresses, dores físicas e argumentos repetitivos."
+  },
+  {
+    id: 4,
+    question: "Quando 'A Aliança' (The Ring) aparece junto de 'A Chave' (The Key), qual segredo do éter é destrancado?",
+    options: [
+      "A quebra definitiva de um contrato de aluguel por ruína estrutural.",
+      "A resolução bem-sucedida de um compromisso, casamento auspicioso ou a confirmação segura de uma sociedade comercial.",
+      "Caminhos fechados por forças misteriosas do além.",
+      "O esquecimento místico de uma dívida antiga."
+    ],
+    answer: 1,
+    explanation: "A Aliança simboliza parcerias, uniões e contratos seguros. A Chave é o destravamento e a solução definitiva do problema. Juntas, garantem a consolidação feliz de uma proposta."
+  },
+  {
+    id: 5,
+    question: "Qual carta o místico cigano utiliza como foco para representar estabilidade a longo prazo, solidez, raízes e proteção espiritual?",
+    options: [
+      "A Árvore (The Tree)",
+      "As Nuvens (The Clouds)",
+      "A Serpente (The Snake)",
+      "Os Ratos (The Mice)"
+    ],
+    answer: 0,
+    explanation: "A Árvore rege a vitalidade física, a conexão ancestral, raízes firmes na terra e paciência para o crescimento a longo prazo."
+  }
+];
+
 interface ChallengeHubProps {
   profile: any;
   setProfile: any;
@@ -66,7 +129,7 @@ interface ChallengeHubProps {
 }
 
 export function ChallengeHub({ profile, setProfile, addGrimoireEntry, challenges, setChallenges }: ChallengeHubProps) {
-  const [activePlayground, setActivePlayground] = useState<'quiz' | 'flashcards' | 'journal'>('quiz');
+  const [activePlayground, setActivePlayground] = useState<'quiz' | 'flashcards' | 'journal' | 'lenormand'>('quiz');
 
   // Quiz States
   const [quizStep, setQuizStep] = useState(0);
@@ -85,8 +148,23 @@ export function ChallengeHub({ profile, setProfile, addGrimoireEntry, challenges
 
   // Journal States
   const [journalText, setJournalText] = useState('');
-  const [journalCard] = useState({ name: "Roda da Fortuna (Wheel of Fortune)", keywords: "Mudanças benéficas, destino, movimento e ciclos cósmicos" });
+  const [journalCard] = useState({ name: "Roda da Fortuna (Wheel of Fortune)", keywords: "Mudanças benéficas, destino, movemento e ciclos cósmicos" });
   const [journalCompletedPersist, setJournalCompletedPersist] = useState(false);
+
+  // Lenormand Weekly Challenge States
+  const [lenormandQuizStep, setLenormandQuizStep] = useState(0);
+  const [lenormandQuizSelectedOpt, setLenormandQuizSelectedOpt] = useState<number | null>(null);
+  const [lenormandQuizCorrect, setLenormandQuizCorrect] = useState(0);
+  const [lenormandQuizFinished, setLenormandQuizFinished] = useState(false);
+  const [lenormandQuizShowExplanation, setLenormandQuizShowExplanation] = useState(false);
+  const [lenormandQuizPassed, setLenormandQuizPassed] = useState(false);
+
+  const [interpretingSpreads, setInterpretingSpreads] = useState<boolean[]>([false, false, false]);
+  const [spreadFeedbacks, setSpreadFeedbacks] = useState<string[]>(['', '', '']);
+  const [spreadInputs, setSpreadInputs] = useState<string[]>(['', '', '']);
+  const [evaluatingIndex, setEvaluatingIndex] = useState<number | null>(null);
+  const [isEarlySubmission, setIsEarlySubmission] = useState(true);
+  const [isSubmittingChallenge, setIsSubmittingChallenge] = useState(false);
 
   useEffect(() => {
     if (challenges) {
@@ -230,27 +308,34 @@ export function ChallengeHub({ profile, setProfile, addGrimoireEntry, challenges
         </div>
         
         {/* Hub Action Choosers */}
-        <div className="flex bg-black/40 p-1 border border-white/5 rounded-xl self-stretch md:self-auto">
+        <div className="flex bg-black/40 p-1 border border-white/5 rounded-xl self-stretch md:self-auto overflow-x-auto hide-scrollbar">
           <button 
             onClick={() => setActivePlayground('quiz')}
-            className={`flex-1 md:flex-none px-4 py-2 rounded-lg text-xs font-black uppercase tracking-widest flex items-center justify-center gap-1.5 transition-all
+            className={`flex-1 md:flex-none px-3.5 py-2 rounded-lg text-xs font-black uppercase tracking-widest flex items-center justify-center gap-1.5 transition-all whitespace-nowrap
               ${activePlayground === 'quiz' ? 'bg-indigo-600 text-white' : 'text-slate-500 hover:text-slate-300'}`}
           >
             <HelpCircle className="w-3.5 h-3.5" /> Quiz {quizCompletedPersist && "✓"}
           </button>
           <button 
             onClick={() => setActivePlayground('flashcards')}
-            className={`flex-1 md:flex-none px-4 py-2 rounded-lg text-xs font-black uppercase tracking-widest flex items-center justify-center gap-1.5 transition-all
+            className={`flex-1 md:flex-none px-3.5 py-2 rounded-lg text-xs font-black uppercase tracking-widest flex items-center justify-center gap-1.5 transition-all whitespace-nowrap
               ${activePlayground === 'flashcards' ? 'bg-indigo-600 text-white' : 'text-slate-500 hover:text-slate-300'}`}
           >
             <Layers className="w-3.5 h-3.5" /> Flashcards ({reviewedCount}/10)
           </button>
           <button 
             onClick={() => setActivePlayground('journal')}
-            className={`flex-1 md:flex-none px-4 py-2 rounded-lg text-xs font-black uppercase tracking-widest flex items-center justify-center gap-1.5 transition-all
+            className={`flex-1 md:flex-none px-3.5 py-2 rounded-lg text-xs font-black uppercase tracking-widest flex items-center justify-center gap-1.5 transition-all whitespace-nowrap
               ${activePlayground === 'journal' ? 'bg-indigo-600 text-white' : 'text-slate-500 hover:text-slate-300'}`}
           >
             <Book className="w-3.5 h-3.5" /> Diário {journalCompletedPersist && "✓"}
+          </button>
+          <button 
+            onClick={() => setActivePlayground('lenormand')}
+            className={`flex-1 md:flex-none px-3.5 py-2 rounded-lg text-xs font-black uppercase tracking-widest flex items-center justify-center gap-1.5 transition-all whitespace-nowrap
+              ${activePlayground === 'lenormand' ? 'bg-indigo-600 text-white border border-indigo-400' : 'text-amber-500 hover:text-amber-300'}`}
+          >
+            <Award className="w-3.5 h-3.5 animate-pulse" /> Desafio Lenormand {challenges?.lenormandCompleted && "✓"}
           </button>
         </div>
       </div>
@@ -469,6 +554,340 @@ export function ChallengeHub({ profile, setProfile, addGrimoireEntry, challenges
                      <Zap className="w-4 h-4 fill-white" /> Concluir e Gravar no Grimório
                   </button>
                 </div>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* WEEKLY LENORMAND CHALLENGE MODULE */}
+        {activePlayground === 'lenormand' && (
+          <div className="w-full space-y-8">
+            <div className="bg-[#0b0819]/80 border border-yellow-500/20 p-6 rounded-[2rem] relative overflow-hidden">
+              <div className="absolute top-0 right-0 w-24 h-24 bg-yellow-500/5 rounded-full blur-2xl pointer-events-none" />
+              <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div>
+                  <h4 className="text-xl font-serif text-amber-300 flex items-center gap-2">
+                    <Award className="w-5 h-5 text-amber-500" /> Desafio Semanal: Sintonização Lenormand
+                  </h4>
+                  <p className="text-xs text-slate-400 mt-1 max-w-xl leading-relaxed">
+                    Instruções da Sabedoria Cigana: Obtenha pelo menos 90% (gabarite!) no quiz do módulo e sintonize com sucesso a sua intuição interpretando os 3 spreads sorteados pela IA.
+                  </p>
+                </div>
+                
+                <div className="bg-black/40 border border-white/5 py-3 px-5 rounded-2xl shrink-0 flex items-center gap-3">
+                  <div className="flex flex-col text-right">
+                    <span className="text-[9px] uppercase tracking-wider font-bold text-slate-500">Recompensa Potencial</span>
+                    <span className="text-base font-mono font-black text-amber-400">+350 XP + Bonus Antecipado (150 XP)</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Status checklist metrics tracker */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6 pt-6 border-t border-white/5">
+                <div className="flex items-center gap-3 bg-black/20 p-4 rounded-xl border border-white/5">
+                  <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-xs ${lenormandQuizPassed ? 'bg-emerald-500/15 text-emerald-400 border border-emerald-500/30' : 'bg-white/5 text-slate-500 border border-white/5'}`}>
+                    {lenormandQuizPassed ? "✓" : "1"}
+                  </div>
+                  <div>
+                    <p className="text-xs font-bold text-slate-200">Mini-Quiz de Oráculos</p>
+                    <p className="text-[10px] text-slate-400">Score mínimo: 90% ({lenormandQuizCorrect}/5 corretas - {Math.round((lenormandQuizCorrect / 5) * 100)}%)</p>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-3 bg-black/20 p-4 rounded-xl border border-white/5">
+                  <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-xs ${interpretingSpreads.filter(b => b).length === 3 ? 'bg-emerald-500/15 text-emerald-400 border border-emerald-500/30' : 'bg-white/5 text-slate-400 border border-white/5'}`}>
+                    {interpretingSpreads.filter(b => b).length === 3 ? "✓" : interpretingSpreads.filter(b => b).length}
+                  </div>
+                  <div>
+                    <p className="text-xs font-bold text-slate-200">Spreads de Prática Avaliados</p>
+                    <p className="text-[10px] text-slate-400">{interpretingSpreads.filter(b => b).length} de 3 spreads aprovados pela IA</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* If challenge is fully completed already in DB */}
+            {challenges?.lenormandCompleted ? (
+              <div className="text-center py-12 max-w-lg mx-auto space-y-6 animate-pulse">
+                <div className="w-20 h-20 rounded-full bg-amber-500/10 border-2 border-amber-500/30 flex items-center justify-center mx-auto shadow-2xl">
+                  <Trophy className="w-10 h-10 text-amber-500" />
+                </div>
+                <div className="space-y-2">
+                  <h4 className="text-3xl font-serif gold-text uppercase font-black">Desafio Coroado!</h4>
+                  <p className="text-sm text-slate-300">
+                    Você completou magistralmente este desafio e as recompensas mágicas de XP já foram agregadas à sua alma espiritual.
+                  </p>
+                  <p className="text-xs text-indigo-400 font-mono">* Sua conquista foi salva de forma persistente com os bônus adequados no salão de líderes.</p>
+                </div>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+                
+                {/* QUIZ COLUMN / PANEL */}
+                <div className="lg:col-span-5 bg-black/40 border border-white/5 p-5 sm:p-6 rounded-[2rem] space-y-4">
+                  <h4 className="text-sm font-black uppercase tracking-widest text-indigo-400 flex items-center gap-1.5">
+                    <HelpCircle className="w-4 h-4" /> Etapa 1: Quiz de Lenormand
+                  </h4>
+
+                  {lenormandQuizPassed ? (
+                    <div className="p-4 bg-emerald-500/10 border border-emerald-500/20 rounded-2xl text-center space-y-2 py-6">
+                      <CheckCircle className="w-10 h-10 text-emerald-400 mx-auto" />
+                      <p className="text-xs text-emerald-400 font-bold uppercase tracking-wider">Aprovado no Quiz (100%)!</p>
+                      <p className="text-[10px] text-slate-400">Sua sintonia teórica de oráculos está validada.</p>
+                    </div>
+                  ) : !lenormandQuizFinished ? (
+                    <div className="space-y-4">
+                      <div className="flex justify-between text-[10px] text-slate-500 font-mono">
+                        <span>QUESTÃO {lenormandQuizStep + 1} de 5</span>
+                        <span>Acertos: {lenormandQuizCorrect}</span>
+                      </div>
+                      <p className="text-sm font-serif text-slate-100 leading-relaxed italic animate-fadeIn">
+                        "{LENORMAND_QUIZ_QUESTIONS[lenormandQuizStep].question}"
+                      </p>
+
+                      <div className="space-y-2">
+                        {LENORMAND_QUIZ_QUESTIONS[lenormandQuizStep].options.map((opt, oIdx) => (
+                          <button
+                            key={oIdx}
+                            disabled={lenormandQuizShowExplanation}
+                            onClick={() => setLenormandQuizSelectedOpt(oIdx)}
+                            className={`w-full text-left p-3 rounded-xl text-xs transition-all border flex justify-between items-center ${
+                              lenormandQuizSelectedOpt === oIdx 
+                                ? 'bg-indigo-500/10 border-indigo-500 text-indigo-300' 
+                                : 'bg-black/20 border-white/5 text-slate-400 hover:bg-[#120f26]/40'
+                            } ${
+                              lenormandQuizShowExplanation && oIdx === LENORMAND_QUIZ_QUESTIONS[lenormandQuizStep].answer
+                                ? 'bg-emerald-500/10 border-emerald-500 text-emerald-400'
+                                : ''
+                            }`}
+                          >
+                            <span>{opt}</span>
+                          </button>
+                        ))}
+                      </div>
+
+                      {lenormandQuizShowExplanation && (
+                        <div className="p-3 bg-white/[0.02] border border-white/5 rounded-xl text-[11px] text-slate-400 leading-relaxed italic">
+                          {LENORMAND_QUIZ_QUESTIONS[lenormandQuizStep].explanation}
+                        </div>
+                      )}
+
+                      <div className="flex justify-end pt-2">
+                        {!lenormandQuizShowExplanation ? (
+                          <button
+                            disabled={lenormandQuizSelectedOpt === null}
+                            onClick={() => {
+                              const correct = lenormandQuizSelectedOpt === LENORMAND_QUIZ_QUESTIONS[lenormandQuizStep].answer;
+                              if (correct) {
+                                setLenormandQuizCorrect(prev => prev + 1);
+                              }
+                              setLenormandQuizShowExplanation(true);
+                            }}
+                            className="bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-2 px-4 rounded-xl text-[10px] uppercase tracking-wider"
+                          >
+                            Confirmar
+                          </button>
+                        ) : (
+                          <button
+                            onClick={() => {
+                              setLenormandQuizSelectedOpt(null);
+                              setLenormandQuizShowExplanation(false);
+                              if (lenormandQuizStep < 4) {
+                                setLenormandQuizStep(prev => prev + 1);
+                              } else {
+                                setLenormandQuizFinished(true);
+                                const perfect = lenormandQuizCorrect >= 5; // requires perfect score
+                                if (perfect) {
+                                  setLenormandQuizPassed(true);
+                                }
+                              }
+                            }}
+                            className="bg-indigo-500 hover:bg-indigo-400 text-white font-bold py-2 px-4 rounded-xl text-[10px] uppercase tracking-wider"
+                          >
+                            {lenormandQuizStep < 4 ? "Próxima" : "Encerrar Quiz"}
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="text-center space-y-4 py-4">
+                      <p className="text-xs text-slate-400">Você concluiu com pontuação de {lenormandQuizCorrect} / 5 ({Math.round((lenormandQuizCorrect/5)*100)}%)</p>
+                      
+                      {lenormandQuizCorrect < 5 ? (
+                        <div className="space-y-3">
+                          <p className="text-[11px] text-amber-500 italic">
+                            A egrégora exige pelo menos 90% (gabaritar todas as 5 questões deste mini-módulo) para validar sua sabedoria acadêmica de Lenormand.
+                          </p>
+                          <button
+                            onClick={() => {
+                              setLenormandQuizStep(0);
+                              setLenormandQuizSelectedOpt(null);
+                              setLenormandQuizCorrect(0);
+                              setLenormandQuizFinished(false);
+                              setLenormandQuizShowExplanation(false);
+                            }}
+                            className="bg-white/5 border border-white/10 hover:bg-white/10 text-slate-300 text-[10px] font-black uppercase tracking-wider py-2 px-4 rounded-xl transition-all"
+                          >
+                            Tentar Novamente
+                          </button>
+                        </div>
+                      ) : (
+                        <p className="text-xs text-emerald-400 font-bold">✓ Excelente! Quiz validado!</p>
+                      )}
+                    </div>
+                  )}
+                </div>
+
+                {/* ADVANCED SPREADS EVALUATION COLUMN */}
+                <div className="lg:col-span-7 bg-black/40 border border-white/5 p-5 sm:p-6 rounded-[2rem] space-y-6">
+                  <h4 className="text-sm font-black uppercase tracking-widest text-[#d97706] flex items-center gap-1.5">
+                    <BookOpen className="w-4 h-4 text-amber-500" /> Etapa 2: Interpretação de Combinatórias IA
+                  </h4>
+
+                  <div className="space-y-4">
+                    {[
+                      { idx: 0, title: "Spread #1: O Cavaleiro + O Trevo", desc: "Significado: Ação veloz trazendo sorte passageira ou pequenos lucros sob agilidade." },
+                      { idx: 1, title: "Spread #2: A Casa + O Navio", desc: "Significado: Planos de mudança estrutural, transição imobiliária ou viagem de parentes." },
+                      { idx: 2, title: "Spread #3: As Nuvens + O Sol", desc: "Significado: Dúvidas mentais passageiras que se dissipam sob a luz radiante da vitória." }
+                    ].map((spread) => (
+                      <div key={spread.idx} className={`p-4 rounded-2xl border ${interpretingSpreads[spread.idx] ? 'bg-emerald-500/5 border-emerald-500/20' : 'bg-black/20 border-white/5'} space-y-3`}>
+                        <div className="flex justify-between items-center">
+                          <span className="text-xs font-black text-slate-200">{spread.title}</span>
+                          {interpretingSpreads[spread.idx] ? (
+                            <span className="text-[10px] font-black uppercase tracking-widest text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded cursor-default">Validado</span>
+                          ) : (
+                            <span className="text-[10px] font-mono text-slate-500">Pendente</span>
+                          )}
+                        </div>
+                        <p className="text-[11px] text-slate-400 italic">Estude a combinação e descreva como você conecta as duas energias:</p>
+
+                        {!interpretingSpreads[spread.idx] ? (
+                          <div className="space-y-3">
+                            <textarea
+                              value={spreadInputs[spread.idx]}
+                              onChange={(e) => {
+                                const copy = [...spreadInputs];
+                                copy[spread.idx] = e.target.value;
+                                setSpreadInputs(copy);
+                              }}
+                              placeholder="Digite sua interpretação mística subjetiva aqui (mínimo de 5 caracteres)..."
+                              className="w-full bg-[#0a0712] border border-white/10 rounded-xl p-3 text-xs text-slate-200 focus:outline-none focus:border-indigo-500 h-20 resize-none leading-relaxed"
+                            />
+                            <div className="flex justify-end">
+                              <button
+                                disabled={evaluatingIndex !== null || spreadInputs[spread.idx].trim().length < 5}
+                                onClick={async () => {
+                                  setEvaluatingIndex(spread.idx);
+                                  try {
+                                    const res = await fetch('/api/challenges/lenormand-evaluate', {
+                                      method: 'POST',
+                                      headers: {
+                                        'Content-Type': 'application/json',
+                                        'x-user-id': profile.user_id?.toString() || '1'
+                                      },
+                                      body: JSON.stringify({
+                                        spreadIndex: spread.idx,
+                                        interpretation: spreadInputs[spread.idx]
+                                      })
+                                    });
+                                    const data = await res.json();
+                                    if (data.approved) {
+                                      const copyBool = [...interpretingSpreads];
+                                      copyBool[spread.idx] = true;
+                                      setInterpretingSpreads(copyBool);
+                                    }
+                                    const copyFb = [...spreadFeedbacks];
+                                    copyFb[spread.idx] = data.feedback;
+                                    setSpreadFeedbacks(copyFb);
+                                  } catch (e) {
+                                    console.error("Evaluation fail", e);
+                                  } finally {
+                                    setEvaluatingIndex(null);
+                                  }
+                                }}
+                                className="px-4 py-2 bg-slate-800 border border-white/10 text-[10px] font-black uppercase tracking-wider text-[#d97706] rounded-xl hover:bg-slate-700 hover:text-white transition-all disabled:opacity-30 inline-flex items-center gap-1.5"
+                              >
+                                {evaluatingIndex === spread.idx ? (
+                                  <>
+                                    Sintonizando com IA... <RefreshCw className="w-3" />
+                                  </>
+                                ) : (
+                                  <>Sintonizar e Avaliar</>
+                                )}
+                              </button>
+                            </div>
+                          </div>
+                        ) : null}
+
+                        {spreadFeedbacks[spread.idx] && (
+                          <div className="p-3 bg-[#0d2218]/45 border border-emerald-500/20 rounded-xl text-[10px] text-slate-300 leading-normal italic">
+                            <p className="font-bold text-emerald-400 mb-1">Feedback do Grande-Mestre Lenormand:</p>
+                            {spreadFeedbacks[spread.idx]}
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* FINAL RECOMMENDATIONS AND SUBMIT ACTION CARD */}
+                <div className="lg:col-span-12 bg-indigo-950/20 border border-indigo-500/20 p-6 rounded-[2rem] space-y-4">
+                  <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                    <div>
+                      <h5 className="text-sm font-bold text-slate-200">Pronto para selar o Pacto Semanal de XP?</h5>
+                      <p className="text-xs text-slate-400">Só é possível resgatar o selo após completar com excelência as duas etapas.</p>
+                      
+                      <div className="mt-3 flex items-center gap-5">
+                        <label className="flex items-center gap-2 text-xs font-black uppercase tracking-wider text-slate-300 cursor-pointer select-none">
+                          <input 
+                            type="checkbox" 
+                            checked={isEarlySubmission} 
+                            onChange={(e) => setIsEarlySubmission(e.target.checked)}
+                            className="w-4 h-4 rounded border-indigo-500 bg-black/60 text-indigo-500 focus:ring-0"
+                          />
+                          Marcar como Envio Antecedente (+150 XP de Bônus!)
+                        </label>
+                      </div>
+                    </div>
+
+                    <button
+                      disabled={!lenormandQuizPassed || interpretingSpreads.filter(b => b).length < 3 || isSubmittingChallenge}
+                      onClick={async () => {
+                        setIsSubmittingChallenge(true);
+                        try {
+                          const res = await fetch('/api/challenges/lenormand-submit', {
+                            method: 'POST',
+                            headers: {
+                              'Content-Type': 'application/json',
+                              'x-user-id': profile.user_id?.toString() || '1'
+                            },
+                            body: JSON.stringify({
+                              quizScore: 100,
+                              isEarly: isEarlySubmission
+                            })
+                          });
+                          const data = await res.json();
+                          if (res.ok && data.success) {
+                            setChallenges((prev: any) => ({
+                              ...prev,
+                              lenormandCompleted: true,
+                              lenormandEarly: isEarlySubmission
+                            }));
+                            triggerXpAward(data.xpAwarded);
+                          }
+                        } catch (e) {
+                          console.error(e);
+                        } finally {
+                          setIsSubmittingChallenge(false);
+                        }
+                      }}
+                      className="px-8 py-4 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-900 font-extrabold rounded-2xl text-[11px] uppercase tracking-[0.2em] transition-all disabled:opacity-20 shadow-[0_0_20px_rgba(245,158,11,0.2)]"
+                    >
+                      {isSubmittingChallenge ? "Concluindo..." : "Concluir Desafio & Capturar XP"}
+                    </button>
+                  </div>
+                </div>
+
               </div>
             )}
           </div>

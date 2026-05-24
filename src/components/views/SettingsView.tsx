@@ -19,6 +19,8 @@ export function SettingsView({ profile, setProfile }: any) {
   const [isWithdrawing, setIsWithdrawing] = useState(false);
   const [transactions, setTransactions] = useState<any[]>([]);
   const [loadingTx, setLoadingTx] = useState(false);
+  const [credentialsStatus, setCredentialsStatus] = useState<any>(null);
+  const [loadingCredentials, setLoadingCredentials] = useState(false);
 
   useEffect(() => {
      let isMounted = true;
@@ -38,7 +40,24 @@ export function SettingsView({ profile, setProfile }: any) {
            if (isMounted) setLoadingTx(false);
         }
      };
+
+     const loadCredentials = async () => {
+        setLoadingCredentials(true);
+        try {
+           const res = await fetch('/api/payments/validate-credentials');
+           const data = await res.json();
+           if (isMounted) {
+              setCredentialsStatus(data);
+           }
+        } catch(e) {
+           console.error(e);
+        } finally {
+           if (isMounted) setLoadingCredentials(false);
+        }
+     };
+
      loadTx();
+     loadCredentials();
      return () => { isMounted = false; };
   }, [profile.id]);
 
@@ -247,8 +266,61 @@ export function SettingsView({ profile, setProfile }: any) {
             </button>
           </div>
 
+          {/* GUIA DE CREDENCIAIS & AMBIENTE SANDBOX MERCADO PAGO */}
+          <div className="p-6 rounded-2xl border border-amber-500/20 bg-amber-500/[0.02] flex flex-col gap-4 mt-6">
+             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-white/5 pb-4">
+                <div className="flex gap-4">
+                   <div className="w-10 h-10 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center shrink-0">
+                      <Shield className="w-5 h-5 text-amber-500" />
+                   </div>
+                   <div>
+                      <h4 className="text-sm font-bold text-slate-100">
+                         Guia de Credenciais & Conexão Sandbox Mercado Pago
+                      </h4>
+                      <p className="text-xs text-slate-400 mt-1">Configure o ambiente de pagamentos do Mercado Pago localmente ou em produção.</p>
+                   </div>
+                </div>
+                
+                {/* Dynamic status chip */}
+                <div className="flex items-center gap-2">
+                   <span className="text-[10px] text-slate-500 uppercase tracking-wider font-mono">Status Detectado:</span>
+                   {loadingCredentials ? (
+                      <span className="text-[10px] bg-slate-800 text-slate-400 font-bold px-2.5 py-1 rounded-full animate-pulse">Consultando...</span>
+                   ) : credentialsStatus?.status === 'configured' ? (
+                      <span className="text-[10px] bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 font-black px-2.5 py-1 rounded-full uppercase tracking-wider">Conectado / Configurado</span>
+                   ) : (
+                      <span className="text-[10px] bg-amber-500/10 border border-amber-500/30 text-amber-400 font-black px-2.5 py-1 rounded-full uppercase tracking-wider">Sandbox / Não-Configurado</span>
+                   )}
+                </div>
+             </div>
+
+             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-xs text-slate-200 leading-relaxed">
+                <div className="space-y-3">
+                   <p className="font-bold text-slate-100">1. Como Obter suas Chaves Sandbox</p>
+                   <ol className="list-decimal pl-4 space-y-1.5 text-slate-400">
+                      <li>Acesse as <span className="text-amber-300">Suas Aplicações</span> no Painel do Desenvolvedor do Mercado Pago.</li>
+                      <li>Crie um novo aplicativo para o Oráculo ou selecione um existente.</li>
+                      <li>No menu lateral, vá em <span className="text-slate-300">Credenciais de Produção</span> ou <span className="text-slate-300">Credenciais de Teste</span> e copie o seu Access Token.</li>
+                   </ol>
+                </div>
+
+                <div className="space-y-3">
+                   <p className="font-bold text-slate-100">2. Configuração de Variáveis de Ambiente</p>
+                   <p className="text-slate-400">
+                      Para efetuar a conexão segura, configure a seguinte variável no seu painel ou arquivo <span className="text-indigo-400 font-mono">.env</span>:
+                   </p>
+                   <div className="bg-black/60 p-2.5 rounded-lg border border-white/5 font-mono text-[10px] text-indigo-300 select-all">
+                      MERCADO_PAGO_ACCESS_TOKEN=APP_USR-... ou TEST-...
+                   </div>
+                   <p className="text-[10px] text-zinc-500 italic">
+                      * Por padrão, a plataforma utiliza credenciais simuladas para testes rápidos de checkout caso a chave não esteja presente.
+                   </p>
+                </div>
+             </div>
+          </div>
+
           {/* WALLET / WITHDRAWAL SECTION (Mercado Pago API connected) */}
-          <div className="mt-12 mb-4 p-8 rounded-2xl border border-indigo-500/20 bg-gradient-to-br from-indigo-950/20 to-black relative overflow-hidden">
+          <div className="mt-8 mb-4 p-8 rounded-2xl border border-indigo-500/20 bg-gradient-to-br from-indigo-950/20 to-black relative overflow-hidden">
              <div className="absolute top-0 right-0 p-4 opacity-10">
                <Wallet className="w-24 h-24" />
              </div>
