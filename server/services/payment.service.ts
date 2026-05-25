@@ -1,10 +1,11 @@
 import { query, useFallback, fallbackDB } from "../database/pool";
 
-let MercadoPagoConfig: any, Preference: any;
+let MercadoPagoConfig: any, Preference: any, PreApproval: any;
 try {
   const mp = require("mercadopago");
   MercadoPagoConfig = mp.MercadoPagoConfig;
   Preference = mp.Preference;
+  PreApproval = mp.PreApproval;
 } catch (e) {
   console.error("[Payment] Mercado Pago SDK not initialized or requiring configurations.");
 }
@@ -89,14 +90,7 @@ export class PaymentService {
             price: itemPrice,
             title
           },
-          external_reference: userId.toString(),
-          back_urls: {
-            success: `${process.env.APP_URL || "http://localhost:3000"}/success`,
-            failure: `${process.env.APP_URL || "http://localhost:3000"}/failure`,
-            pending: `${process.env.APP_URL || "http://localhost:3000"}/pending`
-          },
-          auto_return: "approved",
-          notification_url: `${process.env.APP_URL || "http://localhost:3000"}/api/payments/webhook`
+          external_reference: userId.toString()
         }
       });
 
@@ -260,13 +254,14 @@ export class PaymentService {
 
     // 1. Fetch payment details from MP API if credentials exist
     const token = process.env.MERCADO_PAGO_ACCESS_TOKEN;
+    let detail: any = null;
     if (paymentId && token && !token.includes("TEST-1234567890")) {
       try {
         const fetchRes = await fetch(`https://api.mercadopago.com/v1/payments/${paymentId}`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         if (fetchRes.ok) {
-          const detail = await fetchRes.json();
+          detail = await fetchRes.json();
           if (detail.external_reference) {
             targetUserId = Number(detail.external_reference);
           }
@@ -378,55 +373,102 @@ export class PaymentService {
     }
   }
   // ======================================================
-  // SUBSCRIPTION METHODS
+  // SUBSCRIPTION METHODS (NOVA ARQUITETURA MENSAL/ANUAL)
   // ======================================================
 
-  // Create a Mercado Pago preference for a plan subscription
-  public static async createSubscriptionPreference(userId: number, plan: string, cycle: string): Promise<{ init_point: string; preferenceId: string }> {
-    const amount = PLAN_PRICES[plan]?.[cycle];
-    if (!amount) throw new Error(`Plano ou ciclo inválido: ${plan}/${cycle}`);
+  // Cria uma assinatura MENSAL (Checkout Pro - sem Brick)
+  public static async createMonthlySubscription(userId: number, plan: string, payerEmail: string): Promise<{ init_point: string }> {
+    const amount = PLAN_PRICES[plan]?.mensal;
+    if (!amount) throw new Error(`Plano inválido: ${plan}`);
 
     const label = PLAN_LABELS[plan] || plan;
-    const title = `${label} - ${cycle.charAt(0).toUpperCase() + cycle.slice(1)}`;
-    const externalRef = `sub:${plan}:${cycle}:${userId}`;
+    const title = `Assinatura Mensal - ${label}`;
+    const externalRef = `sub:${plan}:mensal:${userId}`;
+    const mpConfig = this.getMPConfig();
+
+    if (!mpConfig || !PreApproval) {
+      console.warn("[Subscription] MP SDK indisponível. Usando mock.");
+      const mockInitPoint = `${process.env.APP_URL || "http://localhost:3000"}/#/subscription?mock=true&plan=${plan}`;
+      await this.activatePlan(userId, plan, 'mensal', `mock_sub_${Date.now()}`, amount);
+      return { init_point: mockInitPoint };
+    }
+
+    try {
+      const preApproval = new PreApproval(mpConfig);
+      
+      const response = await preApproval.create({
+        body: {
+          reason: title,
+          external_reference: externalRef,
+          payer_email: payerEmail,
+          auto_recurring: {
+            frequency: 1,
+            frequency_type: 'months',
+            transaction_amount: amount,
+            currency_id: 'BRL'
+          },
+          back_url: `${process.env.APP_URL || "http://localhost:3000"}/#/subscription`,
+          status: "pending"
+        }
+      });
+      
+      console.log("[Subscription] PreApproval Pro criado:", response.id);
+      
+      return { init_point: response.init_point };
+    } catch (err: any) {
+      console.error('[Subscription] MP PreApproval error:', err);
+      throw new Error('Erro ao criar assinatura mensal: ' + err.message);
+    }
+  }
+
+  // Cria o pagamento ANUAL (Compra única com parcelamento)
+  public static async createAnnualPurchase(userId: number, plan: string, payerEmail: string): Promise<{ init_point: string, preferenceId: string }> {
+    const amount = PLAN_PRICES[plan]?.anual;
+    if (!amount) throw new Error(`Plano inválido: ${plan}`);
+
+    const label = PLAN_LABELS[plan] || plan;
+    const title = `Acesso de 1 Ano - ${label}`;
+    const externalRef = `sub:${plan}:anual:${userId}`;
     const mpConfig = this.getMPConfig();
 
     if (!mpConfig || !Preference) {
-      console.warn("[Subscription] MP SDK unavailable. Using simulated checkout.");
-      const mockPrefId = `pref_sub_${Date.now()}`;
-      // Simulate activation in dev
-      await this.activatePlan(userId, plan, cycle, mockPrefId, amount);
-      return {
-        init_point: `${process.env.APP_URL || 'http://localhost:3000'}/#/subscription?success=1&plan=${plan}`,
-        preferenceId: mockPrefId
-      };
+      console.warn("[Subscription] MP SDK indisponível. Usando mock.");
+      const mockPrefId = `pref_mock_${Date.now()}`;
+      const mockInitPoint = `${process.env.APP_URL || "http://localhost:3000"}/#/subscription?prefId=${mockPrefId}&price=${amount}`;
+      return { init_point: mockInitPoint, preferenceId: mockPrefId };
     }
 
     try {
       const preference = new Preference(mpConfig);
       const response = await preference.create({
         body: {
-          items: [{
-            id: `oracle-plan-${plan}-${cycle}`,
-            title,
-            quantity: 1,
-            unit_price: amount,
-            currency_id: 'BRL'
-          }],
+          items: [
+            {
+              id: `annual_${plan}`,
+              title: title,
+              quantity: 1,
+              unit_price: amount,
+              currency_id: "BRL",
+            }
+          ],
+          payer: {
+            email: payerEmail
+          },
           external_reference: externalRef,
           back_urls: {
-            success: `${process.env.APP_URL || 'http://localhost:3000'}/#/subscription?success=1&plan=${plan}`,
-            failure: `${process.env.APP_URL || 'http://localhost:3000'}/#/subscription?error=1`,
-            pending: `${process.env.APP_URL || 'http://localhost:3000'}/#/subscription?pending=1`
+            success: `${process.env.APP_URL || "http://localhost:3000"}/#/subscription?success=true`,
+            failure: `${process.env.APP_URL || "http://localhost:3000"}/#/subscription?failure=true`,
+            pending: `${process.env.APP_URL || "http://localhost:3000"}/#/subscription?pending=true`
           },
-          auto_return: 'approved',
-          notification_url: `${process.env.APP_URL || 'http://localhost:3000'}/api/payments/webhook`
+          auto_return: "approved"
         }
       });
+      
+      console.log("[Subscription] Annual Preference criada:", response.id);
       return { init_point: response.init_point, preferenceId: response.id };
     } catch (err: any) {
-      console.error('[Subscription] MP preference error:', err);
-      throw new Error('Erro ao criar preferência de pagamento: ' + err.message);
+      console.error('[Subscription] MP Preference error:', err);
+      throw new Error('Erro ao criar pagamento anual: ' + err.message);
     }
   }
 

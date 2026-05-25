@@ -191,6 +191,7 @@ export function SubscriptionView({ currentUser }: { currentUser?: any }) {
   const [successMsg, setSuccessMsg] = useState('');
   const [errorMsg, setErrorMsg] = useState('');
   const [subInfo, setSubInfo] = useState<any>(null);
+  const [checkoutData, setCheckoutData] = useState<{ amount: number; plan: string; cycle: string } | null>(null);
 
   // Get actual plan from user object
   const currentPlan = currentUser?.plan || 'free';
@@ -211,31 +212,38 @@ export function SubscriptionView({ currentUser }: { currentUser?: any }) {
       .catch(() => {});
   }, [currentUser]);
 
-  // Handle subscribe click
   const handleSubscribe = async (plan: string, selectedCycle: string) => {
     if (!currentUser) return;
     setLoading(true);
     setErrorMsg('');
     setSuccessMsg('');
-    const token = localStorage.getItem('oracle_token') || '';
+    
+    const authToken = localStorage.getItem('oracle_token') || '';
+    
     try {
       const res = await fetch('/api/payments/subscribe', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${authToken}`,
           'x-user-id': currentUser.id?.toString() || ''
         },
-        body: JSON.stringify({ plan, cycle: selectedCycle })
+        body: JSON.stringify({ 
+          plan: plan, 
+          cycle: selectedCycle, 
+          payerEmail: currentUser.email
+        })
       });
       const data = await res.json();
-      if (data.init_point) {
-        window.location.href = data.init_point;
-      } else if (data.error) {
+      
+      if (data.error) {
         setErrorMsg(data.error);
+      } else if (data.init_point) {
+        setSuccessMsg("Redirecionando para o ambiente seguro de pagamento...");
+        window.location.href = data.init_point;
       }
     } catch (err: any) {
-      setErrorMsg('Erro ao iniciar pagamento. Tente novamente.');
+      setErrorMsg('Erro ao iniciar plano. Tente novamente.');
     } finally {
       setLoading(false);
     }
@@ -259,6 +267,7 @@ export function SubscriptionView({ currentUser }: { currentUser?: any }) {
 
       {/* Header */}
       <div className="mb-12 text-center flex flex-col items-center w-full max-w-3xl">
+
         <div className="inline-flex items-center gap-2 text-xs uppercase tracking-widest text-amber-500/70 border border-amber-500/20 rounded-full px-4 py-1.5 mb-5">
           <Star className="w-3 h-3" />
           Portal das Assinaturas

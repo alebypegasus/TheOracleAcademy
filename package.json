@@ -13,6 +13,7 @@
     "@heroui/react": "^3.0.4",
     "@heroui/system": "^2.4.28",
     "@heroui/theme": "^2.4.26",
+    "@mercadopago/sdk-react": "^1.0.7",
     "@tinymce/tinymce-react": "^6.3.0",
     "@types/pg": "^8.20.0",
     "bcrypt": "^6.0.0",

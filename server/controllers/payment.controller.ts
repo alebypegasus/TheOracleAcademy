@@ -97,23 +97,33 @@ export class PaymentController {
     }
   }
 
-  // 7. POST /api/payments/subscribe — Create subscription preference
+  // 7. POST /api/payments/subscribe — Create subscription (Preapproval) or Annual (Preference)
   public static async subscribe(req: AuthenticatedRequest, res: Response) {
     const userId = req.user?.id || Number(req.headers["x-user-id"]);
-    const { plan, cycle = 'mensal' } = req.body;
+    const { plan, cycle = 'mensal', payerEmail } = req.body;
+    
     if (!userId) return res.status(401).json({ error: "Não autorizado" });
     if (!plan || !['medium', 'master'].includes(plan)) {
       return res.status(400).json({ error: "Plano inválido. Use 'medium' ou 'master'." });
     }
-    if (!['mensal', 'trimestral', 'anual'].includes(cycle)) {
-      return res.status(400).json({ error: "Ciclo inválido. Use 'mensal', 'trimestral' ou 'anual'." });
+    if (!['mensal', 'anual'].includes(cycle)) {
+      return res.status(400).json({ error: "Ciclo inválido. Use 'mensal' ou 'anual'." });
     }
+    if (!payerEmail) {
+      return res.status(400).json({ error: "E-mail do pagador é obrigatório." });
+    }
+    
     try {
-      const result = await PaymentService.createSubscriptionPreference(userId, plan, cycle);
-      return res.json(result);
+      if (cycle === 'mensal') {
+        const result = await PaymentService.createMonthlySubscription(userId, plan, payerEmail);
+        return res.json(result);
+      } else {
+        const result = await PaymentService.createAnnualPurchase(userId, plan, payerEmail);
+        return res.json(result);
+      }
     } catch (err: any) {
       console.error("Subscribe Controller Error:", err);
-      return res.status(500).json({ error: err.message || "Erro ao iniciar assinatura" });
+      return res.status(500).json({ error: err.message || "Erro ao iniciar plano" });
     }
   }
 

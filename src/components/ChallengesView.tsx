@@ -114,7 +114,9 @@ export function ChallengesView({ profile, setProfile, grimoireEntries = [], curr
              <p className="text-base text-slate-400 mb-8 max-w-md leading-relaxed">
                Participe de desafios sazonais, compita com a comunidade no quadro de líderes nacional e expanda seus distintivos assinando o plano Premium.
              </p>
-             <button className="px-10 py-4 bg-gradient-to-r from-amber-600 to-amber-500 text-slate-900 font-bold rounded-full text-sm uppercase tracking-wider hover:scale-105 transition-transform shadow-[0_0_20px_rgba(245,158,11,0.3)]">
+             <button 
+               onClick={() => { window.location.hash = '#/subscription'; }}
+               className="px-10 py-4 bg-gradient-to-r from-amber-600 to-amber-500 text-slate-900 font-bold rounded-full text-sm uppercase tracking-wider hover:scale-105 transition-transform shadow-[0_0_20px_rgba(245,158,11,0.3)]">
                Tornar-se Premium
              </button>
           </div>

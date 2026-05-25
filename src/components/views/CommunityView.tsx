@@ -10,9 +10,11 @@ import {
   RefreshCw, Calendar, Check, AlertCircle, ShoppingBag, 
   MessageCircle, FileText, UserCheck, UserPlus, CornerUpRight, 
   Play, File, Link, BookOpen, Crown, ExternalLink, MoonStar,
-  FileCode, Quote, GripVertical, CheckSquare, Sparkle, AlertTriangle, Upload
+  FileCode, Quote, GripVertical, CheckSquare, Sparkle, AlertTriangle, Upload, Clock, Flame,
+  HelpCircle, GraduationCap, Settings2
 } from 'lucide-react';
 import TextareaAutosize from 'react-textarea-autosize';
+import { CheckoutBrick } from '../payments/CheckoutBrick';
 
 // Base initial group data (Covens)
 const DEFAULT_COVENS = [
@@ -229,6 +231,7 @@ export function CommunityView({ currentUser }: { currentUser: any }) {
   const [purchasingProduct, setPurchasingProduct] = useState<any>(null);
   const [purchaseStep, setPurchaseStep] = useState<'confirm' | 'statement'>('confirm');
   const [purchaseSuccessReceipt, setPurchaseSuccessReceipt] = useState<any>(null);
+  const [checkoutPreferenceId, setCheckoutPreferenceId] = useState<string | null>(null);
 
   // Ref composer reference
   const composerTextareaRef = useRef<HTMLTextAreaElement>(null);
@@ -552,7 +555,10 @@ export function CommunityView({ currentUser }: { currentUser: any }) {
       });
       const data = await res.json();
       
-      if (data.init_point) {
+      if (data.preferenceId) {
+        setCheckoutPreferenceId(data.preferenceId);
+        return; // Pause the simulated execution, rely on the brick callback
+      } else if (data.init_point) {
         // Redirecionamento completo funcional para o Mercado Pago
         window.open(data.init_point, '_blank');
       } else {
@@ -1125,7 +1131,7 @@ export function CommunityView({ currentUser }: { currentUser: any }) {
 
                     {/* MYSTICAL TEMPLATES GALLERY */}
                     <div className="bg-black/20 p-4.5 rounded-xl border border-white/5">
-                      <label className="block text-[10px] text-zinc-400 uppercase tracking-widest mb-2 font-bold flex items-center gap-1">
+                      <label className="text-[10px] text-zinc-400 uppercase tracking-widest mb-2 font-bold flex items-center gap-1">
                         <Sparkles className="w-3.5 h-3.5 text-amber-400 animate-pulse" /> Galeria Astral de Modelos de Mídias
                       </label>
                       <p className="text-[9px] text-slate-500 mb-3">Selecione uma imagem mística refinada com apenas um clique para ilustrar seu post de imediato:</p>
@@ -1705,7 +1711,7 @@ export function CommunityView({ currentUser }: { currentUser: any }) {
                     
                     {/* Sort Selector options */}
                     <div className="flex items-center gap-2 text-[10px] bg-black/40 border border-white/5 px-3 py-1 rounded-xl">
-                      <span className="text-slate-500 uppercase font-black uppercase tracking-wider">Classificar:</span>
+                      <span className="text-slate-500 uppercase font-black tracking-wider">Classificar:</span>
                       <button 
                         onClick={() => setCommentsSortOrder('newest')}
                         className={`px-2 py-0.5 rounded transition-all font-bold ${commentsSortOrder === 'newest' ? 'bg-indigo-600 text-white shadow' : 'text-slate-400 hover:text-slate-200'}`}
@@ -2062,6 +2068,42 @@ export function CommunityView({ currentUser }: { currentUser: any }) {
                   </div>
                 )}
 
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+      {/* ==================================== MODAL: CHECKOUT BRICK ==================================== */}
+      <AnimatePresence>
+        {checkoutPreferenceId && (
+          <div className="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 flex items-center justify-center p-4 overflow-y-auto">
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              className="w-full max-w-2xl bg-[#09071c] border-2 border-indigo-500/50 rounded-2xl overflow-hidden shadow-2xl relative mt-10 mb-10"
+            >
+              <button 
+                onClick={() => setCheckoutPreferenceId(null)}
+                className="absolute top-4 right-4 p-1.5 bg-black/50 hover:bg-white/5 rounded-full text-zinc-400 z-10"
+              >
+                <X className="w-4 h-4" />
+              </button>
+
+              <div className="p-6 space-y-6 text-left relative z-0">
+                <div className="text-center pb-2">
+                  <h3 className="text-lg font-serif text-[#9d8ff7] font-black uppercase tracking-widest flex items-center gap-1.5 justify-center">
+                    <Zap className="w-4 h-4 text-amber-400 animate-pulse" /> Pagamento Seguro
+                  </h3>
+                </div>
+                
+                <CheckoutBrick 
+                  preferenceId={checkoutPreferenceId} 
+                  onSuccess={() => {
+                    setCheckoutPreferenceId(null);
+                    setPurchaseStep('statement');
+                  }}
+                />
               </div>
             </motion.div>
           </div>

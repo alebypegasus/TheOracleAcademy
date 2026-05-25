@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { ShoppingCart, Trash2, ArrowLeft, CreditCard, Sparkles, CheckCircle, Wallet, HelpCircle } from 'lucide-react';
+import { ShoppingCart, Trash2, ArrowLeft, CreditCard, Sparkles, CheckCircle, Wallet, HelpCircle, X } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useCart } from '../../hooks/useCart';
+import { CheckoutBrick } from '../../components/payments/CheckoutBrick';
 
 export default function CartPage() {
   const navigate = useNavigate();
@@ -14,6 +15,9 @@ export default function CartPage() {
     getTax, 
     getTotal, 
     checkoutLoading,
+    checkoutUrl,
+    checkoutPreferenceId,
+    setCheckoutPreferenceId,
     checkoutWithMercadoPago,
     completeSimulationPurchase 
   } = useCart();
@@ -23,10 +27,12 @@ export default function CartPage() {
   const [pixSimulatedCode, setPixSimulatedCode] = useState<string | null>(null);
 
   const handleCheckoutMercadoPago = async () => {
-    const initPoint = await checkoutWithMercadoPago();
-    if (initPoint) {
+    const res = await checkoutWithMercadoPago();
+    if (res && res.preferenceId) {
+      // Preference saved to state, will render CheckoutBrick
+    } else if (res && res.init_point) {
       // Open Mercado Pago checkout flow
-      window.open(initPoint, '_blank');
+      window.open(res.init_point, '_blank');
     } else {
       // If MP credentials aren't set, trigger local PIX flow automatically
       triggerPixSimulation();
@@ -263,6 +269,42 @@ export default function CartPage() {
           </div>
         )}
       </div>
+      <AnimatePresence>
+        {checkoutPreferenceId && (
+          <div className="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 flex items-center justify-center p-4 overflow-y-auto">
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              className="w-full max-w-2xl bg-[#09071c] border-2 border-indigo-500/50 rounded-2xl overflow-hidden shadow-2xl relative mt-10 mb-10"
+            >
+              <button 
+                onClick={() => setCheckoutPreferenceId(null)}
+                className="absolute top-4 right-4 p-1.5 bg-black/50 hover:bg-white/5 rounded-full text-zinc-400 z-10"
+              >
+                <X className="w-4 h-4" />
+              </button>
+
+              <div className="p-6 space-y-6 text-left relative z-0">
+                <div className="text-center pb-2">
+                  <h3 className="text-lg font-serif text-[#9d8ff7] font-black uppercase tracking-widest flex items-center gap-1.5 justify-center">
+                    <Sparkles className="w-4 h-4 text-amber-400 animate-pulse" /> Pagamento Seguro
+                  </h3>
+                </div>
+                
+                <CheckoutBrick 
+                  preferenceId={checkoutPreferenceId} 
+                  onSuccess={() => {
+                    setCheckoutPreferenceId(null);
+                    setPaymentSuccess(true);
+                    clearCart();
+                  }}
+                />
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

@@ -59,7 +59,9 @@ export function CurrentCourseCard({ searchQuery, currentUser, onNavigate }: { se
           <Lock className="w-12 h-12 text-rose-400 mb-4 opacity-80" />
           <h3 className="text-2xl font-serif text-slate-200 mb-2 drop-shadow-md">Conteúdo Premium</h3>
           <p className="text-sm text-slate-400 mb-6 text-center max-w-sm">Dê um passo além na sua jornada espiritual. Faça o upgrade para acessar este e outros cursos exclusivos de maestria.</p>
-          <button className="px-8 py-3 bg-gradient-to-r from-amber-600 via-amber-500 to-amber-400 text-slate-900 font-bold rounded-full text-sm uppercase tracking-widest shadow-[0_0_20px_rgba(245,158,11,0.4)] hover:scale-105 transition-transform">
+          <button 
+            onClick={() => { if(onNavigate) onNavigate('/subscription'); else window.location.hash = '#/subscription'; }}
+            className="px-8 py-3 bg-gradient-to-r from-amber-600 via-amber-500 to-amber-400 text-slate-900 font-bold rounded-full text-sm uppercase tracking-widest shadow-[0_0_20px_rgba(245,158,11,0.4)] hover:scale-105 transition-transform">
             Destravar Sabedoria
           </button>
         </div>

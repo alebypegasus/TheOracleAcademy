@@ -19,6 +19,7 @@ export function useCart() {
 
   const [checkoutLoading, setCheckoutLoading] = useState(false);
   const [checkoutUrl, setCheckoutUrl] = useState<string | null>(null);
+  const [checkoutPreferenceId, setCheckoutPreferenceId] = useState<string | null>(null);
 
   useEffect(() => {
     localStorage.setItem('oracle_cart', JSON.stringify(cartItems));
@@ -36,6 +37,7 @@ export function useCart() {
   const clearCart = () => {
     setCartItems([]);
     setCheckoutUrl(null);
+    setCheckoutPreferenceId(null);
   };
 
   const getSubtotal = () => {
@@ -51,15 +53,16 @@ export function useCart() {
     return getSubtotal() + getTax();
   };
 
-  const checkoutWithMercadoPago = async (): Promise<string | null> => {
+  const checkoutWithMercadoPago = async (): Promise<any | null> => {
     if (cartItems.length === 0) return null;
     setCheckoutLoading(true);
     try {
       const itemIds = cartItems.map(item => item.id.toString());
       const res = await api.payment.createPreference(itemIds);
-      if (res && res.init_point) {
-        setCheckoutUrl(res.init_point);
-        return res.init_point;
+      if (res) {
+        if (res.preferenceId) setCheckoutPreferenceId(res.preferenceId);
+        if (res.init_point) setCheckoutUrl(res.init_point);
+        return res;
       }
       return null;
     } catch (error) {
@@ -100,6 +103,8 @@ export function useCart() {
     getTotal,
     checkoutLoading,
     checkoutUrl,
+    checkoutPreferenceId,
+    setCheckoutPreferenceId,
     checkoutWithMercadoPago,
     completeSimulationPurchase
   };
