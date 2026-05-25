@@ -161,7 +161,7 @@ export function CalendarWidget({ grimoireEntries = [], addGrimoireEntry }: any) 
   };
 
   return (
-    <div className="glass-panel p-6 rounded-[2.5rem] flex flex-col items-center justify-center relative overflow-hidden group border border-indigo-500/10 shadow-xl shadow-indigo-900/5">
+    <div className="h-full w-full p-6 flex flex-col items-center justify-center relative overflow-hidden group">
       <div className="absolute top-0 right-0 w-32 h-32 theme-bg-gradient blur-[60px] pointer-events-none" />
       <div className="flex w-full items-center justify-between mb-6 relative z-10">
         <div className="flex items-center gap-2 text-slate-200">

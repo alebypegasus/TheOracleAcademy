@@ -19,7 +19,7 @@ export function DailyChallenges({ onNavigate, profile, grimoireEntries, currentU
   ];
 
   return (
-    <div className="glass-panel p-6 rounded-2xl flex flex-col h-full relative overflow-hidden">
+    <div className="h-full w-full p-6 flex flex-col relative overflow-hidden">
       {isLocked && (
         <div className="absolute inset-0 z-30 bg-black/60 backdrop-blur-[2px] flex flex-col items-center justify-center rounded-2xl p-6 text-center">
           <Lock className="w-10 h-10 text-rose-400 mb-3 opacity-80" />

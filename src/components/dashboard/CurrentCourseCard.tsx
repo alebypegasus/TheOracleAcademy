@@ -37,7 +37,7 @@ export function CurrentCourseCard({ searchQuery, currentUser, onNavigate }: { se
 
   if (filteredCourses.length === 0) {
     return (
-      <div className="glass-panel p-8 rounded-2xl flex flex-col items-center justify-center text-center min-h-[300px] relative">
+      <div className="h-full w-full p-8 flex flex-col items-center justify-center text-center min-h-[300px] relative">
         <SectionLock isPaid={currentUser?.isPaid} className="absolute top-4 right-4" />
         <Info className="w-12 h-12 text-slate-500 mb-4 opacity-50" />
         <h3 className="text-xl font-serif text-slate-300">Nenhum curso corresponde à sua busca.</h3>
@@ -50,7 +50,7 @@ export function CurrentCourseCard({ searchQuery, currentUser, onNavigate }: { se
   const isLocked = !currentUser?.isPaid;
 
   return (
-    <div className="glass-panel p-1 rounded-2xl relative overflow-hidden group border border-indigo-500/20 hover:border-indigo-500/40 transition-colors shadow-2xl shadow-indigo-900/10">
+    <div className="h-full w-full p-1 relative overflow-hidden group transition-colors flex flex-col">
       <SectionLock isPaid={currentUser?.isPaid} className="absolute top-4 right-4" />
       <div className="absolute inset-0 theme-bg-gradient opacity-60 z-0 pointer-events-none" />
       

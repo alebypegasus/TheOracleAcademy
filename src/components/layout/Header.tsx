@@ -175,69 +175,89 @@ export function Header({ searchQuery, setSearchQuery, profile, currentUser, onMe
                   animate={{ opacity: 1, y: 0, scale: 1 }} 
                   exit={{ opacity: 0, y: 12, scale: 0.95 }}
                   transition={{ duration: 0.2 }}
-                  className="absolute top-full right-0 mt-3 w-80 glass-panel border border-indigo-500/20 rounded-2xl shadow-2xl overflow-hidden z-50 max-h-[460px] flex flex-col"
+                  className="absolute top-full right-0 mt-3 w-80 sm:w-96 glass-panel border border-white/10 rounded-3xl shadow-2xl overflow-hidden z-50 max-h-[500px] flex flex-col bg-[#090514]/90 backdrop-blur-3xl"
                 >
-                  <div className="p-4 border-b border-white/5 bg-white/[0.02] flex items-center justify-between shrink-0">
-                    <div>
-                      <h4 className="text-sm font-semibold text-slate-200">Sinais do Éter</h4>
-                      <p className="text-[10px] text-slate-500">Notificações e Sintonias</p>
+                  <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-500/5 blur-[40px] rounded-full pointer-events-none" />
+                  
+                  <div className="p-5 border-b border-white/5 flex items-center justify-between shrink-0 relative z-10">
+                    <div className="flex items-center gap-2">
+                      <Bell className="w-4 h-4 text-indigo-400" />
+                      <h4 className="text-base font-serif text-slate-100">Atividades</h4>
                     </div>
                     {unreadCount > 0 && (
-                      <button 
-                        onClick={handleMarkReadAll} 
-                        className="text-[10px] text-indigo-400 hover:text-indigo-300 font-mono underline hover:no-underline transition-colors cursor-pointer"
-                      >
-                        Limpar Silencioso
-                      </button>
+                      <span className="text-[10px] font-bold tracking-widest uppercase bg-indigo-500/20 text-indigo-300 px-2.5 py-1 rounded-full border border-indigo-500/20 cursor-pointer hover:bg-indigo-500/30 transition-colors" onClick={handleMarkReadAll}>
+                        {unreadCount} Novas
+                      </span>
                     )}
                   </div>
                   
-                  <div className="overflow-y-auto divide-y divide-white/5 scrollbar-thin">
+                  <div className="overflow-y-auto p-4 flex flex-col gap-3 scrollbar-thin relative z-10">
                     {notifications.length > 0 ? (
-                      notifications.map(n => {
+                      notifications.map((n, i) => {
                         let Icon = Sparkles;
-                        let iconBg = 'bg-indigo-500/10 text-indigo-400 border border-indigo-500/20';
+                        let borderColor = 'border-indigo-500/20';
+                        let iconColor = 'text-indigo-400';
+                        
                         if (n.type === 'like') {
                           Icon = Heart;
-                          iconBg = 'bg-rose-500/10 text-rose-400 border border-rose-500/20';
+                          borderColor = 'border-rose-500/20';
+                          iconColor = 'text-rose-400';
                         } else if (n.type === 'certificate') {
                           Icon = Award;
-                          iconBg = 'bg-amber-500/10 text-amber-400 border border-amber-500/20';
+                          borderColor = 'border-amber-500/20';
+                          iconColor = 'text-amber-400';
                         } else if (n.type === 'challenge') {
                           Icon = Flame;
-                          iconBg = 'bg-orange-500/10 text-orange-400 border border-orange-500/20';
+                          borderColor = 'border-orange-500/20';
+                          iconColor = 'text-orange-400';
                         }
 
                         return (
-                          <div 
-                            key={n.id} 
+                          <motion.div
+                            key={n.id}
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: Math.min(i * 0.05, 0.5), duration: 0.3 }}
                             onClick={() => {
                               if (n.type === 'like') handleResultClick('/community');
                               else if (n.type === 'certificate') handleResultClick('/certificates');
                               else if (n.type === 'challenge') handleResultClick('/challenges');
                             }}
-                            className={`p-4 flex gap-3 hover:bg-white/[0.03] transition-colors cursor-pointer ${!n.isRead ? 'bg-indigo-500/[0.02]' : ''}`}
+                            className={`flex items-start gap-4 p-4 rounded-2xl border bg-black/20 hover:bg-white/5 transition-all duration-300 cursor-pointer group hover:scale-[1.02] shadow-sm hover:shadow-xl hover:shadow-black/50 ${borderColor}`}
                           >
-                            <div className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 ${iconBg}`}>
-                              <Icon className="w-5 h-5" />
+                            <div className="flex-shrink-0 mt-0.5">
+                              <div className="w-8 h-8 rounded-full flex items-center justify-center bg-black/40 border border-white/5 group-hover:scale-110 group-hover:rotate-12 transition-transform duration-300">
+                                <Icon className={`w-4 h-4 ${iconColor}`} />
+                              </div>
                             </div>
-                            <div className="space-y-1">
-                              <p className={`text-xs leading-relaxed ${!n.isRead ? 'text-slate-200 font-medium' : 'text-slate-400'}`}>
+                            <div className="flex-1 min-w-0">
+                              <p className={`text-sm truncate transition-colors ${!n.isRead ? 'font-bold text-slate-200 group-hover:text-white' : 'font-medium text-slate-400 group-hover:text-slate-300'}`}>
                                 {n.text}
                               </p>
-                              <span className="text-[9px] text-slate-500 font-mono">
-                                {n.createdAt ? new Date(n.createdAt).toLocaleDateString('pt-BR', { hour: '2-digit', minute: '2-digit' }) : 'Vibração Ativa'}
-                              </span>
+                              <div className="text-[10px] text-slate-500 whitespace-nowrap mt-1 font-mono">
+                                {n.createdAt ? new Date(n.createdAt).toLocaleDateString('pt-BR', { hour: '2-digit', minute: '2-digit' }) : 'Recente'}
+                              </div>
                             </div>
-                          </div>
+                            {!n.isRead && (
+                              <div className="w-2 h-2 rounded-full bg-indigo-400 mt-2 flex-shrink-0 shadow-[0_0_8px_rgba(129,140,248,0.8)]" />
+                            )}
+                          </motion.div>
                         );
                       })
                     ) : (
-                      <div className="p-8 text-center space-y-2">
-                        <Sparkles className="w-8 h-8 text-slate-600 mx-auto animate-pulse" />
-                        <p className="text-xs text-slate-500">Seu éter está limpo e sintonizado. Nenhuma nova transmissão.</p>
+                      <div className="py-8 text-center flex flex-col items-center justify-center">
+                        <div className="w-12 h-12 rounded-full bg-black/40 border border-white/5 flex items-center justify-center mb-3">
+                          <Bell className="w-5 h-5 text-slate-600" />
+                        </div>
+                        <p className="text-xs text-slate-500">Nenhuma atividade no momento.</p>
                       </div>
                     )}
+                  </div>
+                  
+                  <div className="p-4 border-t border-white/5 shrink-0 relative z-10">
+                    <button className="w-full py-2.5 text-xs font-bold uppercase tracking-wider text-slate-400 hover:text-indigo-300 transition-colors border border-transparent hover:border-indigo-500/20 rounded-xl hover:bg-indigo-500/10">
+                      Histórico Completo
+                    </button>
                   </div>
                 </motion.div>
               </>

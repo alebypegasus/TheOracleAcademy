@@ -765,77 +765,115 @@ export function LibraryView({ currentUser }: { currentUser: any }) {
                         )}
                       </div>
 
-                      {/* Transaction Bottom Bar */}
-                      <div className="pt-6 border-t border-indigo-500/10 space-y-4">
-                        <div className="flex items-center justify-between bg-black/30 p-4 rounded-xl border border-white/5">
-                          <div>
-                            <p className="text-[8px] font-black uppercase text-slate-500 tracking-wider">Investimento</p>
-                            <p className="text-xs text-slate-400">Intercâmbio comercial sagrado</p>
+                      {/* Animated Transaction Bottom Bar (Watermelon Add-Cash-Disclosure inspired) */}
+                      <div className="pt-5 border-t border-indigo-500/10 mt-6 relative">
+                        
+                        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center bg-[#0a0715] p-5 rounded-2xl border border-indigo-500/20 shadow-inner gap-4">
+                          <div className="flex flex-col gap-1">
+                            <span className="text-[10px] font-black uppercase text-slate-500 tracking-widest font-mono">Resumo Financeiro</span>
+                            <span className="text-xl font-black font-mono text-emerald-400">
+                               {selectedItem.price > 0 ? `R$ ${selectedItem.price.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}` : 'Gratuito'}
+                            </span>
                           </div>
-                          <div>
-                            {selectedItem.price > 0 ? (
-                              <p className="text-lg font-black font-mono text-emerald-400">
-                                R$ {selectedItem.price.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                              </p>
-                            ) : (
-                              <p className="text-sm font-black uppercase tracking-widest text-[#9d8ff7]">Gratuito</p>
-                            )}
+                          
+                          <div className="flex items-center gap-3 bg-black/40 p-2.5 rounded-xl border border-white/5 w-full sm:w-auto">
+                             <div className="w-8 h-8 rounded-lg bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400">
+                               <Wallet className="w-4 h-4" />
+                             </div>
+                             <div>
+                               <p className="text-[9px] font-black uppercase text-slate-500 tracking-widest font-mono">Seu Saldo Astral</p>
+                               <p className="text-sm font-bold text-slate-300 font-mono">
+                                 R$ {balance.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+                               </p>
+                             </div>
                           </div>
                         </div>
 
-                        {/* Wallet check alert */}
-                        {selectedItem.price > 0 && balance < selectedItem.price ? (
-                          <div className="bg-rose-500/15 border border-rose-500/20 p-3 rounded-xl flex items-center gap-2.5 text-rose-300 text-xs">
-                            <AlertCircle className="w-4 h-4 shrink-0 text-rose-400" />
-                            <div>
-                              <p className="font-bold">Saldo Insuficiente</p>
-                              <p className="text-[10px] text-rose-400/80">Você tem R$ {balance.toFixed(2)}. Complete fundos na tela social.</p>
+                        {/* Animated Processing / Action Button */}
+                        <div className="mt-5 relative z-10 flex flex-col gap-3">
+                          {selectedItem.price > 0 && balance < selectedItem.price ? (
+                            <div className="flex flex-col bg-rose-500/10 border border-rose-500/20 p-4 rounded-xl gap-3">
+                               <div className="flex items-center gap-2 text-rose-300 text-xs">
+                                 <AlertCircle className="w-4 h-4 text-rose-400" />
+                                 <span className="font-bold">Saldo Insuficiente. Adicione fundos para prosseguir.</span>
+                               </div>
+                               <div className="flex gap-2">
+                                 {[50, 100, 200].map(amount => (
+                                    <button
+                                      key={amount}
+                                      onClick={() => {
+                                         setBalance(b => b + amount);
+                                      }}
+                                      className="flex-1 py-2 bg-black/40 hover:bg-black/60 border border-white/10 rounded-lg text-xs font-bold text-slate-300 transition-colors"
+                                    >
+                                      + R$ {amount}
+                                    </button>
+                                 ))}
+                               </div>
                             </div>
-                          </div>
-                        ) : (
-                          <div className="bg-[#121c17] border border-emerald-950 p-3 rounded-xl flex items-center gap-2.5 text-emerald-300 text-xs">
-                            <Info className="w-4 h-4 shrink-0 text-emerald-400 animate-pulse" />
-                            <p className="text-[10px] text-emerald-400/80 leading-relaxed">
-                              Após adquirir o item, a quantia será transferida ao cofre do criador sob a proteção teúrgica.
-                            </p>
-                          </div>
-                        )}
+                          ) : (
+                            <div className="flex flex-col sm:flex-row gap-3">
+                              <motion.button
+                                layoutId="purchase-btn"
+                                onClick={handlePurchase}
+                                disabled={isPurchasing}
+                                className="relative overflow-hidden flex-1 py-4 bg-indigo-600 hover:bg-indigo-500 disabled:bg-indigo-800 text-white rounded-xl text-xs font-black uppercase tracking-widest shadow-lg shadow-indigo-900/30 flex justify-center items-center gap-2 transition-colors group"
+                              >
+                                <AnimatePresence mode="popLayout">
+                                  {isPurchasing ? (
+                                    <motion.div
+                                      key="processing"
+                                      className="absolute inset-0 flex items-center bg-indigo-900"
+                                    >
+                                      <motion.div
+                                        className="h-full bg-indigo-400"
+                                        initial={{ width: '0%' }}
+                                        animate={{ width: '100%' }}
+                                        transition={{ duration: 1.5, ease: 'easeInOut' }}
+                                      />
+                                    </motion.div>
+                                  ) : (
+                                    <motion.div
+                                      key="idle"
+                                      initial={{ opacity: 0 }}
+                                      animate={{ opacity: 1 }}
+                                      className="flex items-center gap-2 relative z-10 group-hover:scale-105 transition-transform"
+                                    >
+                                      <ShoppingBag className="w-4 h-4" />
+                                      {selectedItem.price > 0 ? 'Concluir Compra' : 'Obter Gratuitamente'}
+                                    </motion.div>
+                                  )}
+                                </AnimatePresence>
+                              </motion.button>
 
-                        <div className="flex flex-col sm:flex-row gap-3">
-                          <button
-                            onClick={handlePurchase}
-                            disabled={selectedItem.price > 0 && balance < selectedItem.price}
-                            className="flex-1 py-4 bg-indigo-600 hover:bg-indigo-500 disabled:bg-slate-800 disabled:text-slate-500 text-white font-black text-xs uppercase tracking-widest rounded-xl transition-all shadow-lg shadow-indigo-950/50 flex justify-center items-center gap-2 cursor-pointer"
-                          >
-                            <ShoppingBag className="w-4 h-4" />
-                            {selectedItem.price > 0 ? 'Comprar com Saldo' : 'Obter Ensinamento'}
-                          </button>
-
-                          {selectedItem.price > 0 && (
-                            <button
-                              onClick={() => {
-                                const inCart = cartItems.some(i => i.id === Number(selectedItem.id));
-                                if (!inCart) {
-                                  addToCart({
-                                    id: Number(selectedItem.id),
-                                    title: selectedItem.title,
-                                    subtitle: selectedItem.subtitle,
-                                    price: selectedItem.price,
-                                    category: selectedItem.category,
-                                    cover_image: selectedItem.coverImage,
-                                    author_name: selectedItem.authorName
-                                  });
-                                }
-                                setIsDetailModalOpen(false);
-                                navigate('/cart');
-                              }}
-                              className="flex-1 py-4 bg-emerald-600 hover:bg-emerald-500 text-white font-black text-xs uppercase tracking-widest rounded-xl transition-all shadow-lg flex justify-center items-center gap-2 cursor-pointer"
-                            >
-                              <ShoppingCart className="w-4 h-4" />
-                              {cartItems.some(i => i.id === Number(selectedItem.id)) ? 'Ver no Carrinho' : 'Colocar no Carrinho'}
-                            </button>
+                              {selectedItem.price > 0 && (
+                                <button
+                                  onClick={() => {
+                                    const inCart = cartItems.some(i => i.id === Number(selectedItem.id));
+                                    if (!inCart) {
+                                      addToCart({
+                                        id: Number(selectedItem.id),
+                                        title: selectedItem.title,
+                                        subtitle: selectedItem.subtitle,
+                                        price: selectedItem.price,
+                                        category: selectedItem.category,
+                                        cover_image: selectedItem.coverImage,
+                                        author_name: selectedItem.authorName
+                                      });
+                                    }
+                                    setIsDetailModalOpen(false);
+                                    navigate('/cart');
+                                  }}
+                                  className="flex-1 sm:flex-none sm:px-6 py-4 bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 font-black text-xs uppercase tracking-widest rounded-xl transition-all flex justify-center items-center gap-2 cursor-pointer"
+                                >
+                                  <ShoppingCart className="w-4 h-4" />
+                                  {cartItems.some(i => i.id === Number(selectedItem.id)) ? 'Ver no Carrinho' : 'Colocar no Carrinho'}
+                                </button>
+                              )}
+                            </div>
                           )}
                         </div>
+                        
                       </div>
                     </motion.div>
                   )}

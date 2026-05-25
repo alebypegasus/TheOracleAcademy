@@ -1,13 +1,16 @@
-import React from 'react';
-import { Tabs, TabList, Tab, TabPanel } from 'react-aria-components';
-import { motion } from 'motion/react';
+import React, { useState } from 'react';
+import { motion, AnimatePresence } from 'motion/react';
 import { 
   Home, BookOpen, Library, Layers, Trophy, FileBadge, Users,
-  Eye, Book, CreditCard, ChevronDown, Sparkles, Sun, Moon, LogOut, Monitor, ShoppingBag, X, ShieldAlert
+  Eye, Book, Sparkles, Sun, Moon, LogOut, Monitor, ShoppingBag, X, ShieldAlert,
+  ChevronRight
 } from 'lucide-react';
+import { cn } from '../../lib/utils';
 import { Tooltip } from '../ui/Tooltip';
 
 export function Sidebar({ currentPath, themePreference, setThemePreference, colorTheme, setColorTheme, profile, onNavigate, onLogout, currentUser, className, onMobileClose }: any) {
+  const [isExpanded, setIsExpanded] = useState(false);
+
   const navGroups = [
     {
       group: 'Principal',
@@ -44,138 +47,192 @@ export function Sidebar({ currentPath, themePreference, setThemePreference, colo
   ];
 
   return (
-    <aside className={`w-[280px] sm:w-72 flex-shrink-0 flex flex-col border-r border-slate-200 dark:border-white/5 bg-slate-50 dark:bg-[#080510]/95 backdrop-blur-3xl relative z-50 shadow-xl dark:shadow-2xl transition-colors h-full ${className || ''}`}>
-      <div className="p-6 flex items-center justify-between py-8 h-auto relative">
-        <div className="flex items-center justify-center gap-3 w-full theme-logo-glow relative z-10">
-          <div className="h-20 w-20 sm:h-24 sm:w-24 theme-logo-image" />
-          <div className="h-8 sm:h-10 w-[120px] sm:w-[140px] theme-logo-text" />
-        </div>
+    <motion.aside
+      className={cn(
+        "flex flex-col h-full bg-white/50 dark:bg-black/40 backdrop-blur-3xl border-r border-slate-200/50 dark:border-white/10 relative z-50",
+        className
+      )}
+      initial={false}
+      animate={{ width: isExpanded ? 280 : 80 }}
+      onMouseEnter={() => setIsExpanded(true)}
+      onMouseLeave={() => setIsExpanded(false)}
+      transition={{ type: "spring", stiffness: 300, damping: 30 }}
+    >
+      <div className="flex items-center justify-center h-24 border-b border-slate-200/50 dark:border-white/5 relative">
+        <AnimatePresence mode="wait">
+          {isExpanded ? (
+            <motion.div 
+              key="expanded-logo"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="flex items-center gap-3 w-full px-6 theme-logo-glow"
+            >
+              <div className="h-12 w-12 theme-logo-image" />
+              <div className="h-6 w-[120px] theme-logo-text" />
+            </motion.div>
+          ) : (
+            <motion.div 
+              key="collapsed-logo"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="theme-logo-glow"
+            >
+              <div className="h-10 w-10 theme-logo-image" />
+            </motion.div>
+          )}
+        </AnimatePresence>
+        
         {onMobileClose && (
-          <button onClick={onMobileClose} className="xl:hidden absolute right-4 top-8 p-2 rounded-full bg-slate-200/50 dark:bg-white/5 text-slate-500 hover:text-slate-800 dark:hover:text-white z-20">
+          <button onClick={onMobileClose} className="xl:hidden absolute right-4 p-2 rounded-full bg-white/10 text-slate-500 hover:text-white z-20">
             <X className="w-5 h-5" />
           </button>
         )}
       </div>
 
-      <nav className="flex-1 px-4 py-2 space-y-6 overflow-y-auto custom-scrollbar">
-        {navGroups.map((group) => (
-          <div key={group.group}>
-            <h4 className="px-3 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-3">
-              {group.group}
-            </h4>
-            <div className="space-y-1">
-              {group.items.map((item) => {
-                const isActive = currentPath === item.path;
-                const Icon = item.icon;
-                return (
-                   <button
-                    key={item.name}
-                    onClick={() => onNavigate(item.path)}
-                    className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-300 group relative overflow-hidden
-                      ${isActive ? 'theme-bg-primary-soft theme-text-primary shadow-sm' : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-white/[0.03] hover:text-slate-900 dark:hover:text-slate-200'}`}
-                  >
-                    {isActive && (
-                      <motion.div 
-                        layoutId="activeTabIndicator" 
-                        className="absolute left-0 top-0 bottom-0 w-1 theme-bg-primary rounded-r-md opacity-80"
-                        initial={false}
-                        transition={{ type: "spring", stiffness: 300, damping: 30 }}
-                      />
-                    )}
+      <nav className="flex-1 overflow-y-auto hide-scrollbar py-4 px-3 space-y-6">
+        {navGroups.map((group, groupIdx) => (
+          <div key={group.group} className="flex flex-col gap-1">
+            <AnimatePresence>
+              {isExpanded && (
+                <motion.h4 
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: "auto" }}
+                  exit={{ opacity: 0, height: 0 }}
+                  className="px-3 text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1"
+                >
+                  {group.group}
+                </motion.h4>
+              )}
+            </AnimatePresence>
+
+            {group.items.map((item) => {
+              const isActive = currentPath === item.path;
+              const Icon = item.icon;
+              
+              return (
+                <button
+                  key={item.name}
+                  onClick={() => onNavigate(item.path)}
+                  className={cn(
+                    "relative flex items-center h-12 w-full rounded-2xl transition-all duration-300 group overflow-hidden",
+                    isActive ? "text-indigo-600 dark:text-indigo-400" : "text-slate-600 dark:text-slate-400 hover:bg-slate-200/50 dark:hover:bg-white/5 hover:text-slate-900 dark:hover:text-white"
+                  )}
+                >
+                  {isActive && (
                     <motion.div 
-                      whileHover={{ scale: 1.15, rotate: [-5, 5, 0] }}
-                      transition={{ type: "spring", stiffness: 400, damping: 10 }}
-                      className={`flex items-center justify-center p-1.5 rounded-lg transition-colors ${isActive ? 'theme-text-primary' : 'text-slate-500 group-hover:theme-text-primary'}`}
-                    >
-                      <Icon className="w-5 h-5 flex-shrink-0" strokeWidth={isActive ? 2.5 : 2} />
-                    </motion.div>
-                    <span className="text-sm font-medium tracking-wide truncate">{item.name}</span>
-                  </button>
-                );
-              })}
-            </div>
+                      layoutId="sidebar-active"
+                      className="absolute inset-0 bg-indigo-500/10 border border-indigo-500/20 rounded-2xl"
+                      initial={false}
+                      transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                    />
+                  )}
+                  
+                  <div className="w-[56px] h-full flex items-center justify-center flex-shrink-0 z-10">
+                    <Icon className="w-5 h-5" strokeWidth={isActive ? 2.5 : 2} />
+                  </div>
+                  
+                  <AnimatePresence>
+                    {isExpanded && (
+                      <motion.span 
+                        initial={{ opacity: 0, x: -10 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        exit={{ opacity: 0, x: -10 }}
+                        className="text-sm font-medium whitespace-nowrap z-10 text-left flex-1"
+                      >
+                        {item.name}
+                      </motion.span>
+                    )}
+                  </AnimatePresence>
+                </button>
+              );
+            })}
           </div>
         ))}
       </nav>
 
-      <div className="px-4 py-4 border-t border-slate-200 dark:border-white/5 flex flex-col gap-4">
-        <div className="flex w-full justify-center">
-          <Tabs 
-            selectedKey={themePreference} 
-            onSelectionChange={(key) => setThemePreference(key as string)}
-            className="w-full"
-          >
-            <TabList className="flex w-full bg-slate-100 dark:bg-zinc-800/50 rounded-2xl h-12 p-1.5 shadow-inner" aria-label="Theme selection">
-              <Tab id="light" className="flex-1 h-full rounded-xl flex justify-center items-center text-slate-500 cursor-pointer outline-none data-[selected]:bg-white data-[selected]:dark:bg-zinc-700 data-[selected]:text-slate-900 data-[selected]:dark:text-zinc-100 data-[selected]:shadow transition-all">
-                <Sun className="w-4 h-4" />
-              </Tab>
-              <Tab id="auto" className="flex-1 h-full rounded-xl flex justify-center items-center text-slate-500 cursor-pointer outline-none data-[selected]:bg-white data-[selected]:dark:bg-zinc-700 data-[selected]:text-slate-900 data-[selected]:dark:text-zinc-100 data-[selected]:shadow transition-all">
-                <Monitor className="w-4 h-4" />
-              </Tab>
-              <Tab id="dark" className="flex-1 h-full rounded-xl flex justify-center items-center text-slate-500 cursor-pointer outline-none data-[selected]:bg-white data-[selected]:dark:bg-zinc-700 data-[selected]:text-slate-900 data-[selected]:dark:text-zinc-100 data-[selected]:shadow transition-all">
-                <Moon className="w-4 h-4" />
-              </Tab>
-            </TabList>
-          </Tabs>
-        </div>
-
-        {/* Theme Palette Picker (HeroUI inspired) */}
-        <div className="flex justify-between items-center px-1">
-          {['indigo', 'purple', 'rose', 'emerald', 'cyan', 'amber', 'oracle'].map((t) => (
-             <Tooltip key={t} content={`Tema ${t.charAt(0).toUpperCase() + t.slice(1)}`}>
+      <div className="border-t border-slate-200/50 dark:border-white/5 p-3 flex flex-col gap-3">
+        <AnimatePresence>
+          {isExpanded && (
+            <motion.div 
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: "auto" }}
+              exit={{ opacity: 0, height: 0 }}
+              className="flex justify-center gap-2 p-1 bg-slate-200/50 dark:bg-black/50 rounded-xl"
+            >
+              {[
+                { id: 'light', icon: Sun },
+                { id: 'auto', icon: Monitor },
+                { id: 'dark', icon: Moon }
+              ].map(theme => (
                 <button
-                   onClick={() => setColorTheme(t)}
-                   className={`relative w-6 h-6 rounded-full transition-transform hover:scale-110 active:scale-95 shadow-sm focus:outline-none flex items-center justify-center`}
-                   style={{ 
-                     backgroundColor: 
-                       t === 'indigo' ? '#6366f1' : 
-                       t === 'purple' ? '#8b5cf6' : 
-                       t === 'rose' ? '#f43f5e' : 
-                       t === 'emerald' ? '#10b981' : 
-                       t === 'cyan' ? '#06b6d4' : 
-                       t === 'amber' ? '#f59e0b' : '#d4af37' // oracle is gold
-                   }}
-                >
-                  {colorTheme === t && (
-                    <span className="w-2.5 h-2.5 bg-white rounded-full shadow-[0_0_5px_rgba(0,0,0,0.5)]" />
+                  key={theme.id}
+                  onClick={() => setThemePreference(theme.id)}
+                  className={cn(
+                    "p-2 rounded-lg transition-colors flex-1 flex justify-center",
+                    themePreference === theme.id ? "bg-white dark:bg-white/10 text-indigo-500 shadow-sm" : "text-slate-400 hover:text-slate-600 dark:hover:text-white"
                   )}
+                >
+                  <theme.icon className="w-4 h-4" />
                 </button>
-             </Tooltip>
-          ))}
-        </div>
-      </div>
+              ))}
+            </motion.div>
+          )}
+        </AnimatePresence>
 
-      <div className="p-6 border-t border-slate-200 dark:border-white/5 flex flex-col gap-4 group">
-        <div className="flex items-center gap-3 cursor-pointer hover:opacity-80 transition-opacity" onClick={() => onNavigate('/profile')} title="Configurações de Perfil">
-          <div className="w-10 h-10 rounded-full overflow-hidden border border-slate-300 dark:border-white/10 group-hover:border-indigo-400/50 transition-colors">
-            <img src={currentUser?.avatar || profile.avatar} alt="Profile Avatar" className="w-full h-full object-cover" />
+        <button 
+          onClick={() => onNavigate('/profile')}
+          className="flex items-center w-full rounded-2xl hover:bg-slate-200/50 dark:hover:bg-white/5 transition-colors p-2"
+        >
+          <div className="w-10 h-10 rounded-full overflow-hidden border border-slate-300 dark:border-white/10 flex-shrink-0">
+            <img src={currentUser?.avatar || profile.avatar} alt="Avatar" className="w-full h-full object-cover" />
           </div>
-          <div className="flex-1 min-w-0">
-            <div className="flex items-center justify-between">
-              <h4 className="text-sm font-medium text-slate-800 dark:text-slate-200 truncate">{currentUser?.name || profile.name}</h4>
-              <ChevronDown className="w-4 h-4 text-slate-500 flex-shrink-0" />
-            </div>
-            <p className="text-xs text-slate-500 dark:text-slate-400 flex items-center gap-1">
-              Buscador do Oráculo
-            </p>
-            <div className="flex items-center gap-2 mt-1">
-              <p className="text-[10px] text-indigo-500 dark:text-indigo-400 flex items-center gap-0.5">
-                <Sparkles className="w-3 h-3" /> {currentUser?.xp || profile.xp} XP
-              </p>
-            </div>
-          </div>
-        </div>
+          
+          <AnimatePresence>
+            {isExpanded && (
+              <motion.div 
+                initial={{ opacity: 0, width: 0 }}
+                animate={{ opacity: 1, width: "auto" }}
+                exit={{ opacity: 0, width: 0 }}
+                className="flex-1 min-w-0 ml-3 text-left overflow-hidden"
+              >
+                <div className="text-sm font-medium text-slate-800 dark:text-slate-200 truncate">
+                  {currentUser?.name || profile.name}
+                </div>
+                <div className="text-xs text-indigo-500 dark:text-indigo-400 flex items-center gap-1">
+                  <Sparkles className="w-3 h-3" /> {currentUser?.xp || profile.xp} XP
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </button>
 
-        <Tooltip content="Sair / Encerrar Sessão">
-          <button 
-            onClick={onLogout}
-            className="w-full flex items-center justify-center gap-2 px-3 py-2 rounded-xl transition-colors hover:bg-rose-100 dark:hover:bg-rose-500/10 hover:text-rose-500 dark:hover:text-rose-400 text-slate-500 group/logout mt-1"
-          >
-            <LogOut className="w-3.5 h-3.5 group-hover/logout:-translate-x-1 transition-transform" />
-            <span className="text-[10px] font-bold uppercase tracking-widest leading-none mt-[1px]">Sair da Conta</span>
-          </button>
-        </Tooltip>
+        <AnimatePresence>
+          {isExpanded ? (
+            <motion.button 
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: "auto" }}
+              exit={{ opacity: 0, height: 0 }}
+              onClick={onLogout}
+              className="flex items-center justify-center gap-2 w-full py-2.5 rounded-xl text-rose-500 hover:bg-rose-500/10 transition-colors"
+            >
+              <LogOut className="w-4 h-4" />
+              <span className="text-xs font-bold uppercase tracking-widest">Sair</span>
+            </motion.button>
+          ) : (
+            <motion.button
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={onLogout}
+              className="flex items-center justify-center w-full h-12 rounded-xl text-rose-500 hover:bg-rose-500/10 transition-colors"
+            >
+              <LogOut className="w-5 h-5" />
+            </motion.button>
+          )}
+        </AnimatePresence>
       </div>
-    </aside>
+    </motion.aside>
   );
 }

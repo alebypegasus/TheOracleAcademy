@@ -211,7 +211,7 @@ export function AIStudyPlanCard({ currentUser, profile, setProfile }: AIStudyPla
   const generatedFlashcards = plan?.flashcards || [];
 
   return (
-    <div id="ai-study-plan-tracker" className="glass-panel p-6 sm:p-8 rounded-[2rem] border border-indigo-500/15 bg-black/40 relative overflow-hidden group shadow-xl">
+    <div id="ai-study-plan-tracker" className="h-full w-full p-6 sm:p-8 relative overflow-hidden group flex flex-col">
       {/* Glow Effect */}
       <div className="absolute inset-0 opacity-5 blur-[60px] bg-gradient-to-r from-indigo-500 to-purple-500 rounded-full scale-110 pointer-events-none group-hover:scale-125 transition-all duration-700" />
       

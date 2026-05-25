@@ -24,7 +24,7 @@ export function DailyWordCard() {
   }, []);
 
   return (
-    <div className="glass-panel p-6 rounded-2xl relative overflow-hidden group">
+    <div className="h-full w-full p-6 relative overflow-hidden group flex flex-col">
       <div className="absolute inset-0" style={{ background: 'radial-gradient(ellipse at top, var(--theme-primary-500) 0%, transparent 70%)', opacity: 0.15 }} />
       
       <div className="relative z-10 flex flex-col items-center text-center">

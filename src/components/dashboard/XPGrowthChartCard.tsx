@@ -63,7 +63,7 @@ export function XPGrowthChartCard({ profile }: GrowthChartProps) {
   }, [profile?.xp]);
 
   return (
-    <div className="glass-panel p-6 rounded-2xl relative overflow-hidden group border border-white/5">
+    <div className="h-full w-full p-6 relative overflow-hidden group flex flex-col">
       <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-500/5 blur-[80px] rounded-full pointer-events-none transition-opacity duration-700" />
       
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">

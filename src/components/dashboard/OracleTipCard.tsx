@@ -111,7 +111,7 @@ export function OracleTipCard() {
   }, []);
 
   return (
-    <div id="oracle-tip-widget" className="glass-panel p-6 rounded-2xl relative overflow-hidden group h-full flex flex-col justify-between">
+    <div id="oracle-tip-widget" className="h-full w-full p-6 relative overflow-hidden group flex flex-col justify-between">
       <div className="absolute inset-0" style={{ background: 'radial-gradient(circle at bottom right, var(--theme-primary-500) 0%, transparent 80%)', opacity: 0.12 }} />
       
       <div className="relative z-10">

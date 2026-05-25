@@ -44,7 +44,7 @@ export function StudyStreakCard() {
       animate="visible"
       className="flex flex-col gap-6"
     >
-      <div className="glass-panel p-8 rounded-[2.5rem] border-white/10 relative overflow-hidden group">
+      <div className="h-full w-full p-8 relative overflow-hidden group flex flex-col">
         {/* Background Decorative Elements */}
         <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-600/10 rounded-full blur-[80px] -mr-32 -mt-32 pointer-events-none" />
         <div className="absolute bottom-0 left-0 w-48 h-48 bg-purple-600/5 rounded-full blur-[60px] -ml-24 -mb-24 pointer-events-none" />

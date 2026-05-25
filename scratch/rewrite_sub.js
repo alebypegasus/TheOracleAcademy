@@ -1,4 +1,7 @@
-import React, { useState, useEffect } from 'react';
+const fs = require('fs');
+const path = require('path');
+
+const content = `import React, { useState, useEffect } from 'react';
 import {
   Moon, Star, Eye, CheckCircle2, XCircle, ArrowRight,
   ShieldCheck, CreditCard, RefreshCcw, Heart,
@@ -69,7 +72,7 @@ const CYCLE_DISCOUNT: Record<string, string> = {
 };
 
 function fmt(val: number) {
-  return val === 0 ? 'Grátis' : `R$ ${val.toFixed(2).replace('.', ',')}`;
+  return val === 0 ? 'Grátis' : \`R$ \${val.toFixed(2).replace('.', ',')}\`;
 }
 
 export function SubscriptionView({ currentUser }: { currentUser?: any }) {
@@ -89,7 +92,7 @@ export function SubscriptionView({ currentUser }: { currentUser?: any }) {
     const token = localStorage.getItem('oracle_token') || '';
     fetch('/api/payments/subscription', {
       headers: {
-        Authorization: `Bearer ${token}`,
+        Authorization: \`Bearer \${token}\`,
         'x-user-id': currentUser.id?.toString() || ''
       }
     })
@@ -115,7 +118,7 @@ export function SubscriptionView({ currentUser }: { currentUser?: any }) {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${authToken}`,
+          Authorization: \`Bearer \${authToken}\`,
           'x-user-id': currentUser.id?.toString() || ''
         },
         body: JSON.stringify({ 
@@ -144,7 +147,7 @@ export function SubscriptionView({ currentUser }: { currentUser?: any }) {
     const token = localStorage.getItem('oracle_token') || '';
     const res = await fetch('/api/payments/cancel-subscription', {
       method: 'POST',
-      headers: { Authorization: `Bearer ${token}`, 'x-user-id': currentUser.id?.toString() || '' }
+      headers: { Authorization: \`Bearer \${token}\`, 'x-user-id': currentUser.id?.toString() || '' }
     });
     const data = await res.json();
     if (data.success) {
@@ -168,13 +171,13 @@ export function SubscriptionView({ currentUser }: { currentUser?: any }) {
         </p>
 
         {/* Current plan status */}
-        <div className={`w-full border rounded-3xl p-6 flex flex-col sm:flex-row justify-between items-center text-left mb-10 shadow-2xl relative overflow-hidden
-          ${currentPlan === 'master' ? 'bg-amber-900/10 border-amber-500/30' : currentPlan === 'medium' ? 'bg-purple-900/10 border-purple-500/30' : 'bg-indigo-900/10 border-indigo-500/20'}`}>
+        <div className={\`w-full border rounded-3xl p-6 flex flex-col sm:flex-row justify-between items-center text-left mb-10 shadow-2xl relative overflow-hidden
+          \${currentPlan === 'master' ? 'bg-amber-900/10 border-amber-500/30' : currentPlan === 'medium' ? 'bg-purple-900/10 border-purple-500/30' : 'bg-indigo-900/10 border-indigo-500/20'}\`}>
           
           <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full blur-3xl pointer-events-none -mr-32 -mt-32" />
           
           <div className="relative z-10">
-            <p className={`text-xs uppercase tracking-widest font-bold mb-1 ${currentPlan === 'master' ? 'text-amber-400' : currentPlan === 'medium' ? 'text-purple-400' : 'text-indigo-400'}`}>
+            <p className={\`text-xs uppercase tracking-widest font-bold mb-1 \${currentPlan === 'master' ? 'text-amber-400' : currentPlan === 'medium' ? 'text-purple-400' : 'text-indigo-400'}\`}>
               Status Atual
             </p>
             <h3 className="text-2xl font-serif text-white">
@@ -199,7 +202,7 @@ export function SubscriptionView({ currentUser }: { currentUser?: any }) {
                 Cancelar
               </button>
             )}
-            <div className={`px-5 py-2.5 rounded-xl text-xs font-bold uppercase tracking-widest border shadow-lg ${currentPlan === 'master' ? 'bg-amber-500/10 border-amber-500/50 text-amber-400' : currentPlan === 'medium' ? 'bg-purple-500/10 border-purple-500/50 text-purple-300' : 'bg-indigo-500/10 border-indigo-500/50 text-indigo-300'}`}>
+            <div className={\`px-5 py-2.5 rounded-xl text-xs font-bold uppercase tracking-widest border shadow-lg \${currentPlan === 'master' ? 'bg-amber-500/10 border-amber-500/50 text-amber-400' : currentPlan === 'medium' ? 'bg-purple-500/10 border-purple-500/50 text-purple-300' : 'bg-indigo-500/10 border-indigo-500/50 text-indigo-300'}\`}>
               Plano Ativo
             </div>
           </div>
@@ -230,16 +233,16 @@ export function SubscriptionView({ currentUser }: { currentUser?: any }) {
             <button
               key={c}
               onClick={() => setCycle(c)}
-              className={`flex-1 py-3 px-3 rounded-[20px] text-[11px] font-bold uppercase tracking-widest transition-all flex items-center justify-center gap-1.5
-                ${cycle === c
+              className={\`flex-1 py-3 px-3 rounded-[20px] text-[11px] font-bold uppercase tracking-widest transition-all flex items-center justify-center gap-1.5
+                \${cycle === c
                   ? c === 'anual' ? 'bg-amber-500/20 border border-amber-500/30 text-amber-400 shadow-[0_0_15px_rgba(245,158,11,0.2)]'
                     : 'bg-white/10 text-white shadow-sm border border-white/5'
                   : 'text-slate-500 hover:text-slate-300'
-                }`}
+                }\`}
             >
               {c.charAt(0).toUpperCase() + c.slice(1)}
               {CYCLE_DISCOUNT[c] && (
-                <span className={`text-[9px] px-1.5 py-0.5 rounded-md ml-1 ${cycle === c && c === 'anual' ? 'bg-amber-500 text-amber-950' : 'bg-indigo-500/20 text-indigo-300'}`}>
+                <span className={\`text-[9px] px-1.5 py-0.5 rounded-md ml-1 \${cycle === c && c === 'anual' ? 'bg-amber-500 text-amber-950' : 'bg-indigo-500/20 text-indigo-300'}\`}>
                   {CYCLE_DISCOUNT[c]}
                 </span>
               )}
@@ -261,13 +264,13 @@ export function SubscriptionView({ currentUser }: { currentUser?: any }) {
                 key={plan.key}
                 onClick={() => setSelectedPlan(plan.key)}
                 transition={{ type: "spring", bounce: 0.3, duration: 0.6 }}
-                className={`relative overflow-hidden cursor-pointer rounded-[24px] transition-colors duration-300 bg-[#0c081c] ${
+                className={\`relative overflow-hidden cursor-pointer rounded-[24px] transition-colors duration-300 bg-[#0c081c] \${
                   isSelected
                     ? isAmber ? "border border-amber-500/40 shadow-[0_4px_24px_rgba(245,158,11,0.15)] bg-amber-900/10" 
                       : isPurple ? "border border-purple-500/40 shadow-[0_4px_24px_rgba(168,85,247,0.15)] bg-purple-900/10"
                       : "border border-indigo-500/40 shadow-[0_4px_24px_rgba(99,102,241,0.15)] bg-indigo-900/10"
                     : "border border-white/5 hover:border-white/10 hover:bg-white/5"
-                }`}
+                }\`}
               >
                 <div className="px-5 py-5 sm:px-6 sm:py-5">
                   <div className="flex justify-between items-start gap-4">
@@ -275,11 +278,11 @@ export function SubscriptionView({ currentUser }: { currentUser?: any }) {
                       {/* Custom Checkbox */}
                       <div className="mt-1 shrink-0">
                         <div
-                          className={`w-5 h-5 rounded-full flex items-center justify-center border transition-colors ${
+                          className={\`w-5 h-5 rounded-full flex items-center justify-center border transition-colors \${
                             isSelected
                               ? isAmber ? "border-amber-500 bg-amber-500" : isPurple ? "border-purple-500 bg-purple-500" : "border-indigo-500 bg-indigo-500"
                               : "border-slate-700 bg-[#0c081c]"
-                          }`}
+                          }\`}
                         >
                           {isSelected && (
                             <Check size={12} strokeWidth={4} className="text-[#080512]" />
@@ -290,7 +293,7 @@ export function SubscriptionView({ currentUser }: { currentUser?: any }) {
                       {/* Info */}
                       <div className="flex flex-1 flex-col">
                         <div className="flex flex-wrap items-center gap-2">
-                          <span className={`text-[17px] font-serif font-black leading-none ${isSelected ? 'text-white' : 'text-slate-300'}`}>
+                          <span className={\`text-[17px] font-serif font-black leading-none \${isSelected ? 'text-white' : 'text-slate-300'}\`}>
                             {plan.name}
                           </span>
                           {plan.badge && (
@@ -346,11 +349,11 @@ export function SubscriptionView({ currentUser }: { currentUser?: any }) {
                             {plan.features.map((feature: any, idx: number) => (
                               <div key={idx} className="flex items-center gap-3">
                                 {feature.ok ? (
-                                    <CheckCircle2 size={16} strokeWidth={2.5} className={`shrink-0 ${isAmber ? 'text-amber-500' : isPurple ? 'text-purple-400' : 'text-indigo-400'}`} />
+                                    <CheckCircle2 size={16} strokeWidth={2.5} className={\`shrink-0 \${isAmber ? 'text-amber-500' : isPurple ? 'text-purple-400' : 'text-indigo-400'}\`} />
                                 ) : (
                                     <XCircle size={16} strokeWidth={2.5} className="shrink-0 text-slate-700" />
                                 )}
-                                <span className={`text-[13px] leading-tight font-light ${feature.ok ? 'text-slate-300' : 'text-slate-600 line-through'}`}>
+                                <span className={\`text-[13px] leading-tight font-light \${feature.ok ? 'text-slate-300' : 'text-slate-600 line-through'}\`}>
                                   {feature.text}
                                 </span>
                               </div>
@@ -371,13 +374,13 @@ export function SubscriptionView({ currentUser }: { currentUser?: any }) {
             <button
                 onClick={() => handleSubscribe(selectedPlan, cycle)}
                 disabled={loading}
-                className={`w-full py-4 rounded-[20px] text-xs font-black tracking-widest uppercase transition-all shadow-2xl flex items-center justify-center gap-3 ${loading ? 'opacity-50' : ''} ${
+                className={\`w-full py-4 rounded-[20px] text-xs font-black tracking-widest uppercase transition-all shadow-2xl flex items-center justify-center gap-3 \${loading ? 'opacity-50' : ''} \${
                     selectedPlan === 'master' 
                         ? 'bg-gradient-to-r from-amber-600 to-amber-500 hover:from-amber-500 hover:to-amber-400 text-slate-950 shadow-amber-500/20' 
                         : selectedPlan === 'medium'
                         ? 'bg-gradient-to-r from-purple-600 to-purple-500 hover:from-purple-500 hover:to-purple-400 text-white shadow-purple-500/20'
                         : 'bg-white/5 border border-white/10 text-slate-300 hover:bg-white/10 hover:text-white'
-                }`}
+                }\`}
             >
                 {loading && <Loader2 className="w-4 h-4 animate-spin" />}
                 {selectedPlan === 'free' ? 'Manter Gratuito' : selectedPlan === 'master' ? 'Consagrar Mestria' : 'Realizar Upgrade'}
@@ -392,3 +395,7 @@ export function SubscriptionView({ currentUser }: { currentUser?: any }) {
     </div>
   );
 }
+`;
+
+fs.writeFileSync(path.join(__dirname, '../src/components/views/SubscriptionView.tsx'), content, 'utf8');
+console.log('SubscriptionView replaced');
