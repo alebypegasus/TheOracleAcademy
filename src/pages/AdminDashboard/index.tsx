@@ -4,6 +4,8 @@ import { Shield, Users as UsersIcon, Settings as SettingsIcon, FileText, Chevron
 import UsersAdmin from './Users';
 import ContentAdmin from './Content';
 import SettingsAdmin from './Settings';
+import AdsAdmin from './Ads';
+import { LayoutTemplate } from 'lucide-react';
 
 export default function AdminDashboard({ currentUser }: { currentUser: any }) {
   const navigate = useNavigate();
@@ -17,6 +19,7 @@ export default function AdminDashboard({ currentUser }: { currentUser: any }) {
     { name: 'Visão Geral', path: '/admin', icon: <Shield className="w-5 h-5" /> },
     { name: 'Usuários', path: '/admin/users', icon: <UsersIcon className="w-5 h-5" /> },
     { name: 'Conteúdo', path: '/admin/content', icon: <FileText className="w-5 h-5" /> },
+    { name: 'Propagandas', path: '/admin/ads', icon: <LayoutTemplate className="w-5 h-5" /> },
     { name: 'Configurações', path: '/admin/settings', icon: <SettingsIcon className="w-5 h-5" /> },
   ];
 
@@ -60,6 +63,7 @@ export default function AdminDashboard({ currentUser }: { currentUser: any }) {
             <Route path="/" element={<Overview />} />
             <Route path="/users" element={<UsersAdmin />} />
             <Route path="/content" element={<ContentAdmin />} />
+            <Route path="/ads" element={<AdsAdmin />} />
             <Route path="/settings" element={<SettingsAdmin />} />
           </Routes>
         </div>

@@ -28,7 +28,7 @@ export function CoursesSaga({
       className="w-full flex flex-col flex-1 min-h-screen relative pb-20"
     >
       <div className="w-full px-4 lg:px-10 py-12 border-b border-[#1e1b4b] bg-white/[0.01]">
-         <div className="max-w-7xl mx-auto flex flex-col md:flex-row md:items-end justify-between gap-6">
+         <div className="w-full mx-auto flex flex-col md:flex-row md:items-end justify-between gap-6">
             <div className="space-y-2">
                <h2 className="text-4xl md:text-5xl font-serif font-medium text-slate-100 flex items-center gap-4">
                   Saga Oracular <Sparkles className="w-8 h-8 text-indigo-400 animate-pulse" />
@@ -50,7 +50,7 @@ export function CoursesSaga({
          </div>
       </div>
 
-      <div className="w-full max-w-7xl mx-auto px-4 lg:px-10 py-12 flex flex-col gap-10">
+      <div className="w-full mx-auto px-4 lg:px-10 py-12 flex flex-col gap-10">
         {MODULES.map((levelBlock) => {
           const levelUnlocked = levelBlock.level === 0 || canAccess('medium');
           return (

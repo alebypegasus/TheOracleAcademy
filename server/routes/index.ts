@@ -1,4 +1,5 @@
 import { Router, Request, Response } from "express";
+import crypto from "crypto";
 import authRoutes from "./auth.routes";
 import courseRoutes from "./course.routes";
 import marketplaceRoutes from "./marketplace.routes";
@@ -398,12 +399,28 @@ apiRouter.post("/tts", authMiddleware, async (req: AuthenticatedRequest, res: Re
     return res.status(400).json({ error: "Text and voiceId are required" });
   }
 
-  const apiKey = process.env.VITE_ELEVENLABS_API_KEY || process.env.ELEVENLABS_API_KEY;
-  if (!apiKey) {
-    return res.status(500).json({ error: "ElevenLabs API key not configured on server" });
-  }
-
   try {
+    const hash = crypto.createHash("md5").update(text + voiceId).digest("hex");
+    
+    // Check Cache
+    const cacheRes = await query("SELECT audio_data FROM lesson_audios WHERE hash = $1", [hash]);
+    if (cacheRes.rows.length > 0) {
+      console.log("[TTS Cache] Audio retrieved from database for hash:", hash);
+      let audioBuffer = cacheRes.rows[0].audio_data;
+      if (!Buffer.isBuffer(audioBuffer)) {
+         audioBuffer = Buffer.from(audioBuffer);
+      }
+      res.setHeader("Content-Type", "audio/mpeg");
+      res.setHeader("Content-Length", audioBuffer.length.toString());
+      return res.send(audioBuffer);
+    }
+
+    const apiKey = process.env.VITE_ELEVENLABS_API_KEY || process.env.ELEVENLABS_API_KEY;
+    if (!apiKey) {
+      return res.status(500).json({ error: "ElevenLabs API key not configured on server" });
+    }
+
+    console.log("[TTS Cache] Generating new audio with ElevenLabs for hash:", hash);
     const elevenRes = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${voiceId}?output_format=mp3_44100_128`, {
       method: "POST",
       headers: {
@@ -428,12 +445,33 @@ apiRouter.post("/tts", authMiddleware, async (req: AuthenticatedRequest, res: Re
     const arrayBuffer = await elevenRes.arrayBuffer();
     const buffer = Buffer.from(arrayBuffer);
     
+    // Save to Cache
+    await query("INSERT INTO lesson_audios (hash, voice_id, audio_data) VALUES ($1, $2, $3)", [hash, voiceId, buffer]);
+
     res.setHeader("Content-Type", "audio/mpeg");
-    res.setHeader("Content-Length", buffer.length);
+    res.setHeader("Content-Length", buffer.length.toString());
     return res.send(buffer);
   } catch (err: any) {
     console.error("[TTS Proxy] Error:", err);
     return res.status(500).json({ error: "Failed to generate TTS audio" });
+  }
+});
+
+// --- PUBLIC ADS PROXY ---
+apiRouter.get("/ads", async (req: Request, res: Response) => {
+  const { placement } = req.query;
+  try {
+    let sql = "SELECT * FROM ads_campaigns WHERE is_active = true";
+    let params: any[] = [];
+    if (placement) {
+      sql += " AND placement = $1";
+      params.push(placement);
+    }
+    const result = await query(sql, params);
+    res.json(result.rows);
+  } catch (err) {
+    console.error("[Ads Fetch] Error:", err);
+    res.status(500).json({ error: "Erro ao buscar ads" });
   }
 });
 

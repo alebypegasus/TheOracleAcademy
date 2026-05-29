@@ -8,6 +8,7 @@ import draftToHtml from 'draftjs-to-html';
 import htmlToDraft from 'html-to-draftjs';
 import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
 import { SectionLock } from './ui/SectionLock';
+import { AdBanner } from './AdBanner';
 
 const GRIMOIRE_CATEGORIES = [
   { id: 'all', label: 'Tudo', icon: Book },
@@ -346,7 +347,7 @@ export function GrimoireView({
   };
 
   return (
-    <div className="w-full max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8 relative h-full flex flex-col">
+    <div className="w-full mx-auto py-8 px-4 sm:px-6 lg:px-8 relative h-full flex flex-col">
       <SectionLock isPaid={currentUser?.isPaid} className="absolute top-8 right-8 z-50" />
       
       <div className="mb-8 pt-8">
@@ -377,6 +378,10 @@ export function GrimoireView({
               </button>
             )
           })}
+          
+          <div className="mt-8">
+            <AdBanner placement="grimoire" />
+          </div>
         </div>
 
         {/* Main Content Area */}
@@ -386,7 +391,7 @@ export function GrimoireView({
                <Lock className="w-12 h-12 text-rose-400 mb-4 opacity-80" />
                <h3 className="text-xl font-serif text-slate-200 mb-2">Grimório Pessoal Restrito</h3>
                <p className="text-sm text-slate-400 mb-6 text-center max-w-xs">Destrave todas as seções do seu Grimório para registrar magias, sonhos e anotações adquirindo a assinatura Premium.</p>
-               <button className="px-6 py-2 bg-gradient-to-r from-amber-600 to-amber-500 text-slate-900 font-bold rounded-full text-sm uppercase tracking-wider shadow-lg hover:shadow-amber-500/25 transition-all">
+               <button onClick={() => document.dispatchEvent(new CustomEvent('OPEN_SUBSCRIPTION_MODAL'))} className="px-6 py-2 bg-gradient-to-r from-amber-600 to-amber-500 text-slate-900 font-bold rounded-full text-sm uppercase tracking-wider shadow-lg hover:shadow-amber-500/25 transition-all">
                  Assinar Plano
                </button>
             </div>

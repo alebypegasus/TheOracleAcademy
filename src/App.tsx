@@ -26,7 +26,7 @@ import AdminDashboard from './pages/AdminDashboard';
 
 // Standard Views still in components
 import { ChallengesView } from './components/ChallengesView';
-import { SubscriptionView } from './components/views/SubscriptionView';
+import { SubscriptionModal } from './components/payments/SubscriptionModal';
 import { GuidelinesView } from './components/views/GuidelinesView';
 import { SupportView } from './components/views/SupportView';
 
@@ -51,6 +51,13 @@ function AppContent({
   const [prevXp, setPrevXp] = useState(profile.xp);
   const [showLevelUp, setShowLevelUp] = useState(false);
   const [currentMilestone, setCurrentMilestone] = useState(0);
+  const [isSubscriptionModalOpen, setIsSubscriptionModalOpen] = useState(false);
+
+  useEffect(() => {
+    const handleSubModal = () => setIsSubscriptionModalOpen(true);
+    document.addEventListener('OPEN_SUBSCRIPTION_MODAL', handleSubModal);
+    return () => document.removeEventListener('OPEN_SUBSCRIPTION_MODAL', handleSubModal);
+  }, []);
 
   useEffect(() => {
     if (profile.xp > prevXp) {
@@ -92,6 +99,16 @@ function AppContent({
           onClose={() => setShowLevelUp(false)} 
         />
       )}
+      
+      <AnimatePresence>
+        {isSubscriptionModalOpen && (
+          <SubscriptionModal 
+            currentUser={currentUser} 
+            onClose={() => setIsSubscriptionModalOpen(false)} 
+          />
+        )}
+      </AnimatePresence>
+
       {location.pathname !== '/landing' && currentUser && !isZenMode && (
         <>
           {/* Desktop Sidebar */}
@@ -293,11 +310,7 @@ function AppContent({
               </motion.div>
             } />
             
-            <Route path="/subscription" element={
-              <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} transition={{ duration: 0.3 }} className="py-10">
-                <SubscriptionView currentUser={currentUser} />
-              </motion.div>
-            } />
+            <Route path="/subscription" element={<Navigate to="/dashboard" replace />} />
             
             <Route path="/settings" element={
               <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} transition={{ duration: 0.3 }} className="max-w-3xl mx-auto w-full pt-8">

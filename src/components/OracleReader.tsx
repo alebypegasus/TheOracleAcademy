@@ -7,6 +7,7 @@ import {
 import Markdown from 'react-markdown';
 import { SectionLock } from './ui/SectionLock';
 import { usePlan } from '../hooks/usePlan';
+import { AdBanner } from './AdBanner';
 
 export function OracleReader({ profile, setProfile, addGrimoireEntry, currentUser }: any) {
   const [activeMode, setActiveMode] = useState<'normal' | 'study'>('study');
@@ -138,7 +139,7 @@ export function OracleReader({ profile, setProfile, addGrimoireEntry, currentUse
   };
 
   return (
-    <div className="max-w-5xl mx-auto py-8 px-4 relative">
+    <div className="w-full mx-auto py-8 px-4 md:px-8 relative">
       <SectionLock isPaid={canAccess('master')} className="absolute top-8 right-4" />
       
       <div className="mb-10 text-center pt-8">
@@ -153,6 +154,10 @@ export function OracleReader({ profile, setProfile, addGrimoireEntry, currentUse
         <p className="text-slate-400 max-w-lg mx-auto text-sm leading-relaxed">
           Consulte as forças astrais e receba orientações personalizadas de progresso diretamente conectadas ao seu aprendizado.
         </p>
+      </div>
+
+      <div className="max-w-2xl mx-auto mb-10">
+        <AdBanner placement="oracle" />
       </div>
 
       {/* Mode Selectors */}
@@ -179,7 +184,7 @@ export function OracleReader({ profile, setProfile, addGrimoireEntry, currentUse
             <Lock className="w-14 h-14 text-rose-400 mb-4 opacity-80" />
             <h3 className="text-2xl font-serif text-slate-200 mb-2">Oráculo Conectado Restrito</h3>
             <p className="text-sm text-slate-400 mb-6 max-w-xs leading-relaxed">Destrave os geradores de tiragens integrados por IA avançada e amplie seus estudos hoje mesmo.</p>
-            <button className="px-8 py-3 bg-gradient-to-r from-amber-600 to-amber-500 text-slate-900 font-black rounded-full text-xs uppercase tracking-widest shadow-lg shadow-amber-500/25 hover:scale-105 transition-transform">
+            <button onClick={() => document.dispatchEvent(new CustomEvent('OPEN_SUBSCRIPTION_MODAL'))} className="px-8 py-3 bg-gradient-to-r from-amber-600 to-amber-500 text-slate-900 font-black rounded-full text-xs uppercase tracking-widest shadow-lg shadow-amber-500/25 hover:scale-105 transition-transform">
               Assinar Plano Premium
             </button>
           </div>

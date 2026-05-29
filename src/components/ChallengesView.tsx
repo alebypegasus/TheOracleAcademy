@@ -77,11 +77,15 @@ export function ChallengesView({ profile, setProfile, grimoireEntries = [], curr
   }));
 
   return (
-    <div className="max-w-7xl mx-auto py-8 px-4 relative w-full flex flex-col h-full bg-transparent">
-      <SectionLock isPaid={currentUser?.isPaid} className="absolute top-8 right-4" />
+    <div className="w-full mx-auto py-8 px-4 sm:px-6 lg:px-8 relative h-full flex flex-col bg-transparent">
+      <SectionLock isPaid={currentUser?.isPaid} className="absolute top-8 right-8 z-50" />
       
-      <div className="mb-8 flex flex-col md:flex-row md:items-end justify-between gap-6 shrink-0 pt-8">
-        <div>
+      {/* Enhanced Hero Section */}
+      <div className="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-6 shrink-0 pt-8 glass-panel p-8 md:px-12 rounded-[3rem] border border-amber-500/20 bg-gradient-to-r from-indigo-950/40 via-black/40 to-amber-950/20 relative overflow-hidden shadow-2xl shadow-indigo-900/10">
+        <div className="absolute -top-20 -right-20 w-80 h-80 bg-amber-500/10 rounded-full blur-[80px] pointer-events-none z-0" />
+        <div className="absolute -bottom-20 -left-20 w-64 h-64 bg-indigo-500/10 rounded-full blur-[80px] pointer-events-none z-0" />
+        
+        <div className="relative z-10">
           <div className="flex items-center gap-3 mb-2 opacity-70">
             <Trophy className="w-5 h-5 text-amber-400" />
             <span className="text-amber-400 font-bold tracking-widest text-sm uppercase">Caminho da Evolução</span>
@@ -90,19 +94,21 @@ export function ChallengesView({ profile, setProfile, grimoireEntries = [], curr
           <p className="text-slate-400 max-w-xl">Superação diária. Ganhe XP e libere distintivos místicos colecionáveis ao exercitar sua intuição e conhecimento.</p>
         </div>
         
-        <div className="flex flex-col items-end gap-2">
-           <div className="flex items-center gap-4 glass-panel px-8 py-4 rounded-3xl border-amber-500/30 shadow-[0_0_20px_rgba(245,158,11,0.1)]">
-             <Trophy className="w-8 h-8 text-amber-400" />
+        <div className="flex flex-col items-end gap-2 relative z-10">
+           <div className="flex items-center gap-4 bg-black/60 px-8 py-4 rounded-[2rem] border border-amber-500/30 shadow-[0_0_30px_rgba(245,158,11,0.15)] backdrop-blur-xl">
+             <Trophy className="w-10 h-10 text-amber-400 drop-shadow-[0_0_15px_rgba(245,158,11,0.5)]" />
              <div className="flex flex-col">
-               <span className="text-xs text-amber-500/80 font-bold uppercase tracking-widest">Nível de Conhecimento</span>
-               <span className="text-3xl font-serif font-bold text-amber-500">{profile.xp || 850} XP</span>
+               <span className="text-[10px] text-amber-500/80 font-black uppercase tracking-[0.2em] mb-1">Nível de Conhecimento</span>
+               <span className="text-4xl font-serif font-bold text-transparent bg-clip-text bg-gradient-to-r from-amber-300 to-amber-500">{profile.xp || 850} <span className="text-xl">XP</span></span>
              </div>
            </div>
            {/* Level Progress */}
-           <div className="w-full h-2 bg-black/40 rounded-full mt-2 overflow-hidden border border-[#1e1b4b]">
-              <div className="h-full bg-gradient-to-r from-amber-600 to-amber-400" style={{ width: '45%' }} />
+           <div className="w-full h-3 bg-black/80 rounded-full mt-3 overflow-hidden border border-amber-500/20 shadow-inner">
+              <div className="h-full bg-gradient-to-r from-amber-600 to-amber-400 relative overflow-hidden" style={{ width: '45%' }}>
+                 <div className="absolute inset-0 bg-[linear-gradient(90deg,transparent,rgba(255,255,255,0.4),transparent)] -translate-x-[100%] animate-[shimmer_2s_infinite]" />
+              </div>
            </div>
-           <p className="text-[10px] text-slate-500 w-full text-right">Mais 150 XP para o Nível 4</p>
+           <p className="text-[11px] text-amber-500/60 w-full text-right font-bold tracking-wider uppercase">Mais 150 XP para o Nível 4</p>
         </div>
       </div>
 
@@ -136,8 +142,8 @@ export function ChallengesView({ profile, setProfile, grimoireEntries = [], curr
                   <button
                     key={tab.id}
                     onClick={() => setActiveTab(tab.id as any)}
-                    className={`flex items-center gap-2 px-5 py-3 rounded-xl text-[11px] uppercase tracking-widest font-black whitespace-nowrap transition-all flex-1 justify-center
-                      ${activeTab === tab.id ? 'bg-indigo-600 shadow-md shadow-indigo-500/20 text-white border-none' : 'text-slate-500 hover:bg-white/5 hover:text-slate-200 border-none'}`}
+                    className={`flex items-center gap-2 px-5 py-4 rounded-[1.5rem] text-[11px] uppercase tracking-[0.2em] font-black whitespace-nowrap transition-all flex-1 justify-center border
+                      ${activeTab === tab.id ? 'bg-gradient-to-r from-amber-600 to-amber-500 text-slate-900 border-amber-400 shadow-[0_0_20px_rgba(245,158,11,0.3)]' : 'bg-black/20 text-slate-500 border-[#1e1b4b] hover:border-amber-500/30 hover:text-amber-400 hover:bg-amber-900/10'}`}
                   >
                     <tab.icon className="w-4 h-4" /> {tab.title}
                   </button>

@@ -178,6 +178,51 @@ router.post("/prompts/:id", async (req, res) => {
   }
 });
 
+// ==========================================
+// PROPAGANDAS (ADS)
+// ==========================================
+
+router.get("/ads", async (req, res) => {
+  try {
+    const result = await pool.query("SELECT * FROM ads_campaigns ORDER BY created_at DESC");
+    res.json(result.rows);
+  } catch (err) {
+    res.status(500).json({ error: "Erro ao buscar ads" });
+  }
+});
+
+router.post("/ads", async (req, res) => {
+  const { title, image_url, link_url, placement } = req.body;
+  try {
+    const result = await pool.query(
+      "INSERT INTO ads_campaigns (title, image_url, link_url, placement) VALUES ($1, $2, $3, $4)",
+      [title, image_url, link_url, placement]
+    );
+    res.json({ success: true, ad: result.rows[0] });
+  } catch (err) {
+    res.status(500).json({ error: "Erro ao criar ad" });
+  }
+});
+
+router.put("/ads/:id/toggle", async (req, res) => {
+  const { is_active } = req.body;
+  try {
+    await pool.query("UPDATE ads_campaigns SET is_active = $1 WHERE id = $2", [is_active, req.params.id]);
+    res.json({ success: true });
+  } catch (err) {
+    res.status(500).json({ error: "Erro ao atualizar ad" });
+  }
+});
+
+router.delete("/ads/:id", async (req, res) => {
+  try {
+    await pool.query("DELETE FROM ads_campaigns WHERE id = $1", [req.params.id]);
+    res.json({ success: true });
+  } catch (err) {
+    res.status(500).json({ error: "Erro ao deletar ad" });
+  }
+});
+
 // Listar Logs de moderação
 router.get("/logs", async (req, res) => {
   try {

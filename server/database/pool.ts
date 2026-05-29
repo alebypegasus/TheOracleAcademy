@@ -53,6 +53,8 @@ export const fallbackDB: {
   group_members: any[];
   friendships: any[];
   direct_messages: any[];
+  lesson_audios: any[];
+  ads_campaigns: any[];
 } = {
   users: [
     { id: 1, email: 'admin@admin.com', password: '$2b$10$FdZebsjlwQP7GUjqxTX6UOO0iM7LSdHeXyG00kMpHHNpAmTaupHnG', role: 'admin', is_paid: true, created_at: new Date().toISOString() }, // password: 123456 (hashed)
@@ -227,7 +229,19 @@ export const fallbackDB: {
   community_groups: [],
   group_members: [],
   friendships: [],
-  direct_messages: []
+  direct_messages: [],
+  lesson_audios: [],
+  ads_campaigns: [
+    {
+      id: 1,
+      title: 'Plano Ascendente',
+      image_url: 'https://images.unsplash.com/photo-1518531933037-91b2f5f229cc?auto=format&fit=crop&w=1200&h=300&q=80',
+      link_url: '#/dashboard',
+      placement: 'marketplace',
+      is_active: true,
+      created_at: new Date().toISOString()
+    }
+  ]
 };
 
 // Custom query executor mimicking the standard queries for PostgreSQL
@@ -439,6 +453,63 @@ export function executeMockQuery(sql: string, params: any[] = []): { rows: any[]
       };
       fallbackDB.marketplace_items.push(newItem);
       return { rows: [newItem] };
+    }
+
+    // lesson_audios
+    if (norm.includes('from lesson_audios')) {
+      if (norm.includes('where hash =')) {
+        const h = params[0];
+        return { rows: fallbackDB.lesson_audios.filter((l: any) => l.hash === h) };
+      }
+      return { rows: fallbackDB.lesson_audios };
+    }
+    if (norm.includes('insert into lesson_audios')) {
+      const newAudio = {
+        id: fallbackDB.lesson_audios.length + 1,
+        hash: params[0],
+        voice_id: params[1],
+        audio_data: params[2],
+        created_at: new Date().toISOString()
+      };
+      fallbackDB.lesson_audios.push(newAudio);
+      return { rows: [newAudio] };
+    }
+
+    // ads_campaigns
+    if (norm.includes('from ads_campaigns')) {
+      if (norm.includes('where placement =')) {
+        const placement = params[0];
+        return { rows: fallbackDB.ads_campaigns.filter((a: any) => a.placement === placement && a.is_active) };
+      }
+      return { rows: fallbackDB.ads_campaigns };
+    }
+    if (norm.includes('insert into ads_campaigns')) {
+      const newAd = {
+        id: fallbackDB.ads_campaigns.length > 0 ? Math.max(...fallbackDB.ads_campaigns.map(a => a.id)) + 1 : 1,
+        title: params[0],
+        image_url: params[1],
+        link_url: params[2] || '',
+        placement: params[3],
+        is_active: true,
+        created_at: new Date().toISOString()
+      };
+      fallbackDB.ads_campaigns.push(newAd);
+      return { rows: [newAd] };
+    }
+    if (norm.includes('update ads_campaigns set is_active')) {
+      const activeStatus = params[0];
+      const adId = Number(params[1]);
+      const ad = fallbackDB.ads_campaigns.find(a => a.id === adId);
+      if (ad) {
+         ad.is_active = activeStatus;
+         return { rows: [ad] };
+      }
+      return { rows: [] };
+    }
+    if (norm.includes('delete from ads_campaigns')) {
+      const adId = Number(params[0]);
+      fallbackDB.ads_campaigns = fallbackDB.ads_campaigns.filter(a => a.id !== adId);
+      return { rows: [] };
     }
 
     // 9. SELECT * FROM transactions

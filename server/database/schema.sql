@@ -259,3 +259,12 @@ CREATE TABLE IF NOT EXISTS moderation_logs (
   details JSONB DEFAULT '{}',
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
+
+-- 23. TTS Audio Cache Table
+CREATE TABLE IF NOT EXISTS lesson_audios (
+  id SERIAL PRIMARY KEY,
+  hash TEXT UNIQUE NOT NULL,
+  voice_id TEXT NOT NULL,
+  audio_data BYTEA NOT NULL,
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);

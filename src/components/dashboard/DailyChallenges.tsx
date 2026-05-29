@@ -25,7 +25,7 @@ export function DailyChallenges({ onNavigate, profile, grimoireEntries, currentU
           <Lock className="w-10 h-10 text-rose-400 mb-3 opacity-80" />
           <h3 className="text-lg font-serif text-slate-200 mb-1">Missões Diárias</h3>
           <p className="text-xs text-slate-400 mb-4 max-w-[200px]">Acompanhe seu progresso e ganhe recompensas com o Premium.</p>
-          <button className="px-4 py-1.5 bg-gradient-to-r from-amber-600 to-amber-500 text-slate-900 font-bold rounded-full text-xs uppercase tracking-wider">
+          <button onClick={() => document.dispatchEvent(new CustomEvent('OPEN_SUBSCRIPTION_MODAL'))} className="px-4 py-1.5 bg-gradient-to-r from-amber-600 to-amber-500 text-slate-900 font-bold rounded-full text-xs uppercase tracking-wider">
             Assinar Plano
           </button>
         </div>

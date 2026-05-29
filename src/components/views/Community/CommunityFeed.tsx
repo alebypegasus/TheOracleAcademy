@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion } from 'motion/react';
 import { RichPostEditor } from './RichPostEditor';
 import { Heart, MessageCircle, Share2, Sparkles, MoreHorizontal, User } from 'lucide-react';
+import { AdBanner } from '../../AdBanner';
 
 interface CommunityFeedProps {
   currentUser: any;
@@ -76,6 +77,10 @@ export function CommunityFeed({ currentUser }: CommunityFeedProps) {
     <div className="flex flex-col lg:flex-row gap-6">
       <div className="flex-1 min-w-0">
         <RichPostEditor currentUser={currentUser} onSubmit={handlePostSubmit} />
+        
+        <div className="mt-6 mb-6">
+          <AdBanner placement="community" />
+        </div>
         
         {loading ? (
           <div className="flex justify-center items-center py-20">

@@ -74,7 +74,7 @@ export default function DashboardPage({
       animate={{ opacity: 1 }} 
       exit={{ opacity: 0 }} 
       transition={{ duration: 0.5, ease: "easeOut" }} 
-      className="max-w-7xl mx-auto w-full pb-20 px-4 md:px-8"
+      className="w-full mx-auto pb-20 px-4 md:px-8"
     >
       {!isZenMode && (
         <Header 

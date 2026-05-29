@@ -83,8 +83,8 @@ export function PlanGate({ requiredPlan, featureName, children, compact = false,
           )}
         </div>
 
-        <a
-          href="#/subscription"
+        <button
+          onClick={() => document.dispatchEvent(new CustomEvent('OPEN_SUBSCRIPTION_MODAL'))}
           className={`px-6 py-2.5 rounded-xl text-sm font-bold tracking-wide transition-all
             ${color === 'amber'
               ? 'bg-gradient-to-r from-amber-600 to-amber-500 hover:from-amber-500 hover:to-amber-400 text-amber-950 shadow-[0_0_20px_rgba(245,158,11,0.3)]'
@@ -92,7 +92,7 @@ export function PlanGate({ requiredPlan, featureName, children, compact = false,
             }`}
         >
           Fazer Upgrade →
-        </a>
+        </button>
       </div>
     </div>
   );

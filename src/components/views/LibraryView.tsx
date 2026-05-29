@@ -7,6 +7,7 @@ import {
   CreditCard, QrCode, Check, ArrowLeft, Upload, ShoppingBag,
   ChevronDown, ChevronUp, Loader2
 } from 'lucide-react';
+import { AdBanner } from '../AdBanner';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 interface Product {
@@ -784,6 +785,8 @@ export function LibraryView({ currentUser }: { currentUser: any }) {
           </div>
         </div>
       </div>
+
+      <AdBanner placement="marketplace" className="mb-6" />
 
       {/* Filters */}
       <div className="mb-6 space-y-4">

@@ -115,12 +115,7 @@ export function SupportView({ currentUser }: { currentUser: any }) {
   const filteredFaqs = FAQS.filter(f => f.q.toLowerCase().includes(searchQuery.toLowerCase()) || f.tag.toLowerCase().includes(searchQuery.toLowerCase()));
 
   return (
-    <div className="relative min-h-screen bg-[#050505] text-slate-100 overflow-hidden font-sans">
-      
-      {/* Background gradients and noise overlay */}
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-indigo-900/10 via-[#050505] to-[#050505] z-0"></div>
-      <div className="absolute top-[-20%] left-[-10%] w-[60%] h-[60%] rounded-full bg-blue-900/10 blur-[130px] pointer-events-none z-0" />
-      <div className="absolute bottom-[-20%] right-[-10%] w-[60%] h-[60%] rounded-full bg-purple-900/10 blur-[130px] pointer-events-none z-0" />
+    <div className="relative min-h-screen text-slate-100 overflow-hidden font-sans w-full">
 
       {/* Main Content Container */}
       <div className="relative z-10 w-full mx-auto py-16 px-6 lg:px-8">
