@@ -14,7 +14,7 @@ import { AIStudyPlanCard } from '../../components/dashboard/AIStudyPlanCard';
 import { XPGrowthChartCard } from '../../components/dashboard/XPGrowthChartCard';
 import { RevenueReport } from '../../components/dashboard/RevenueReport';
 
-const cardBaseStyle = "bg-black/40 backdrop-blur-xl border border-white/10 rounded-[2rem] relative overflow-hidden shadow-2xl transition-all duration-300 hover:border-white/20";
+const cardBaseStyle = "bg-black/40 backdrop-blur-xl border border-[#1e1b4b] rounded-[2rem] relative overflow-hidden shadow-2xl transition-all duration-300 hover:border-[#312e81]";
 
 // Custom Card Wrapper to replace MagicCard without height constraints
 const DashboardCard = ({ children, className }: { children: React.ReactNode, className?: string }) => (
@@ -109,7 +109,7 @@ export default function DashboardPage({
       )}
       
       {!isZenMode && (currentUser?.role === 'vendedor' || currentUser?.role === 'admin') && (
-        <div className="flex border-b border-white/10 gap-8 mt-2 mb-8">
+        <div className="flex border-b border-[#1e1b4b] gap-8 mt-2 mb-8">
           <button 
             onClick={() => setDashboardTab('overview')}
             className={`pb-4 px-2 text-sm font-bold relative transition-colors ${dashboardTab === 'overview' ? 'text-indigo-400 font-extrabold' : 'text-slate-400 hover:text-slate-200'}`}

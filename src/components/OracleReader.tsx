@@ -156,7 +156,7 @@ export function OracleReader({ profile, setProfile, addGrimoireEntry, currentUse
       </div>
 
       {/* Mode Selectors */}
-      <div className="flex bg-black/40 border border-white/5 p-1 rounded-2xl max-w-md mx-auto mb-10">
+      <div className="flex bg-black/40 border border-[#1e1b4b] p-1 rounded-2xl max-w-md mx-auto mb-10">
         <button
           onClick={() => { setActiveMode('study'); setReading(null); }}
           className={`flex-1 py-3 text-xs font-black uppercase tracking-widest rounded-xl transition-all flex items-center justify-center gap-2
@@ -173,7 +173,7 @@ export function OracleReader({ profile, setProfile, addGrimoireEntry, currentUse
         </button>
       </div>
 
-      <div className="glass-panel p-8 rounded-[2.5rem] border-white/10 mb-8 relative overflow-hidden group">
+      <div className="glass-panel p-8 rounded-[2.5rem] border-[#1e1b4b] mb-8 relative overflow-hidden group">
         {isLocked && (
           <div className="absolute inset-0 z-30 bg-black/75 backdrop-blur-[3px] flex flex-col items-center justify-center rounded-[2.5rem] p-6 text-center">
             <Lock className="w-14 h-14 text-rose-400 mb-4 opacity-80" />
@@ -200,7 +200,7 @@ export function OracleReader({ profile, setProfile, addGrimoireEntry, currentUse
                         className={`py-3 rounded-xl text-xs font-bold transition-all border ${
                           selectedOracle === orc 
                           ? 'bg-indigo-600/20 border-indigo-500 text-indigo-300 shadow-[0_0_15px_rgba(99,102,241,0.15)]' 
-                          : 'bg-black/30 border-white/5 text-slate-400 hover:text-white hover:border-white/10'
+                          : 'bg-black/30 border-[#1e1b4b] text-slate-400 hover:text-white hover:border-[#1e1b4b]'
                         }`}
                       >
                         {orc === 'Tarot' ? '🔮 Tarot' : orc === 'Runas' ? 'ᛗ Runas' : '🃏 Lenormand'}
@@ -214,7 +214,7 @@ export function OracleReader({ profile, setProfile, addGrimoireEntry, currentUse
                   <select 
                     value={studySpread}
                     onChange={(e) => setSpreadType(e.target.value)}
-                    className="w-full bg-black/45 border border-white/5 rounded-xl px-4 py-3.5 text-xs text-slate-200 outline-none focus:border-indigo-500/50"
+                    className="w-full bg-black/45 border border-[#1e1b4b] rounded-xl px-4 py-3.5 text-xs text-slate-200 outline-none focus:border-indigo-500/50"
                   >
                     <option>Portal do Aprendizado (1 Carta - Foco Absoluto)</option>
                     <option>Caminho da Compreensão (3 Cartas - Passado/Presente/Futuro do Saber)</option>
@@ -239,7 +239,7 @@ export function OracleReader({ profile, setProfile, addGrimoireEntry, currentUse
                         className={`px-4 py-3 rounded-xl text-left text-xs transition-all border ${
                           studyGoal === goalOption 
                           ? 'bg-indigo-500/10 border-indigo-500/50 text-indigo-300' 
-                          : 'bg-black/20 border-white/5 text-slate-400 hover:bg-white/5'
+                          : 'bg-black/20 border-[#1e1b4b] text-slate-400 hover:bg-white/5'
                         }`}
                       >
                         {goalOption}
@@ -247,7 +247,7 @@ export function OracleReader({ profile, setProfile, addGrimoireEntry, currentUse
                     ))}
                     <button
                       onClick={() => setShowCustomGoal(true)}
-                      className="px-4 py-3 rounded-xl text-left text-xs bg-black/20 border border-dashed border-white/10 text-slate-500 hover:border-indigo-500/50 hover:text-indigo-400 transition-all"
+                      className="px-4 py-3 rounded-xl text-left text-xs bg-black/20 border border-dashed border-[#1e1b4b] text-slate-500 hover:border-indigo-500/50 hover:text-indigo-400 transition-all"
                     >
                       + Outro Foco de Estudo Personalizado...
                     </button>
@@ -259,7 +259,7 @@ export function OracleReader({ profile, setProfile, addGrimoireEntry, currentUse
                       value={customGoal}
                       onChange={(e) => setCustomGoal(e.target.value)}
                       placeholder="Escreva sua meta de aprendizado (ex: Aprender as runas de proteção)"
-                      className="flex-1 bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-xs text-slate-200 outline-none focus:border-indigo-500/50"
+                      className="flex-1 bg-black/40 border border-[#1e1b4b] rounded-xl px-4 py-3 text-xs text-slate-200 outline-none focus:border-indigo-500/50"
                     />
                     <button 
                       onClick={() => { setShowCustomGoal(false); setCustomGoal(''); }}
@@ -278,7 +278,7 @@ export function OracleReader({ profile, setProfile, addGrimoireEntry, currentUse
                   value={studyQuestion}
                   onChange={(e) => setStudyQuestion(e.target.value)}
                   placeholder="Ex: Como lidar com bloqueios de criatividade sob a ótica da egrégora?"
-                  className="w-full bg-black/20 border border-white/10 rounded-xl px-4 py-3 text-slate-200 outline-none focus:border-indigo-500/50 transition-colors text-sm"
+                  className="w-full bg-black/20 border border-[#1e1b4b] rounded-xl px-4 py-3 text-slate-200 outline-none focus:border-indigo-500/50 transition-colors text-sm"
                 />
               </div>
 
@@ -304,7 +304,7 @@ export function OracleReader({ profile, setProfile, addGrimoireEntry, currentUse
                   value={question}
                   onChange={(e) => setQuestion(e.target.value)}
                   placeholder="Que sabedoria as cartas devem revelar hoje?"
-                  className="w-full bg-black/20 border border-white/10 rounded-xl px-4 py-3.5 text-slate-200 outline-none focus:border-indigo-500/50 transition-colors resize-none h-28 text-sm"
+                  className="w-full bg-black/20 border border-[#1e1b4b] rounded-xl px-4 py-3.5 text-slate-200 outline-none focus:border-indigo-500/50 transition-colors resize-none h-28 text-sm"
                 />
               </div>
               
@@ -314,7 +314,7 @@ export function OracleReader({ profile, setProfile, addGrimoireEntry, currentUse
                   <select 
                     value={spreadType}
                     onChange={(e) => setSpreadType(e.target.value)}
-                    className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-xs text-slate-200 outline-none focus:border-indigo-500/50"
+                    className="w-full bg-black/40 border border-[#1e1b4b] rounded-xl px-4 py-3 text-xs text-slate-200 outline-none focus:border-indigo-500/50"
                   >
                     <option>Tarot (1 Carta)</option>
                     <option>Tarot (3 Cartas Passado/Presente/Futuro)</option>
@@ -388,12 +388,12 @@ export function OracleReader({ profile, setProfile, addGrimoireEntry, currentUse
                   <motion.div 
                     key={i}
                     whileHover={{ scale: 1.05, rotate: 1 }}
-                    className="w-44 h-72 bg-gradient-to-br from-indigo-950/40 via-purple-950/40 to-black/60 border border-indigo-500/20 rounded-2xl flex flex-col justify-between p-5 text-center shadow-xl cursor-help relative overflow-hidden group/card"
+                    className="w-44 h-72 bg-gradient-to-br from-indigo-950/40 via-purple-950/40 to-black/60 border border-[#312e81] rounded-2xl flex flex-col justify-between p-5 text-center shadow-xl cursor-help relative overflow-hidden group/card"
                   >
                     <div className="absolute inset-0 bg-indigo-500/[0.03] opacity-0 group-hover/card:opacity-100 transition-opacity" />
                     
                     {/* Header decorative card outline */}
-                    <div className="border border-white/5 flex-1 rounded-xl p-3 flex flex-col justify-between relative z-10">
+                    <div className="border border-[#1e1b4b] flex-1 rounded-xl p-3 flex flex-col justify-between relative z-10">
                       <div className="flex justify-between items-center">
                         <span className="text-[9px] font-mono text-indigo-500/60 font-bold">ARC#0{i+1}</span>
                         <div className="w-1.5 h-1.5 rounded-full bg-indigo-500" />
@@ -415,7 +415,7 @@ export function OracleReader({ profile, setProfile, addGrimoireEntry, currentUse
               </div>
             </div>
 
-            <div className="border-t border-white/5 pt-6 grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <div className="border-t border-[#1e1b4b] pt-6 grid grid-cols-1 lg:grid-cols-3 gap-8">
               {/* Left & Middle Column: Deep Interpretation */}
               <div className="lg:col-span-2 space-y-4">
                 <h3 className="text-lg font-black uppercase tracking-[0.2em] text-slate-400 flex items-center gap-2">
@@ -428,7 +428,7 @@ export function OracleReader({ profile, setProfile, addGrimoireEntry, currentUse
               </div>
 
               {/* Right Column: Dynamic Study Notes / Task Recommendation */}
-              <div className="space-y-4 lg:bg-white/[0.01] lg:border border-white/5 p-6 rounded-3xl lg:shadow-inner self-start">
+              <div className="space-y-4 lg:bg-white/[0.01] lg:border border-[#1e1b4b] p-6 rounded-3xl lg:shadow-inner self-start">
                 <div className="flex items-center gap-2 text-indigo-400">
                   <Brain className="w-5 h-5" />
                   <h4 className="text-xs font-black uppercase tracking-widest text-slate-200">Exercício Educativo</h4>
@@ -438,7 +438,7 @@ export function OracleReader({ profile, setProfile, addGrimoireEntry, currentUse
                   A inteligência integrativa calculou este exercício místico específico para acelerar a memorização desta tiragem:
                 </p>
                 
-                <div className="p-4 bg-indigo-500/5 border border-indigo-500/10 rounded-2xl">
+                <div className="p-4 bg-indigo-500/5 border border-[#1e1b4b] rounded-2xl">
                   <p className="text-xs text-indigo-300 leading-relaxed italic">
                     {reading.studyNote || "Após ler a interpretação, reserve 5 minutos para mentalizar os arquétipos e anote em seu caderno."}
                   </p>
@@ -453,7 +453,7 @@ export function OracleReader({ profile, setProfile, addGrimoireEntry, currentUse
               </div>
             </div>
             
-            <div className="mt-8 flex flex-col sm:flex-row justify-between items-center border-t border-white/5 pt-6 gap-4">
+            <div className="mt-8 flex flex-col sm:flex-row justify-between items-center border-t border-[#1e1b4b] pt-6 gap-4">
               <div className="flex items-center gap-3">
                 <span className="text-xs text-slate-500 font-bold uppercase tracking-wider">A leitura foi relevante?</span>
                 <button 

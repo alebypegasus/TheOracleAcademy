@@ -36,7 +36,7 @@ function indexToResonanceLevel(i: number) {
 }
 
 function resonanceStyle(lvl: number) {
-  if (lvl === 0) return 'bg-slate-900 border-white/5';
+  if (lvl === 0) return 'bg-slate-900 border-[#1e1b4b]';
   if (lvl === 1) return 'bg-emerald-950/80 border-emerald-950';
   if (lvl === 2) return 'bg-emerald-900 border-emerald-800';
   if (lvl === 3) return 'bg-emerald-700 border-emerald-600';
@@ -486,7 +486,7 @@ export function LandingPage({
               initial={{ opacity: 0, scale: 0.95, y: 15 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 15 }}
-              className="w-full max-w-sm sm:max-w-md bg-[#090615] shadow-[0_10px_40px_rgba(99,102,241,0.15)] rounded-[32px] overflow-hidden border-[1.5px] border-indigo-500/20 transition-all my-8 relative"
+              className="w-full max-w-sm sm:max-w-md bg-[#090615] shadow-[0_10px_40px_rgba(99,102,241,0.1)] rounded-[32px] overflow-hidden border border-[#1e1b4b] transition-all my-8 relative"
             >
               <button 
                 onClick={() => {
@@ -501,7 +501,7 @@ export function LandingPage({
                 <X className="w-5 h-5" />
               </button>
 
-              <div className="p-6 sm:p-8 pb-8 sm:pb-10 border-b-[1.2px] bg-[#0c081c] border-indigo-500/10 rounded-b-[28px]">
+              <div className="p-6 sm:p-8 pb-8 sm:pb-10 border-b-[1.2px] bg-[#0c081c] border-[#1e1b4b] rounded-b-[28px]">
                 <div className="w-12 h-12 mb-4 theme-logo-image filter drop-shadow-[0_0_8px_rgba(139,92,246,0.5)] mx-auto sm:mx-0" />
                 
                 <h2 className="text-2xl sm:text-3xl font-serif text-slate-100 mb-1.5 sm:mb-2 text-center sm:text-left">
@@ -538,7 +538,7 @@ export function LandingPage({
                              maxLength={6}
                              value={mfaCode}
                              onChange={(e) => setMfaCode(e.target.value)}
-                             className="w-full bg-black/40 border-[1.2px] border-indigo-500/20 rounded-xl py-3.5 text-center text-lg tracking-[0.5em] font-mono text-amber-400 outline-none focus:border-amber-500/60 transition-all font-bold placeholder-indigo-900"
+                             className="w-full bg-black/40 border-[1.2px] border-[#1e1b4b] rounded-xl py-3.5 text-center text-lg tracking-[0.5em] font-mono text-amber-400 outline-none focus:border-amber-500/60 transition-all font-bold placeholder-indigo-900"
                              placeholder="000000"
                            />
                          </div>
@@ -560,7 +560,7 @@ export function LandingPage({
                          className="space-y-5"
                       >
                          <div className="space-y-3">
-                           <button onClick={handleGoogleLogin} className="w-full flex items-center justify-center gap-3 py-3 px-4 border-[1.2px] border-indigo-500/20 rounded-xl font-medium text-slate-200 bg-black/40 hover:bg-black/60 transition-colors text-[13px] sm:text-sm shadow-sm">
+                           <button onClick={handleGoogleLogin} className="w-full flex items-center justify-center gap-3 py-3 px-4 border-[1.2px] border-[#1e1b4b] rounded-xl font-medium text-slate-200 bg-black/40 hover:bg-black/60 transition-colors text-[13px] sm:text-sm shadow-sm">
                              <svg className="w-4 h-4" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" /><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" /><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" /><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" /></svg>
                              Sincronizar com Google
                            </button>
@@ -579,16 +579,16 @@ export function LandingPage({
                            {isRegistering && (
                              <div>
                                <label className="block text-[11px] font-bold text-slate-300 mb-1.5 uppercase tracking-widest">Nome Místico</label>
-                               <input type="text" required value={name} onChange={(e) => setName(e.target.value)} className="w-full px-4 py-3 rounded-xl border-[1.2px] border-indigo-500/20 bg-black/40 focus:border-indigo-500/60 outline-none text-[14px] text-slate-200" placeholder="Ex: Iniciado Asteca" />
+                               <input type="text" required value={name} onChange={(e) => setName(e.target.value)} className="w-full px-4 py-3 rounded-xl border-[1.2px] border-[#1e1b4b] bg-black/40 focus:border-indigo-500/60 outline-none text-[14px] text-slate-200" placeholder="Ex: Iniciado Asteca" />
                              </div>
                            )}
                            <div>
                              <label className="block text-[11px] font-bold text-slate-300 mb-1.5 uppercase tracking-widest">E-mail</label>
-                             <input type="email" required value={email} onChange={(e) => setEmail(e.target.value)} className="w-full px-4 py-3 rounded-xl border-[1.2px] border-indigo-500/20 bg-black/40 focus:border-indigo-500/60 outline-none text-[14px] text-slate-200 font-light" placeholder="nome@exemplo.com" />
+                             <input type="email" required value={email} onChange={(e) => setEmail(e.target.value)} className="w-full px-4 py-3 rounded-xl border-[1.2px] border-[#1e1b4b] bg-black/40 focus:border-indigo-500/60 outline-none text-[14px] text-slate-200 font-light" placeholder="nome@exemplo.com" />
                            </div>
                            <div>
                              <label className="block text-[11px] font-bold text-slate-300 mb-1.5 uppercase tracking-widest">Senha de Acesso</label>
-                             <input type={showPassword ? "text" : "password"} required value={password} onChange={(e) => setPassword(e.target.value)} className="w-full px-4 py-3 rounded-xl border-[1.2px] border-indigo-500/20 bg-black/40 focus:border-indigo-500/60 outline-none text-[14px] text-slate-200" placeholder="••••••••" />
+                             <input type={showPassword ? "text" : "password"} required value={password} onChange={(e) => setPassword(e.target.value)} className="w-full px-4 py-3 rounded-xl border-[1.2px] border-[#1e1b4b] bg-black/40 focus:border-indigo-500/60 outline-none text-[14px] text-slate-200" placeholder="••••••••" />
                            </div>
                            <div className="pt-2">
                              <motion.button whileHover={{ scale: 1.015 }} whileTap={{ scale: 0.97 }} transition={{ type: "spring", stiffness: 400, damping: 25 }} type="submit" className="w-full py-3.5 bg-indigo-600 text-white rounded-xl font-bold tracking-widest text-[12px] uppercase shadow-lg shadow-indigo-500/20">
@@ -682,7 +682,7 @@ export function LandingPage({
             </button>
             <a 
               href="#mapa-astral-section"
-              className="px-8 py-5 border border-white/10 hover:border-amber-500/40 bg-white/[0.02] hover:bg-white/[0.05] text-slate-200 font-bold rounded-2xl text-md uppercase tracking-wider backdrop-blur-md transition-all"
+              className="px-8 py-5 border border-[#312e81] hover:border-amber-500/40 bg-white/[0.02] hover:bg-white/[0.05] text-slate-200 font-bold rounded-2xl text-md uppercase tracking-wider backdrop-blur-md transition-all"
             >
               Descobrir Meu Destino (Grátis)
             </a>
@@ -707,7 +707,7 @@ export function LandingPage({
       </section>
 
       {/* Dynamic Horoscope Wheel / O Zodíaco dos Sete Céus */}
-      <section className="relative py-24 px-4 bg-gradient-to-b from-black/0 via-slate-950/40 to-black/0 border-y border-white/5">
+      <section className="relative py-24 px-4 bg-gradient-to-b from-black/0 via-slate-950/40 to-black/0 border-y border-[#1e1b4b]">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-16">
             <span className="text-xs text-amber-500 uppercase tracking-widest font-black flex items-center justify-center gap-1.5 mb-3 leading-none">
@@ -732,7 +732,7 @@ export function LandingPage({
                     isSelected ? 'scale-105' : ''
                   }`}
                 >
-                  <MagicCard className={`p-4 h-full text-center transition-all ${isSelected ? 'border-amber-400 bg-amber-400/10 shadow-[0_0_20px_rgba(245,158,11,0.2)]' : 'border-white/5 bg-black/40 group-hover:border-slate-700 group-hover:bg-slate-900/50'}`}>
+                  <MagicCard className={`p-4 h-full text-center transition-all ${isSelected ? 'border-amber-400 bg-amber-400/10 shadow-[0_0_20px_rgba(245,158,11,0.2)]' : 'border-[#1e1b4b] bg-black/40 group-hover:border-slate-700 group-hover:bg-slate-900/50'}`}>
                     <div className={`text-4xl bg-gradient-to-br ${sign.color} bg-clip-text text-transparent font-bold mb-2`}>
                       {sign.symbol}
                     </div>
@@ -770,11 +770,11 @@ export function LandingPage({
                     <div className="flex flex-wrap items-center gap-3 mb-2">
                       <h3 className="text-2xl font-serif text-slate-100 font-bold">{selectedHoroscope.name}</h3>
                       <span className="px-3 py-1 bg-amber-500/10 border border-amber-500/20 text-amber-400 text-[10px] rounded-full uppercase tracking-wider font-mono font-bold">Elemento: {selectedHoroscope.element}</span>
-                      <span className="px-3 py-1 bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 text-[10px] rounded-full uppercase tracking-wider font-mono font-bold">Astro Regente: {selectedHoroscope.ruler}</span>
+                      <span className="px-3 py-1 bg-indigo-500/10 border border-[#312e81] text-indigo-400 text-[10px] rounded-full uppercase tracking-wider font-mono font-bold">Astro Regente: {selectedHoroscope.ruler}</span>
                     </div>
                     <p className="text-xs text-slate-500 font-mono">Vigência Astrológica: {selectedHoroscope.date}</p>
                     
-                    <div className="mt-4 p-4 bg-black/40 rounded-xl border border-white/5">
+                    <div className="mt-4 p-4 bg-black/40 rounded-xl border border-[#1e1b4b]">
                       <p className="text-sm md:text-base text-slate-300 leading-relaxed font-light italic">
                         "{selectedHoroscope.horoscope}"
                       </p>
@@ -783,7 +783,7 @@ export function LandingPage({
                 </div>
               </motion.div>
             ) : (
-              <div className="text-center p-6 bg-white/[0.01] border border-dashed border-white/5 rounded-2xl text-xs text-slate-500 uppercase tracking-widest font-mono">
+              <div className="text-center p-6 bg-white/[0.01] border border-dashed border-[#1e1b4b] rounded-2xl text-xs text-slate-500 uppercase tracking-widest font-mono">
                 ✦ Clique em qualquer um dos 12 signos acima para sintonizar a previsão semanal ✦
               </div>
             )}
@@ -797,7 +797,7 @@ export function LandingPage({
         
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-16">
-            <span className="text-xs text-indigo-400 uppercase tracking-widest font-mono font-bold px-3 py-1 bg-indigo-500/10 border border-indigo-500/20 rounded-full mb-3 inline-block">
+            <span className="text-xs text-indigo-400 uppercase tracking-widest font-mono font-bold px-3 py-1 bg-indigo-500/10 border border-[#312e81] rounded-full mb-3 inline-block">
               INTEGRAÇÃO GOOGLE GEMINI MAIS TOP DO PLANETA
             </span>
             <h2 className="text-3xl md:text-5xl font-serif text-slate-100 tracking-wide mb-4">
@@ -818,7 +818,7 @@ export function LandingPage({
               // If seeker has submitted but is not logged in: show the inline login/register wall
               (!currentUser && pendingChartData) ? (
                 <div className="space-y-6 relative z-10 text-left">
-                  <div className="p-5 bg-indigo-505/10 border border-indigo-500/20 bg-indigo-950/40 rounded-2xl">
+                  <div className="p-5 bg-indigo-505/10 border border-[#312e81] bg-indigo-950/40 rounded-2xl">
                     <p className="text-sm text-indigo-200 leading-relaxed font-light">
                       🌌 Seu portal celestial para <strong>{pendingChartData.fullName}</strong> está sintonizado e sutilmente calculado!
                       <br /><br />
@@ -833,7 +833,7 @@ export function LandingPage({
                   )}
 
                   {/* Tab Selector */}
-                  <div className="flex border-b border-white/5 pb-1 gap-2">
+                  <div className="flex border-b border-[#1e1b4b] pb-1 gap-2">
                     <button
                       type="button"
                       onClick={() => { setInlineAuthMode('register'); setInlineError(''); }}
@@ -927,7 +927,7 @@ export function LandingPage({
                           required
                           value={inlineEmail}
                           onChange={(e) => setInlineEmail(e.target.value)}
-                          className="w-full bg-black/50 border border-white/10 rounded-xl py-3.5 pl-11 pr-4 text-sm focus:border-amber-400 text-slate-100 outline-none"
+                          className="w-full bg-black/50 border border-[#312e81] rounded-xl py-3.5 pl-11 pr-4 text-sm focus:border-amber-400 text-slate-100 outline-none"
                           placeholder="seuemail@exemplo.com"
                         />
                       </div>
@@ -942,7 +942,7 @@ export function LandingPage({
                           required
                           value={inlinePassword}
                           onChange={(e) => setInlinePassword(e.target.value)}
-                          className="w-full bg-black/50 border border-white/10 rounded-xl py-3.5 pl-11 pr-4 text-sm focus:border-amber-400 text-slate-100 outline-none"
+                          className="w-full bg-black/50 border border-[#312e81] rounded-xl py-3.5 pl-11 pr-4 text-sm focus:border-amber-400 text-slate-100 outline-none"
                           placeholder="Sua senha secreta"
                         />
                       </div>
@@ -984,7 +984,7 @@ export function LandingPage({
                           disabled={isGeneratingChart}
                           value={fullName}
                           onChange={(e) => setFullName(e.target.value)}
-                          className="w-full bg-black/50 border border-white/10 rounded-2xl py-4 pl-11 pr-4 text-sm outline-none focus:border-amber-400 focus:bg-slate-900/50 text-slate-100 transition-all font-light"
+                          className="w-full bg-black/50 border border-[#312e81] rounded-2xl py-4 pl-11 pr-4 text-sm outline-none focus:border-amber-400 focus:bg-slate-900/50 text-slate-100 transition-all font-light"
                           placeholder="Nome completo para leitura"
                         />
                       </div>
@@ -1000,7 +1000,7 @@ export function LandingPage({
                           disabled={isGeneratingChart}
                           value={birthLocation}
                           onChange={(e) => setBirthLocation(e.target.value)}
-                          className="w-full bg-black/50 border border-white/10 rounded-2xl py-4 pl-11 pr-4 text-sm outline-none focus:border-amber-400 focus:bg-slate-900/50 text-slate-100 transition-all font-light"
+                          className="w-full bg-black/50 border border-[#312e81] rounded-2xl py-4 pl-11 pr-4 text-sm outline-none focus:border-amber-400 focus:bg-slate-900/50 text-slate-100 transition-all font-light"
                           placeholder="Cidade - Estado (ex: São Paulo - SP)"
                         />
                       </div>
@@ -1018,7 +1018,7 @@ export function LandingPage({
                           disabled={isGeneratingChart}
                           value={birthDate}
                           onChange={(e) => setBirthDate(e.target.value)}
-                          className="w-full bg-black/50 border border-white/10 rounded-2xl py-4 pl-11 pr-4 text-sm outline-none focus:border-amber-400 focus:bg-slate-900/50 text-slate-200 transition-all h-[54px]"
+                          className="w-full bg-black/50 border border-[#312e81] rounded-2xl py-4 pl-11 pr-4 text-sm outline-none focus:border-amber-400 focus:bg-slate-900/50 text-slate-200 transition-all h-[54px]"
                         />
                       </div>
                     </div>
@@ -1033,7 +1033,7 @@ export function LandingPage({
                           disabled={isGeneratingChart}
                           value={birthTime}
                           onChange={(e) => setBirthTime(e.target.value)}
-                          className="w-full bg-black/50 border border-white/10 rounded-2xl py-4 pl-11 pr-4 text-sm outline-none focus:border-amber-400 focus:bg-slate-900/50 text-slate-200 transition-all h-[54px]"
+                          className="w-full bg-black/50 border border-[#312e81] rounded-2xl py-4 pl-11 pr-4 text-sm outline-none focus:border-amber-400 focus:bg-slate-900/50 text-slate-200 transition-all h-[54px]"
                         />
                       </div>
                     </div>
@@ -1041,10 +1041,10 @@ export function LandingPage({
 
                   <div className="pt-4">
                     {isGeneratingChart ? (
-                      <div className="p-6 bg-white/[0.02] border border-indigo-500/20 rounded-2xl flex flex-col items-center justify-center text-center space-y-4">
+                      <div className="p-6 bg-white/[0.02] border border-[#312e81] rounded-2xl flex flex-col items-center justify-center text-center space-y-4">
                         {/* Interactive Loading Wheel */}
                         <div className="relative w-16 h-16">
-                          <div className="absolute inset-0 rounded-full border-4 border-indigo-500/20 animate-pulse" />
+                          <div className="absolute inset-0 rounded-full border-4 border-[#312e81] animate-pulse" />
                           <div className="absolute inset-0 rounded-full border-4 border-t-amber-400 animate-spin" />
                           <Sparkles className="absolute inset-0 m-auto text-amber-400 w-6 h-6 animate-pulse" />
                         </div>
@@ -1075,7 +1075,7 @@ export function LandingPage({
                 animate={{ opacity: 1, scale: 1 }}
                 className="space-y-8 relative z-10"
               >
-                <div className="flex items-center justify-between border-b border-white/15 pb-6">
+                <div className="flex items-center justify-between border-b border-[#312e81] pb-6">
                   <div>
                     <span className="text-[10px] text-amber-400 font-mono font-bold uppercase tracking-wider">MAPA ASTRAL DA ESSÊNCIA REVELADO</span>
                     <h3 className="text-3xl font-serif text-white mt-1 uppercase tracking-wider font-bold">
@@ -1094,7 +1094,7 @@ export function LandingPage({
                         setSavedBirthChart(null);
                       }
                     }}
-                    className="px-3 py-1.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-slate-300 text-xs font-mono transition-colors"
+                    className="px-3 py-1.5 rounded-xl bg-white/5 hover:bg-white/10 border border-[#312e81] text-slate-300 text-xs font-mono transition-colors"
                   >
                     Nova Consulta
                   </button>
@@ -1102,17 +1102,17 @@ export function LandingPage({
 
                 {/* Solares Alignments row */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <div className="p-5 bg-white/[0.02] border border-white/5 rounded-2xl text-center">
+                  <div className="p-5 bg-white/[0.02] border border-[#1e1b4b] rounded-2xl text-center">
                     <span className="text-[10px] text-slate-500 tracking-wider font-mono block uppercase">Signo Solar</span>
                     <div className="text-2xl font-serif text-amber-400 font-bold mt-1">☀️ {currentChart.signoSolar}</div>
                     <span className="text-[9px] text-slate-500 block mt-1 uppercase tracking-widest">A Força de Vida Principal</span>
                   </div>
-                  <div className="p-5 bg-white/[0.02] border border-white/5 rounded-2xl text-center">
+                  <div className="p-5 bg-white/[0.02] border border-[#1e1b4b] rounded-2xl text-center">
                     <span className="text-[10px] text-slate-500 tracking-wider font-mono block uppercase">Signo Ascendente</span>
                     <div className="text-2xl font-serif text-indigo-400 font-bold mt-1">🌅 {currentChart.signoAscendente}</div>
                     <span className="text-[9px] text-slate-500 block mt-1 uppercase tracking-widest">Sua Máscara Celestial & Destino</span>
                   </div>
-                  <div className="p-5 bg-white/[0.02] border border-white/5 rounded-2xl text-center">
+                  <div className="p-5 bg-white/[0.02] border border-[#1e1b4b] rounded-2xl text-center">
                     <span className="text-[10px] text-slate-500 tracking-wider font-mono block uppercase">Luminar Lunar</span>
                     <div className="text-2xl font-serif text-cyan-400 font-bold mt-1">🌙 {currentChart.luna}</div>
                     <span className="text-[9px] text-slate-500 block mt-1 uppercase tracking-widest">Sua Mente Emocional & Oculta</span>
@@ -1142,7 +1142,7 @@ export function LandingPage({
                   </div>
 
                   {/* Aspect 3: Spiritual */}
-                  <div className="glass-panel p-6 border border-indigo-500/10 bg-indigo-950/[0.03] rounded-xl text-left">
+                  <div className="glass-panel p-6 border border-[#1e1b4b] bg-indigo-950/[0.03] rounded-xl text-left">
                     <h4 className="text-base font-serif text-indigo-300 flex items-center gap-2 mb-3 font-bold">
                       <Compass className="w-4 h-4 text-indigo-400" /> Sintonias de Jornada Espiritual
                     </h4>
@@ -1210,7 +1210,7 @@ export function LandingPage({
       </section>
 
       {/* Narrative Section: History of Oracle Academy / O Motivo do Renascimento */}
-      <section className="relative py-28 px-4 bg-gradient-to-b from-black/0 via-slate-950/20 to-black/0 border-y border-white/5">
+      <section className="relative py-28 px-4 bg-gradient-to-b from-black/0 via-slate-950/20 to-black/0 border-y border-[#1e1b4b]">
         <div className="max-w-4xl mx-auto text-center">
           <div className="w-12 h-12 rounded-full bg-amber-500/10 border border-amber-500/30 flex items-center justify-center mx-auto mb-6">
             <Sparkles className="w-6 h-6 text-amber-400 animate-pulse" />
@@ -1231,7 +1231,7 @@ export function LandingPage({
       </section>
 
       {/* Showcasing Physical Occult Goods: Mercadorias do Santuário */}
-      <section className="relative py-24 px-4 bg-[#080510] border-t border-white/5">
+      <section className="relative py-24 px-4 bg-[#080510] border-t border-[#1e1b4b]">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-16">
             <span className="text-xs text-amber-500 uppercase tracking-widest font-black flex items-center justify-center gap-1.5 mb-3 leading-none">
@@ -1280,7 +1280,7 @@ export function LandingPage({
                 price: "R$ 189,95"
               }
             ].map(prod => (
-              <div key={prod.id} className="glass-panel p-5 rounded-3xl border border-white/5 bg-black/40 hover:border-amber-500/30 transition-all flex flex-col group relative overflow-hidden text-left">
+              <div key={prod.id} className="glass-panel p-5 rounded-3xl border border-[#1e1b4b] bg-black/40 hover:border-amber-500/30 transition-all flex flex-col group relative overflow-hidden text-left">
                 <div className="absolute top-4 right-4 z-10 px-2.5 py-1 bg-amber-500/10 border border-amber-500/30 text-amber-400 text-[9px] font-mono rounded-full uppercase tracking-wider font-bold">
                   {prod.tag}
                 </div>
@@ -1290,7 +1290,7 @@ export function LandingPage({
                 <h4 className="text-base font-serif text-slate-100 font-bold mb-1">{prod.name}</h4>
                 <p className="text-xs text-slate-400 font-light leading-relaxed mb-4 flex-1">{prod.desc}</p>
                 
-                <div className="flex items-center justify-between mt-auto pt-3 border-t border-white/5">
+                <div className="flex items-center justify-between mt-auto pt-3 border-t border-[#1e1b4b]">
                   <span className="text-sm font-mono font-black text-amber-300">{prod.price}</span>
                   <button 
                     type="button"
@@ -1307,7 +1307,7 @@ export function LandingPage({
       </section>
 
       {/* Courses Section: A Jornada do Iniciado */}
-      <section className="relative py-24 px-4 bg-gradient-to-b from-black/0 via-slate-950/20 to-black/0 border-t border-white/5">
+      <section className="relative py-24 px-4 bg-gradient-to-b from-black/0 via-slate-950/20 to-black/0 border-t border-[#1e1b4b]">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-16">
             <span className="text-xs text-indigo-400 uppercase tracking-widest font-mono font-bold leading-none mb-3 inline-block">Módulos Exclusivos & Certificados</span>
@@ -1341,7 +1341,7 @@ export function LandingPage({
                 border: "hover:border-amber-500/30"
               }
             ].map((crs, i) => (
-              <div key={i} className={`glass-panel p-6 rounded-3xl border border-white/5 flex flex-col transition-all relative text-left ${crs.border}`}>
+              <div key={i} className={`glass-panel p-6 rounded-3xl border border-[#1e1b4b] flex flex-col transition-all relative text-left ${crs.border}`}>
                 <div className="h-48 rounded-2xl bg-indigo-900/20 mb-6 overflow-hidden">
                   <img src={crs.img} alt={crs.title} className="w-full h-full object-cover mix-blend-luminosity opacity-70" referrerPolicy="no-referrer" />
                 </div>
@@ -1350,7 +1350,7 @@ export function LandingPage({
                 <button 
                   type="button"
                   onClick={() => currentUser ? onEnterApp() : setShowLogin(true)} 
-                  className="mt-auto px-6 py-4 bg-indigo-500/10 text-indigo-300 border border-indigo-500/20 rounded-xl hover:bg-indigo-500/20 transition-all uppercase text-xs tracking-widest font-black"
+                  className="mt-auto px-6 py-4 bg-indigo-500/10 text-indigo-300 border border-[#312e81] rounded-xl hover:bg-indigo-500/20 transition-all uppercase text-xs tracking-widest font-black"
                 >
                   {crs.btn}
                 </button>
@@ -1361,7 +1361,7 @@ export function LandingPage({
       </section>
 
       {/* Testimonials */}
-      <section className="relative py-24 px-4 bg-black/40 border-y border-white/5">
+      <section className="relative py-24 px-4 bg-black/40 border-y border-[#1e1b4b]">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-4xl font-serif text-slate-100 mb-4 uppercase tracking-widest">Vozes da Comunidade</h2>
@@ -1407,10 +1407,10 @@ export function LandingPage({
 
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
             {/* Left: Spread Oracle Print Representation */}
-            <div className="lg:col-span-7 glass-panel p-8 rounded-[3.5rem] border border-white/10 bg-black/60 relative overflow-hidden group">
+            <div className="lg:col-span-7 glass-panel p-8 rounded-[3.5rem] border border-[#312e81] bg-black/60 relative overflow-hidden group">
               <div className="absolute top-0 right-0 w-48 h-48 bg-indigo-500/10 rounded-full blur-[60px]" />
               
-              <div className="flex items-center justify-between mb-8 pb-4 border-b border-white/5">
+              <div className="flex items-center justify-between mb-8 pb-4 border-b border-[#1e1b4b]">
                 <div className="flex items-center gap-2">
                   <div className="w-2.5 h-2.5 rounded-full bg-rose-500" />
                   <div className="w-2.5 h-2.5 rounded-full bg-amber-400" />
@@ -1429,20 +1429,20 @@ export function LandingPage({
                     { title: 'Presente', card: 'O Mago', arcana: 'I', desc: 'Vontade ativa', highlight: true },
                     { title: 'Futuro', card: 'A Estrela', arcana: 'XVII', desc: 'Esperança & Cura' }
                   ].map((c, i) => (
-                    <div key={i} className={`w-full max-w-[150px] aspect-[1/1.6] rounded-xl border p-4 flex flex-col justify-between transition-all relative overflow-hidden ${c.highlight ? 'border-amber-500/40 bg-amber-500/[0.04] shadow-[0_0_20px_rgba(245,158,11,0.15)] scale-105' : 'border-white/10 bg-[#120f26]/40'}`}>
+                    <div key={i} className={`w-full max-w-[150px] aspect-[1/1.6] rounded-xl border p-4 flex flex-col justify-between transition-all relative overflow-hidden ${c.highlight ? 'border-amber-500/40 bg-amber-500/[0.04] shadow-[0_0_20px_rgba(245,158,11,0.15)] scale-105' : 'border-[#312e81] bg-[#120f26]/40'}`}>
                       <div className="flex justify-between items-start text-[8px] text-slate-500 font-black uppercase">
                         <span>{c.title}</span>
                         <span>{c.arcana}</span>
                       </div>
                       <div className="my-auto text-center">
-                         <div className="w-8 h-8 rounded-full border border-white/10 mx-auto flex items-center justify-center mb-1 text-slate-400 bg-black/20"><Sparkles className={`w-4 h-4 ${c.highlight ? 'text-amber-400' : 'text-slate-500'}`} /></div>
+                         <div className="w-8 h-8 rounded-full border border-[#312e81] mx-auto flex items-center justify-center mb-1 text-slate-400 bg-black/20"><Sparkles className={`w-4 h-4 ${c.highlight ? 'text-amber-400' : 'text-slate-500'}`} /></div>
                          <h5 className="text-[11px] font-bold text-slate-200 mt-1">{c.card}</h5>
                       </div>
                       <p className="text-[8px] text-slate-500 text-center leading-tight truncate">{c.desc}</p>
                     </div>
                   ))}
                 </div>
-                <div className="p-4 bg-white/5 border border-white/5 rounded-2xl text-[11px] text-slate-400 leading-relaxed font-light italic">
+                <div className="p-4 bg-white/5 border border-[#1e1b4b] rounded-2xl text-[11px] text-slate-400 leading-relaxed font-light italic">
                    "A inteligência híbrida do Santuário decodifica cada carta no contexto exato do seu objetivo de aprendizado atual, sugerindo exercícios direcionados no seu Grimório."
                 </div>
               </div>
@@ -1451,7 +1451,7 @@ export function LandingPage({
             {/* Right: Study consistency heat map preview */}
             <div className="lg:col-span-5 grid grid-cols-1 gap-8 w-full">
               {/* Consistency Map Mock */}
-              <div className="glass-panel p-8 rounded-[3rem] border border-white/10 bg-black/60 relative overflow-hidden group">
+              <div className="glass-panel p-8 rounded-[3rem] border border-[#312e81] bg-black/60 relative overflow-hidden group">
                  <div className="absolute bottom-0 left-0 w-36 h-36 bg-emerald-500/10 rounded-full blur-[50px]" />
                  
                  <div className="flex items-center justify-between mb-6">
@@ -1463,7 +1463,7 @@ export function LandingPage({
                  <p className="text-xs text-slate-500 mb-6 font-light">Seus estudos geram ressonância mágica no éter através da consistência diária:</p>
                  
                  {/* Fake calendar map */}
-                 <div className="grid grid-cols-7 gap-1.5 p-3 bg-white/5 border border-white/15 rounded-2xl">
+                 <div className="grid grid-cols-7 gap-1.5 p-3 bg-white/5 border border-[#312e81] rounded-2xl">
                     {Array.from({ length: 28 }).map((_, i) => {
                       const level = indexToResonanceLevel(i);
                       return (
@@ -1479,7 +1479,7 @@ export function LandingPage({
                  <div className="flex justify-between items-center mt-6 text-[9px] text-slate-500 uppercase font-black tracking-widest">
                     <span>Inércia</span>
                     <div className="flex gap-1">
-                      <div className="w-2.5 h-2.5 rounded bg-slate-900 border border-white/5" />
+                      <div className="w-2.5 h-2.5 rounded bg-slate-900 border border-[#1e1b4b]" />
                       <div className="w-2.5 h-2.5 rounded bg-emerald-950 border border-emerald-900" />
                       <div className="w-2.5 h-2.5 rounded bg-emerald-800 border border-emerald-700" />
                       <div className="w-2.5 h-2.5 rounded bg-emerald-500 border border-emerald-400" />
@@ -1489,16 +1489,16 @@ export function LandingPage({
               </div>
 
               {/* Community and Seller Profiles Mock */}
-              <div className="glass-panel p-8 rounded-[3rem] border border-white/10 bg-black/60 relative overflow-hidden">
+              <div className="glass-panel p-8 rounded-[3rem] border border-[#312e81] bg-black/60 relative overflow-hidden">
                  <div className="absolute top-1/2 left-1/3 w-32 h-32 bg-purple-500/10 rounded-full blur-[40px]" />
                  
-                 <div className="flex items-center justify-between mb-6 pb-2 border-b border-white/5">
+                 <div className="flex items-center justify-between mb-6 pb-2 border-b border-[#1e1b4b]">
                     <h4 className="text-base font-serif text-slate-100">Mercadores Verificados</h4>
                     <span className="text-[10px] text-purple-400 font-mono tracking-wider">ECOS DE NEGÓCIOS</span>
                  </div>
                  
                  {/* Fake miniature profile */}
-                 <div className="flex items-center gap-4 p-3 bg-white/5 border border-white/10 rounded-2xl mb-4 hover:border-purple-500/30 transition-all">
+                 <div className="flex items-center gap-4 p-3 bg-white/5 border border-[#312e81] rounded-2xl mb-4 hover:border-purple-500/30 transition-all">
                     <div className="w-11 h-11 rounded-full border border-purple-500/40 overflow-hidden shrink-0">
                        <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&q=80&w=150" className="w-full h-full object-cover" alt="" />
                     </div>
@@ -1512,7 +1512,7 @@ export function LandingPage({
                  </div>
 
                  {/* Mini service and price listed */}
-                 <div className="flex justify-between items-center bg-white/[0.02] p-3 rounded-xl border border-white/5">
+                 <div className="flex justify-between items-center bg-white/[0.02] p-3 rounded-xl border border-[#1e1b4b]">
                     <span className="text-xs text-slate-400">Leitura de Runas de Oden</span>
                     <span className="text-xs text-indigo-400 font-black">R$ 180,00</span>
                  </div>
@@ -1526,7 +1526,7 @@ export function LandingPage({
 
       {/* Marketplace Section */}
       <section className="relative py-24 px-4">
-        <div className="max-w-6xl mx-auto glass-panel p-8 md:p-16 rounded-[3rem] border border-indigo-500/20 bg-gradient-to-br from-indigo-900/10 to-transparent">
+        <div className="max-w-6xl mx-auto glass-panel p-8 md:p-16 rounded-[3rem] border border-[#312e81] bg-gradient-to-br from-indigo-900/10 to-transparent">
           <div className="grid md:grid-cols-2 gap-12 items-center">
             <div>
               <ShoppingBag className="w-12 h-12 text-indigo-400 mb-6" />
@@ -1543,17 +1543,17 @@ export function LandingPage({
                 Venha fazer suas leituras
               </button>
             </div>
-            <div className="bg-black/40 rounded-2xl p-6 border border-white/5 relative">
+            <div className="bg-black/40 rounded-2xl p-6 border border-[#1e1b4b] relative">
               <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(79,70,229,0.1)_0%,transparent_70%)]" />
               <div className="space-y-4 relative z-10">
-                <div className="glass-panel p-4 rounded-xl flex items-center justify-between border border-indigo-500/20">
+                <div className="glass-panel p-4 rounded-xl flex items-center justify-between border border-[#312e81]">
                   <div className="flex items-center gap-4">
                     <div className="w-12 h-12 rounded-full bg-indigo-500/30" />
                     <div><h4 className="text-sm font-medium">Leitura Profunda de Tarot</h4><p className="text-xs text-slate-400">Por Luiza M.</p></div>
                   </div>
                   <span className="text-indigo-300 font-medium">R$ 150</span>
                 </div>
-                <div className="glass-panel p-4 rounded-xl flex items-center justify-between border border-white/5 opacity-70">
+                <div className="glass-panel p-4 rounded-xl flex items-center justify-between border border-[#1e1b4b] opacity-70">
                   <div className="flex items-center gap-4">
                     <div className="w-12 h-12 rounded-full bg-blue-500/30" />
                     <div><h4 className="text-sm font-medium">Mesa Real Lenormand</h4><p className="text-xs text-slate-400">Por Carlos E.</p></div>
@@ -1567,7 +1567,7 @@ export function LandingPage({
       </section>
 
       {/* Competitors Comparison Section */}
-      <section className="relative py-24 px-4 bg-black/40 border-y border-white/5">
+      <section className="relative py-24 px-4 bg-black/40 border-y border-[#1e1b4b]">
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-4xl font-serif text-slate-100 mb-4 uppercase tracking-widest">Por quê a Oracle Academy?</h2>
@@ -1578,36 +1578,36 @@ export function LandingPage({
             <table className="w-full text-left border-collapse">
               <thead>
                 <tr>
-                  <th className="p-4 border-b border-white/10 text-slate-400 font-medium uppercase tracking-wider text-sm">Recurso</th>
-                  <th className="p-4 border-b border-white/10 text-amber-400 font-bold uppercase tracking-wider text-sm text-center">Oracle Academy</th>
-                  <th className="p-4 border-b border-white/10 text-slate-500 font-medium uppercase tracking-wider text-sm text-center">Místicos Genéricos</th>
-                  <th className="p-4 border-b border-white/10 text-slate-500 font-medium uppercase tracking-wider text-sm text-center">Plataformas de Cursos</th>
+                  <th className="p-4 border-b border-[#312e81] text-slate-400 font-medium uppercase tracking-wider text-sm">Recurso</th>
+                  <th className="p-4 border-b border-[#312e81] text-amber-400 font-bold uppercase tracking-wider text-sm text-center">Oracle Academy</th>
+                  <th className="p-4 border-b border-[#312e81] text-slate-500 font-medium uppercase tracking-wider text-sm text-center">Místicos Genéricos</th>
+                  <th className="p-4 border-b border-[#312e81] text-slate-500 font-medium uppercase tracking-wider text-sm text-center">Plataformas de Cursos</th>
                 </tr>
               </thead>
               <tbody className="text-sm">
                 <tr>
-                  <td className="p-4 border-b border-white/5 text-slate-300">Cursos Focados e Estruturados</td>
-                  <td className="p-4 border-b border-white/5 text-center"><Check className="w-5 h-5 text-green-400 inline-block" /></td>
-                  <td className="p-4 border-b border-white/5 text-center"><X className="w-5 h-5 text-rose-500 inline-block" /></td>
-                  <td className="p-4 border-b border-white/5 text-center"><Check className="w-5 h-5 text-green-400 inline-block" /></td>
+                  <td className="p-4 border-b border-[#1e1b4b] text-slate-300">Cursos Focados e Estruturados</td>
+                  <td className="p-4 border-b border-[#1e1b4b] text-center"><Check className="w-5 h-5 text-green-400 inline-block" /></td>
+                  <td className="p-4 border-b border-[#1e1b4b] text-center"><X className="w-5 h-5 text-rose-500 inline-block" /></td>
+                  <td className="p-4 border-b border-[#1e1b4b] text-center"><Check className="w-5 h-5 text-green-400 inline-block" /></td>
                 </tr>
                 <tr>
-                  <td className="p-4 border-b border-white/5 text-slate-300">Tutor Oráculo com IA Pessoal</td>
-                  <td className="p-4 border-b border-white/5 text-center"><Check className="w-5 h-5 text-green-400 inline-block" /></td>
-                  <td className="p-4 border-b border-white/5 text-center"><X className="w-5 h-5 text-rose-500 inline-block" /></td>
-                  <td className="p-4 border-b border-white/5 text-center"><X className="w-5 h-5 text-rose-500 inline-block" /></td>
+                  <td className="p-4 border-b border-[#1e1b4b] text-slate-300">Tutor Oráculo com IA Pessoal</td>
+                  <td className="p-4 border-b border-[#1e1b4b] text-center"><Check className="w-5 h-5 text-green-400 inline-block" /></td>
+                  <td className="p-4 border-b border-[#1e1b4b] text-center"><X className="w-5 h-5 text-rose-500 inline-block" /></td>
+                  <td className="p-4 border-b border-[#1e1b4b] text-center"><X className="w-5 h-5 text-rose-500 inline-block" /></td>
                 </tr>
                 <tr>
-                  <td className="p-4 border-b border-white/5 text-slate-300">Grimório Digital Integrado</td>
-                  <td className="p-4 border-b border-white/5 text-center"><Check className="w-5 h-5 text-green-400 inline-block" /></td>
-                  <td className="p-4 border-b border-white/5 text-center"><X className="w-5 h-5 text-rose-500 inline-block" /></td>
-                  <td className="p-4 border-b border-white/5 text-center"><X className="w-5 h-5 text-rose-500 inline-block" /></td>
+                  <td className="p-4 border-b border-[#1e1b4b] text-slate-300">Grimório Digital Integrado</td>
+                  <td className="p-4 border-b border-[#1e1b4b] text-center"><Check className="w-5 h-5 text-green-400 inline-block" /></td>
+                  <td className="p-4 border-b border-[#1e1b4b] text-center"><X className="w-5 h-5 text-rose-500 inline-block" /></td>
+                  <td className="p-4 border-b border-[#1e1b4b] text-center"><X className="w-5 h-5 text-rose-500 inline-block" /></td>
                 </tr>
                 <tr>
-                  <td className="p-4 border-b border-white/5 text-slate-300">Marketplace Justo (15% - 20% taxa)</td>
-                  <td className="p-4 border-b border-white/5 text-center"><Check className="w-5 h-5 text-green-400 inline-block" /></td>
-                  <td className="p-4 border-b border-white/5 text-center"><X className="w-5 h-5 text-rose-500 inline-block" /> (Até 50%)</td>
-                  <td className="p-4 border-b border-white/5 text-center"><X className="w-5 h-5 text-rose-500 inline-block" /></td>
+                  <td className="p-4 border-b border-[#1e1b4b] text-slate-300">Marketplace Justo (15% - 20% taxa)</td>
+                  <td className="p-4 border-b border-[#1e1b4b] text-center"><Check className="w-5 h-5 text-green-400 inline-block" /></td>
+                  <td className="p-4 border-b border-[#1e1b4b] text-center"><X className="w-5 h-5 text-rose-500 inline-block" /> (Até 50%)</td>
+                  <td className="p-4 border-b border-[#1e1b4b] text-center"><X className="w-5 h-5 text-rose-500 inline-block" /></td>
                 </tr>
               </tbody>
             </table>
@@ -1628,7 +1628,7 @@ export function LandingPage({
 
           <div className="grid md:grid-cols-3 gap-6 mb-12">
             {/* Free Plan */}
-            <div className="glass-panel p-8 rounded-[2rem] border border-white/10 hover:border-white/20 transition-all flex flex-col">
+            <div className="glass-panel p-8 rounded-[2rem] border border-[#312e81] hover:border-[#312e81] transition-all flex flex-col">
               <div className="mb-6">
                 <h3 className="text-slate-300 font-serif text-xl mb-1">Iniciado</h3>
                 <p className="text-slate-500 text-xs">Para quem está começando</p>
@@ -1645,7 +1645,7 @@ export function LandingPage({
                 <li className="flex gap-2 items-start text-slate-600"><Lock className="w-4 h-4 flex-shrink-0 mt-0.5" /><span>Módulos avançados de cursos</span></li>
                 <li className="flex gap-2 items-start text-slate-600"><Lock className="w-4 h-4 flex-shrink-0 mt-0.5" /><span>Orientação Oracular com IA</span></li>
               </ul>
-              <button onClick={() => currentUser ? onEnterApp() : setShowLogin(true)} className="w-full py-3 rounded-xl border border-white/10 text-slate-300 hover:bg-white/5 text-sm font-bold tracking-wide transition-all">
+              <button onClick={() => currentUser ? onEnterApp() : setShowLogin(true)} className="w-full py-3 rounded-xl border border-[#312e81] text-slate-300 hover:bg-white/5 text-sm font-bold tracking-wide transition-all">
                 Começar Gratuitamente
               </button>
             </div>
@@ -1710,7 +1710,7 @@ export function LandingPage({
         </div>
       </section>
 
-      <footer className="text-center py-8 border-t border-white/5 opacity-50 text-sm">
+      <footer className="text-center py-8 border-t border-[#1e1b4b] opacity-50 text-sm">
         <p>&copy; 2024 The Oracle Academy. Conhecimento Hoje, Sabedoria Sempre.</p>
       </footer>
     </div>

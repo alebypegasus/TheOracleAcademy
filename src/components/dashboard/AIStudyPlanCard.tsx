@@ -261,7 +261,7 @@ export function AIStudyPlanCard({ currentUser, profile, setProfile }: AIStudyPla
             key="config-form"
             initial={{ opacity: 0, scale: 0.98 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="bg-slate-900/60 p-6 rounded-2.5xl border border-indigo-500/20 space-y-5"
+            className="bg-slate-900/60 p-6 rounded-2.5xl border border-[#312e81] space-y-5"
           >
             <h3 className="text-lg font-serif text-slate-200 flex items-center gap-2">
               <Sparkles className="w-5 h-5 text-indigo-400" /> Parâmetros de Personalização Cósmica
@@ -273,7 +273,7 @@ export function AIStudyPlanCard({ currentUser, profile, setProfile }: AIStudyPla
                 <select 
                   value={tarotProgress} 
                   onChange={(e) => setTarotProgress(e.target.value)}
-                  className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-xs text-slate-200 focus:outline-none focus:border-indigo-500 transition-all font-sans"
+                  className="w-full bg-black/50 border border-[#1e1b4b] rounded-xl px-4 py-3 text-xs text-slate-200 focus:outline-none focus:border-indigo-500 transition-all font-sans"
                 >
                   <option value="Iniciante total (Conhecendo os Arcanos)">Iniciante total (Conhecendo os Arcanos)</option>
                   <option value="Intermediário (Fazendo tiragens simples)">Intermediário (Fazendo tiragens simples)</option>
@@ -288,7 +288,7 @@ export function AIStudyPlanCard({ currentUser, profile, setProfile }: AIStudyPla
                   value={goal} 
                   onChange={(e) => setGoal(e.target.value)}
                   placeholder="Ex: Dominar interpretações simbólicas em mandala celestial"
-                  className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-xs text-slate-200 focus:outline-none focus:border-indigo-500 transition-all"
+                  className="w-full bg-black/50 border border-[#1e1b4b] rounded-xl px-4 py-3 text-xs text-slate-200 focus:outline-none focus:border-indigo-500 transition-all"
                 />
               </div>
 
@@ -299,7 +299,7 @@ export function AIStudyPlanCard({ currentUser, profile, setProfile }: AIStudyPla
                   value={weakness} 
                   onChange={(e) => setWeakness(e.target.value)}
                   placeholder="Ex: Conexão e fluxo narrativo entre múltiplas cartas no mesmo spread"
-                  className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-xs text-slate-200 focus:outline-none focus:border-indigo-500 transition-all"
+                  className="w-full bg-black/50 border border-[#1e1b4b] rounded-xl px-4 py-3 text-xs text-slate-200 focus:outline-none focus:border-indigo-500 transition-all"
                 />
                 <p className="text-[9px] text-indigo-400 italic">* Sua fraqueza será utilizada para modelar tarefas e fabricar flashcards específicos que expandam sua mente espiritual.</p>
               </div>
@@ -316,7 +316,7 @@ export function AIStudyPlanCard({ currentUser, profile, setProfile }: AIStudyPla
               {plan && (
                 <button
                   onClick={() => setShowConfig(false)}
-                  className="py-3 px-5 bg-white/5 border border-white/10 text-slate-400 font-bold hover:bg-white/10 rounded-xl text-xs uppercase tracking-wider transition-all"
+                  className="py-3 px-5 bg-white/5 border border-[#1e1b4b] text-slate-400 font-bold hover:bg-white/10 rounded-xl text-xs uppercase tracking-wider transition-all"
                 >
                   Voltar
                 </button>
@@ -328,9 +328,9 @@ export function AIStudyPlanCard({ currentUser, profile, setProfile }: AIStudyPla
             key="empty"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="py-10 text-center flex flex-col items-center justify-center border border-dashed border-white/10 rounded-2.5xl bg-white/[0.01]"
+            className="py-10 text-center flex flex-col items-center justify-center border border-dashed border-[#1e1b4b] rounded-2.5xl bg-white/[0.01]"
           >
-            <div className="w-14 h-14 rounded-full bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center mb-4">
+            <div className="w-14 h-14 rounded-full bg-indigo-500/10 border border-[#312e81] flex items-center justify-center mb-4">
               <Calendar className="w-6 h-6 text-indigo-400" />
             </div>
             <h3 className="font-serif text-slate-200 text-lg">Sem Cronograma Ativo</h3>
@@ -352,7 +352,7 @@ export function AIStudyPlanCard({ currentUser, profile, setProfile }: AIStudyPla
             className="space-y-6"
           >
             {/* Streak Graph */}
-            <div className="bg-[#0d091a]/60 border border-white/5 rounded-2.5xl p-5 md:p-6 mb-2">
+            <div className="bg-[#0d091a]/60 border border-[#1e1b4b] rounded-2.5xl p-5 md:p-6 mb-2">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
                 <div>
                   <h3 className="text-sm font-bold text-slate-200">Milestone Semanal</h3>
@@ -389,7 +389,7 @@ export function AIStudyPlanCard({ currentUser, profile, setProfile }: AIStudyPla
                 {plan.tasks.map((task, idx) => (
                   <div
                     key={task.id || idx}
-                    className={`border rounded-2.5xl p-5 flex flex-col justify-between transition-all relative overflow-hidden bg-[#0d091a]/40 ${task.completed ? 'border-emerald-500/30' : 'border-white/5 hover:border-white/10'}`}
+                    className={`border rounded-2.5xl p-5 flex flex-col justify-between transition-all relative overflow-hidden bg-[#0d091a]/40 ${task.completed ? 'border-emerald-500/30' : 'border-[#1e1b4b] hover:border-[#1e1b4b]'}`}
                   >
                     {task.completed && (
                       <div className="absolute top-0 right-0 w-16 h-16 bg-emerald-500/5 col-span-1 rounded-bl-full border-b border-l border-emerald-500/20 pointer-events-none flex items-center justify-center pl-4 pb-4">
@@ -415,7 +415,7 @@ export function AIStudyPlanCard({ currentUser, profile, setProfile }: AIStudyPla
                           ) : (
                             <button 
                               onClick={() => handleToggleNotification(task.id, !task.notificationsEnabled)}
-                              className={`p-1.5 rounded-full transition-all border ${task.notificationsEnabled ? 'bg-indigo-500/20 text-indigo-400 border-indigo-500/30' : 'bg-white/5 text-slate-500 border-white/10 hover:bg-white/10'}`}
+                              className={`p-1.5 rounded-full transition-all border ${task.notificationsEnabled ? 'bg-indigo-500/20 text-indigo-400 border-indigo-500/30' : 'bg-white/5 text-slate-500 border-[#1e1b4b] hover:bg-white/10'}`}
                               title="Notificações diárias"
                             >
                               {task.notificationsEnabled ? <Bell className="w-3 h-3" /> : <BellOff className="w-3 h-3" />}
@@ -437,7 +437,7 @@ export function AIStudyPlanCard({ currentUser, profile, setProfile }: AIStudyPla
                       </p>
                     </div>
 
-                    <div className="mt-5 pt-4 border-t border-white/5 flex items-center justify-between gap-4">
+                    <div className="mt-5 pt-4 border-t border-[#1e1b4b] flex items-center justify-between gap-4">
                       <span className="inline-flex items-center gap-1.5 text-[11px] font-extrabold text-amber-400 uppercase tracking-wider">
                         <Zap className="w-3.5 h-3.5 text-amber-500 fill-amber-500/10" /> +{task.xp} XP
                       </span>
@@ -450,7 +450,7 @@ export function AIStudyPlanCard({ currentUser, profile, setProfile }: AIStudyPla
                         <button
                           onClick={() => handleCompleteTask(task.id)}
                           disabled={completingTaskId === task.id}
-                          className="py-1.5 px-3 bg-white/5 hover:bg-indigo-500/20 hover:text-indigo-300 hover:border-indigo-500/35 border border-white/10 rounded-xl transition-all text-[9px] font-black uppercase tracking-[0.2em] text-slate-300 flex items-center gap-1"
+                          className="py-1.5 px-3 bg-white/5 hover:bg-indigo-500/20 hover:text-indigo-300 hover:border-indigo-500/35 border border-[#1e1b4b] rounded-xl transition-all text-[9px] font-black uppercase tracking-[0.2em] text-slate-300 flex items-center gap-1"
                         >
                           {completingTaskId === task.id ? (
                             <Loader2 className="w-3 h-3 animate-spin" />
@@ -469,7 +469,7 @@ export function AIStudyPlanCard({ currentUser, profile, setProfile }: AIStudyPla
 
             {/* Dynamically Generated Flashcards Section */}
             {generatedFlashcards.length > 0 && (
-              <div className="bg-indigo-950/20 border border-indigo-500/10 p-6 rounded-[2.5rem] mt-6 relative overflow-hidden">
+              <div className="bg-indigo-950/20 border border-[#1e1b4b] p-6 rounded-[2.5rem] mt-6 relative overflow-hidden">
                 <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-500/5 rounded-full blur-2xl pointer-events-none" />
                 
                 <div className="flex justify-between items-center mb-4">
@@ -480,7 +480,7 @@ export function AIStudyPlanCard({ currentUser, profile, setProfile }: AIStudyPla
                     <p className="text-[11px] text-slate-400">Cartas conceituais geradas para focar no seu objetivo: "{goal}"</p>
                   </div>
                   
-                  <span className="text-xs font-mono font-bold text-slate-500 bg-white/5 px-2.5 py-1 rounded-lg border border-white/5">
+                  <span className="text-xs font-mono font-bold text-slate-500 bg-white/5 px-2.5 py-1 rounded-lg border border-[#1e1b4b]">
                     {currentFcIdx + 1} / {generatedFlashcards.length}
                   </span>
                 </div>
@@ -494,7 +494,7 @@ export function AIStudyPlanCard({ currentUser, profile, setProfile }: AIStudyPla
                     {/* Front Face */}
                     <div className="absolute inset-0 w-full h-full backface-hidden bg-gradient-to-br from-indigo-950/80 to-slate-900 border border-indigo-500/30 rounded-2xl p-6 flex flex-col justify-between shadow-2xl">
                       <div className="flex justify-between items-start">
-                        <span className="text-[9px] font-black uppercase tracking-widest text-indigo-400 bg-indigo-500/10 border border-indigo-500/20 px-2 py-0.5 rounded">
+                        <span className="text-[9px] font-black uppercase tracking-widest text-indigo-400 bg-indigo-500/10 border border-[#312e81] px-2 py-0.5 rounded">
                           {generatedFlashcards[currentFcIdx].type}
                         </span>
                         <span className="text-[10px] text-slate-500 font-mono">Clique para revelar</span>
@@ -541,7 +541,7 @@ export function AIStudyPlanCard({ currentUser, profile, setProfile }: AIStudyPla
                       setCurrentFcIdx(prev => prev - 1);
                       setFcFlipped(false);
                     }}
-                    className="px-4 py-2 text-xs font-black uppercase tracking-wider rounded-lg bg-white/5 border border-white/15 text-slate-400 hover:bg-white/10 disabled:opacity-30 disabled:pointer-events-none transition-all"
+                    className="px-4 py-2 text-xs font-black uppercase tracking-wider rounded-lg bg-white/5 border border-[#2e2a5f] text-slate-400 hover:bg-white/10 disabled:opacity-30 disabled:pointer-events-none transition-all"
                   >
                     Anterior
                   </button>
@@ -560,7 +560,7 @@ export function AIStudyPlanCard({ currentUser, profile, setProfile }: AIStudyPla
             )}
             
             {/* Legend / Tip */}
-            <div className="mt-2 flex items-center justify-between text-[11px] text-slate-500 border-t border-white/5 pt-4">
+            <div className="mt-2 flex items-center justify-between text-[11px] text-slate-500 border-t border-[#1e1b4b] pt-4">
               <span>* Complete as rotinas sugeridas para consolidar o conhecimento hermético e evoluir os graus da sua egrégora.</span>
             </div>
           </motion.div>

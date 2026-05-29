@@ -11,6 +11,8 @@ import { GrimoireController } from "../controllers/grimoire.controller";
 import { CommunityController } from "../controllers/community.controller";
 import { WorkspaceController } from "../controllers/workspace.controller";
 import { AuthController } from "../controllers/auth.controller";
+import { EgregorasController } from "../controllers/egregoras.controller";
+import { FriendsController, ChatController } from "../controllers/friends.controller";
 import { GeminiService } from "../services/gemini.service";
 import { query, useFallback, fallbackDB } from "../database/pool";
 
@@ -109,6 +111,15 @@ apiRouter.get("/community/posts/:id/comments", authMiddleware, CommunityControll
 apiRouter.post("/community/posts/:id/comments", authMiddleware, CommunityController.createComment);
 apiRouter.delete("/community/posts/:id", authMiddleware, CommunityController.deletePost);
 apiRouter.delete("/community/comments/:id", authMiddleware, CommunityController.deleteComment);
+
+// --- EGREGORAS (GROUPS) ---
+apiRouter.get("/community/groups", authMiddleware, EgregorasController.listGroups);
+apiRouter.post("/community/groups", authMiddleware, EgregorasController.createGroup);
+
+// --- FRIENDS & MESSAGES ---
+apiRouter.get("/community/friends", authMiddleware, FriendsController.listFriends);
+apiRouter.get("/community/messages/:friendId", authMiddleware, ChatController.getDirectMessages);
+apiRouter.post("/community/messages", authMiddleware, ChatController.sendMessage);
 
 // --- WORKSPACE DRIVE & DOCS ---
 apiRouter.post("/workspace/drive/upload-certificate", authMiddleware, WorkspaceController.uploadCertificate);
@@ -377,6 +388,52 @@ apiRouter.post("/ai/evaluate-module", authMiddleware, async (req: AuthenticatedR
   } catch (err: any) {
     console.error("[AI Evaluate Module] Error:", err);
     return res.status(500).json({ error: "Erro ao avaliar módulo com IA" });
+  }
+});
+
+// --- ELEVENLABS TTS PROXY ---
+apiRouter.post("/tts", authMiddleware, async (req: AuthenticatedRequest, res: Response) => {
+  const { text, voiceId } = req.body;
+  if (!text || !voiceId) {
+    return res.status(400).json({ error: "Text and voiceId are required" });
+  }
+
+  const apiKey = process.env.VITE_ELEVENLABS_API_KEY || process.env.ELEVENLABS_API_KEY;
+  if (!apiKey) {
+    return res.status(500).json({ error: "ElevenLabs API key not configured on server" });
+  }
+
+  try {
+    const elevenRes = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${voiceId}?output_format=mp3_44100_128`, {
+      method: "POST",
+      headers: {
+        "xi-api-key": apiKey,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        text,
+        model_id: "eleven_multilingual_v2",
+        voice_settings: {
+          stability: 0.5,
+          similarity_boost: 0.75
+        }
+      })
+    });
+
+    if (!elevenRes.ok) {
+      const errText = await elevenRes.text();
+      return res.status(elevenRes.status).json({ error: `ElevenLabs Error: ${errText}` });
+    }
+
+    const arrayBuffer = await elevenRes.arrayBuffer();
+    const buffer = Buffer.from(arrayBuffer);
+    
+    res.setHeader("Content-Type", "audio/mpeg");
+    res.setHeader("Content-Length", buffer.length);
+    return res.send(buffer);
+  } catch (err: any) {
+    console.error("[TTS Proxy] Error:", err);
+    return res.status(500).json({ error: "Failed to generate TTS audio" });
   }
 });
 

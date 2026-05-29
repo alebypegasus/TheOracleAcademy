@@ -21,7 +21,7 @@ export function StudyStreakCard() {
       case 1: return 'bg-indigo-500/20 border-indigo-500/30';
       case 2: return 'bg-indigo-500/40 border-indigo-500/50 shadow-[0_0_10px_rgba(99,102,241,0.2)]';
       case 3: return 'bg-indigo-500 shadow-[0_0_15px_rgba(99,102,241,0.4)] border-indigo-400';
-      default: return 'bg-white/5 border-white/5';
+      default: return 'bg-white/5 border-[#1e1b4b]';
     }
   };
 
@@ -102,7 +102,7 @@ export function StudyStreakCard() {
                       ? 'bg-indigo-500/20 border-indigo-500/40 text-indigo-400 shadow-[0_0_20px_rgba(99,102,241,0.2)]' 
                       : isToday 
                         ? 'bg-white/5 border-indigo-500/50 text-indigo-300 animate-pulse'
-                        : 'bg-black/20 border-white/5 text-slate-600'
+                        : 'bg-black/20 border-[#1e1b4b] text-slate-600'
                     }`}
                   >
                     {isPast ? (
@@ -117,7 +117,7 @@ export function StudyStreakCard() {
             })}
           </div>
           
-          <div className="p-6 rounded-[2rem] bg-indigo-500/5 border border-indigo-500/10 mb-10 relative overflow-hidden">
+          <div className="p-6 rounded-[2rem] bg-indigo-500/5 border border-[#1e1b4b] mb-10 relative overflow-hidden">
             <div className="absolute top-0 right-0 p-4 opacity-10">
                <Sparkles className="w-12 h-12 text-indigo-400" />
             </div>
@@ -126,7 +126,7 @@ export function StudyStreakCard() {
             </p>
           </div>
 
-          <div className="pt-8 border-t border-white/5 space-y-8">
+          <div className="pt-8 border-t border-[#1e1b4b] space-y-8">
             <div className="flex items-center justify-between px-2">
               <div className="flex flex-col">
                 <h4 className="text-xs font-black text-slate-300 uppercase tracking-[0.3em] flex items-center gap-2">
@@ -135,7 +135,7 @@ export function StudyStreakCard() {
                 </h4>
                 <p className="text-[10px] text-slate-500 mt-1 uppercase tracking-widest">Visualização de Fluxo Energético</p>
               </div>
-              <div className="flex items-center gap-4 bg-black/40 px-4 py-2 rounded-xl border border-white/5">
+              <div className="flex items-center gap-4 bg-black/40 px-4 py-2 rounded-xl border border-[#1e1b4b]">
                 <span className="text-[9px] text-slate-600 font-black uppercase tracking-widest">Vazio</span>
                 <div className="flex gap-1.5">
                   {[0, 1, 2, 3].map((int) => (
@@ -187,7 +187,7 @@ export function StudyStreakCard() {
             
             <motion.div 
               whileHover={{ x: 5 }}
-              className="bg-gradient-to-r from-indigo-500/10 to-transparent border border-indigo-500/20 p-5 rounded-[2rem] flex items-center gap-5 group/promo cursor-pointer"
+              className="bg-gradient-to-r from-indigo-500/10 to-transparent border border-[#312e81] p-5 rounded-[2rem] flex items-center gap-5 group/promo cursor-pointer"
             >
               <div className="w-12 h-12 rounded-2xl bg-indigo-500/20 flex items-center justify-center border border-indigo-500/30 group-hover/promo:bg-indigo-500/30 transition-all shadow-xl">
                  <Trophy className="w-6 h-6 text-indigo-300 drop-shadow-[0_0_10px_rgba(165,180,252,0.5)]" />

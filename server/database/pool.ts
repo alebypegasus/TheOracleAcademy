@@ -49,6 +49,10 @@ export const fallbackDB: {
   sellers: any[];
   product_reviews: any[];
   course_node_contents: any[];
+  community_groups: any[];
+  group_members: any[];
+  friendships: any[];
+  direct_messages: any[];
 } = {
   users: [
     { id: 1, email: 'admin@admin.com', password: '$2b$10$FdZebsjlwQP7GUjqxTX6UOO0iM7LSdHeXyG00kMpHHNpAmTaupHnG', role: 'admin', is_paid: true, created_at: new Date().toISOString() }, // password: 123456 (hashed)
@@ -219,7 +223,11 @@ export const fallbackDB: {
     { id: 2, user_id: 2, balance: 80.00, commission_rate: 15.00 }
   ],
   product_reviews: [],
-  course_node_contents: []
+  course_node_contents: [],
+  community_groups: [],
+  group_members: [],
+  friendships: [],
+  direct_messages: []
 };
 
 // Custom query executor mimicking the standard queries for PostgreSQL

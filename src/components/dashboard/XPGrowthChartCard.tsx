@@ -79,7 +79,7 @@ export function XPGrowthChartCard({ profile }: GrowthChartProps) {
             initial={{ scale: 1.1, backgroundColor: 'rgba(245, 158, 11, 0.2)' }}
             animate={{ scale: 1, backgroundColor: 'transparent' }}
             transition={{ duration: 0.5 }}
-            className="bg-black/20 border border-white/5 px-4 py-2 rounded-xl flex items-center gap-3 relative"
+            className="bg-black/20 border border-[#1e1b4b] px-4 py-2 rounded-xl flex items-center gap-3 relative"
           >
             <div className="w-8 h-8 rounded-full premium-icon-container flex items-center justify-center border border-amber-500/20 relative">
               <Sparkles className="w-4 h-4 text-amber-400 z-10" />
@@ -101,8 +101,8 @@ export function XPGrowthChartCard({ profile }: GrowthChartProps) {
               <p className="text-lg font-bold text-slate-200 leading-tight">{profile?.xp || 0}</p>
             </div>
           </motion.div>
-          <div className="bg-[#0A0A0B] border border-white/5 px-4 py-2 rounded-xl flex items-center gap-3">
-            <div className="w-8 h-8 rounded-full bg-indigo-500/10 flex items-center justify-center border border-indigo-500/20">
+          <div className="bg-[#0A0A0B] border border-[#1e1b4b] px-4 py-2 rounded-xl flex items-center gap-3">
+            <div className="w-8 h-8 rounded-full bg-indigo-500/10 flex items-center justify-center border border-[#312e81]">
               <Clock className="w-4 h-4 text-indigo-400" />
             </div>
             <div>

@@ -33,7 +33,7 @@ export const MagicCard = ({
       className={cn(
         "relative rounded-3xl overflow-hidden group",
         "bg-white/5 dark:bg-black/40",
-        "border border-white/10 dark:border-white/5",
+        "border border-[#1e1b4b] dark:border-[#1e1b4b]",
         containerClassName
       )}
     >

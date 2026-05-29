@@ -53,7 +53,7 @@ export function LevelUpModal({ xp, currentMilestone, onClose }: { xp: number, cu
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.6 }}
-              className="w-full bg-white/5 border border-white/10 rounded-2xl p-4 flex flex-col items-center"
+              className="w-full bg-white/5 border border-[#1e1b4b] rounded-2xl p-4 flex flex-col items-center"
             >
               <div className="flex justify-center -space-x-3 mb-3">
                 <div className="w-10 h-10 rounded-full bg-indigo-500/20 border-2 border-indigo-500/50 flex items-center justify-center text-indigo-400"><Sparkles className="w-4 h-4"/></div>

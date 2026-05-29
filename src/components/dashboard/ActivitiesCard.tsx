@@ -4,7 +4,7 @@ import { Bell, Award, BookOpen, Star, Sparkles } from 'lucide-react';
 
 const activities = [
   { id: 1, icon: <Award className="w-4 h-4 text-amber-400" />, title: "Nova Conquista", desc: "Você desbloqueou 'Leitor Intuitivo'.", time: "Há 2 horas", color: "border-amber-500/20" },
-  { id: 2, icon: <BookOpen className="w-4 h-4 text-indigo-400" />, title: "Módulo Concluído", desc: "Simbolismo das Copas e Ouros finalizado.", time: "Hoje, 10:30", color: "border-indigo-500/20" },
+  { id: 2, icon: <BookOpen className="w-4 h-4 text-indigo-400" />, title: "Módulo Concluído", desc: "Simbolismo das Copas e Ouros finalizado.", time: "Hoje, 10:30", color: "border-[#312e81]" },
   { id: 3, icon: <Star className="w-4 h-4 text-purple-400" />, title: "XP Bônus Recebido", desc: "+50 XP por acessar 3 dias seguidos.", time: "Ontem", color: "border-purple-500/20" },
   { id: 4, icon: <Sparkles className="w-4 h-4 text-emerald-400" />, title: "Portal Aberto", desc: "Novo oráculo disponível para consulta.", time: "Há 2 dias", color: "border-emerald-500/20" },
 ];
@@ -19,7 +19,7 @@ export function ActivitiesCard() {
           <Bell className="w-5 h-5 text-indigo-400" />
           Atividades
         </h3>
-        <span className="text-[10px] font-bold tracking-widest uppercase bg-indigo-500/20 text-indigo-300 px-3 py-1 rounded-full border border-indigo-500/20">
+        <span className="text-[10px] font-bold tracking-widest uppercase bg-indigo-500/20 text-indigo-300 px-3 py-1 rounded-full border border-[#312e81]">
           Novidades
         </span>
       </div>
@@ -34,7 +34,7 @@ export function ActivitiesCard() {
             className={`flex items-start gap-4 p-4 rounded-2xl border bg-black/20 hover:bg-white/5 transition-all duration-300 cursor-default group hover:scale-[1.02] shadow-sm hover:shadow-xl hover:shadow-black/50 ${item.color}`}
           >
             <div className="flex-shrink-0 mt-0.5">
-              <div className="w-8 h-8 rounded-full flex items-center justify-center bg-black/40 border border-white/5 group-hover:scale-110 group-hover:rotate-12 transition-transform duration-300">
+              <div className="w-8 h-8 rounded-full flex items-center justify-center bg-black/40 border border-[#1e1b4b] group-hover:scale-110 group-hover:rotate-12 transition-transform duration-300">
                 {item.icon}
               </div>
             </div>
@@ -49,7 +49,7 @@ export function ActivitiesCard() {
         ))}
       </div>
       
-      <button className="mt-6 w-full py-3 text-xs font-bold uppercase tracking-wider text-slate-400 hover:text-indigo-300 transition-colors border border-transparent hover:border-indigo-500/20 rounded-xl hover:bg-indigo-500/10 relative z-10">
+      <button className="mt-6 w-full py-3 text-xs font-bold uppercase tracking-wider text-slate-400 hover:text-indigo-300 transition-colors border border-transparent hover:border-[#312e81] rounded-xl hover:bg-indigo-500/10 relative z-10">
         Histórico Completo
       </button>
     </div>

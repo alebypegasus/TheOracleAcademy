@@ -83,7 +83,7 @@ export function CurrentCourseCard({ searchQuery, currentUser, onNavigate }: { se
             alt={course.title}
           />
           <div className="absolute top-4 left-4 z-20 flex flex-col gap-2">
-            <span className="bg-black/60 backdrop-blur-md border border-white/10 text-slate-200 text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full shadow-lg">
+            <span className="bg-black/60 backdrop-blur-md border border-[#1e1b4b] text-slate-200 text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full shadow-lg">
               {course.level}
             </span>
           </div>
@@ -97,7 +97,7 @@ export function CurrentCourseCard({ searchQuery, currentUser, onNavigate }: { se
               Continuar Jornada
             </p>
             {filteredCourses.length > 1 && (
-              <span className="text-[10px] uppercase font-bold tracking-widest text-slate-500 mr-12 md:mr-24 bg-white/5 px-2 py-1 rounded-full border border-white/5">
+              <span className="text-[10px] uppercase font-bold tracking-widest text-slate-500 mr-12 md:mr-24 bg-white/5 px-2 py-1 rounded-full border border-[#1e1b4b]">
                 Res 1 de {filteredCourses.length}
               </span>
             )}
@@ -115,12 +115,12 @@ export function CurrentCourseCard({ searchQuery, currentUser, onNavigate }: { se
 
           <p className="text-slate-400 text-sm mb-6 leading-relaxed max-w-2xl">{course.desc}</p>
           
-          <div className="bg-black/20 border border-white/5 rounded-xl p-4 mb-6">
+          <div className="bg-black/20 border border-[#1e1b4b] rounded-xl p-4 mb-6">
             <p className="text-xs text-slate-500 uppercase tracking-widest mb-1">Próxima Lição</p>
             <p className="text-sm text-indigo-200 font-medium">{course.nextLesson}</p>
           </div>
           
-          <div className="flex flex-col md:flex-row md:items-center gap-6 mb-8 bg-indigo-950/20 p-5 rounded-xl border border-indigo-500/10">
+          <div className="flex flex-col md:flex-row md:items-center gap-6 mb-8 bg-indigo-950/20 p-5 rounded-xl border border-[#1e1b4b]">
             <Tooltip content={`${course.progress}% de ${course.total} lições concluídas`}>
               <div className="relative w-16 h-16 flex items-center justify-center flex-shrink-0 cursor-help">
                 <svg className="w-full h-full transform -rotate-90 drop-shadow-[0_0_8px_rgba(99,102,241,0.3)]" viewBox="0 0 100 100">
@@ -148,7 +148,7 @@ export function CurrentCourseCard({ searchQuery, currentUser, onNavigate }: { se
                 <span className="text-slate-300">Progresso Geral</span>
                 <span className="text-indigo-300">{Math.round((course.progress / 100) * course.total)} / {course.total} Concluídas</span>
               </div>
-              <div className="h-2 w-full bg-black/40 rounded-full overflow-hidden border border-white/5">
+              <div className="h-2 w-full bg-black/40 rounded-full overflow-hidden border border-[#1e1b4b]">
                 <motion.div 
                   className="h-full bg-gradient-to-r from-indigo-600 via-indigo-500 to-purple-500 rounded-full relative"
                   initial={{ width: 0 }}
@@ -169,7 +169,7 @@ export function CurrentCourseCard({ searchQuery, currentUser, onNavigate }: { se
             </button>
             <button 
               onClick={() => setIsExpanded(!isExpanded)}
-              className="px-6 py-3 text-xs font-bold uppercase tracking-wider text-slate-400 hover:text-slate-200 transition-colors border border-transparent hover:border-white/10 rounded-xl hover:bg-white/5 flex items-center gap-2"
+              className="px-6 py-3 text-xs font-bold uppercase tracking-wider text-slate-400 hover:text-slate-200 transition-colors border border-transparent hover:border-[#1e1b4b] rounded-xl hover:bg-white/5 flex items-center gap-2"
             >
               Exibir Detalhes <ChevronDown className={`w-4 h-4 transition-transform duration-300 ${isExpanded ? 'rotate-180' : ''}`} />
             </button>
@@ -184,7 +184,7 @@ export function CurrentCourseCard({ searchQuery, currentUser, onNavigate }: { se
                 transition={{ duration: 0.4, ease: "easeInOut" }}
                 className="overflow-hidden mt-8"
               >
-                <div className="pt-8 border-t border-white/10 grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div className="pt-8 border-t border-[#1e1b4b] grid grid-cols-1 md:grid-cols-2 gap-8">
                   {/* Modulos */}
                   <div>
                     <h4 className="text-sm font-bold uppercase tracking-widest text-slate-300 mb-4 flex items-center gap-2">
@@ -193,7 +193,7 @@ export function CurrentCourseCard({ searchQuery, currentUser, onNavigate }: { se
                     </h4>
                     <div className="space-y-3">
                       {course.modules?.map((mod, i) => (
-                        <div key={mod.id} className={`p-4 rounded-xl border ${mod.current ? 'border-indigo-500/50 bg-indigo-900/20' : 'border-white/5 bg-black/20'} flex items-center gap-4 transition-colors hover:bg-white/5`}>
+                        <div key={mod.id} className={`p-4 rounded-xl border ${mod.current ? 'border-indigo-500/50 bg-indigo-900/20' : 'border-[#1e1b4b] bg-black/20'} flex items-center gap-4 transition-colors hover:bg-white/5`}>
                           <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${mod.completed ? 'bg-indigo-500/20 text-indigo-400' : mod.current ? 'bg-indigo-500 text-white shadow-[0_0_10px_rgba(99,102,241,0.5)]' : 'bg-white/5 text-slate-500'}`}>
                             {mod.completed ? <CheckCircle2 className="w-4 h-4" /> : <span className="text-xs font-bold">{i + 1}</span>}
                           </div>
@@ -214,7 +214,7 @@ export function CurrentCourseCard({ searchQuery, currentUser, onNavigate }: { se
                           <User className="w-4 h-4 text-indigo-400" />
                           Instrutor
                         </h4>
-                        <div className="flex items-center gap-4 p-4 rounded-xl border border-white/5 bg-black/20">
+                        <div className="flex items-center gap-4 p-4 rounded-xl border border-[#1e1b4b] bg-black/20">
                           <img src={course.instructor.avatar} alt={course.instructor.name} className="w-12 h-12 rounded-full border border-indigo-500/30 object-cover" />
                           <div>
                             <h5 className="text-sm font-medium text-slate-200">{course.instructor.name}</h5>
@@ -232,7 +232,7 @@ export function CurrentCourseCard({ searchQuery, currentUser, onNavigate }: { se
                       </h4>
                       <div className="space-y-3">
                         {course.reviews?.map((review) => (
-                          <div key={review.id} className="p-4 rounded-xl border border-white/5 bg-black/20">
+                          <div key={review.id} className="p-4 rounded-xl border border-[#1e1b4b] bg-black/20">
                             <div className="flex items-center justify-between gap-2 mb-2">
                               <span className="text-xs font-bold text-slate-300">{review.author}</span>
                               <div className="flex">

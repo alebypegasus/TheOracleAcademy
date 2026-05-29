@@ -48,11 +48,11 @@ export default function ContentAdmin() {
       <h2 className="text-3xl font-serif mb-6 text-white">Moderação de Conteúdo</h2>
       <p className="text-slate-400 mb-8">Gerencie as postagens da comunidade e itens do marketplace.</p>
 
-      <div className="bg-[#110D1A] rounded-xl border border-white/5 overflow-hidden">
+      <div className="bg-[#110D1A] rounded-xl border border-[#1e1b4b] overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="bg-black/20 text-slate-400 text-sm border-b border-white/5">
+              <tr className="bg-black/20 text-slate-400 text-sm border-b border-[#1e1b4b]">
                 <th className="p-4 font-medium">Autor</th>
                 <th className="p-4 font-medium">Conteúdo</th>
                 <th className="p-4 font-medium">Data</th>
@@ -60,7 +60,7 @@ export default function ContentAdmin() {
                 <th className="p-4 font-medium text-right">Ações</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-white/5">
+            <tbody className="divide-y divide-[#1e1b4b]">
               {posts.map(p => (
                 <tr key={p.id} className="text-slate-300 hover:bg-white/5 transition-colors">
                   <td className="p-4">

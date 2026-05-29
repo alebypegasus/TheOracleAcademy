@@ -109,7 +109,7 @@ export function SettingsView({ profile, setProfile }: any) {
   };
 
   return (
-    <div className="glass-panel p-8 md:p-12 rounded-[2rem] border border-white/5 relative overflow-hidden">
+    <div className="glass-panel p-8 md:p-12 rounded-[2rem] border border-[#1e1b4b] relative overflow-hidden">
       <div className="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-transparent via-indigo-500/30 to-transparent" />
       
       <div className="flex items-center gap-4 mb-8">
@@ -124,7 +124,7 @@ export function SettingsView({ profile, setProfile }: any) {
 
       <div className="space-y-8">
         {/* Avatar Section */}
-        <div className="flex flex-col md:flex-row items-center gap-6 pb-8 border-b border-white/5">
+        <div className="flex flex-col md:flex-row items-center gap-6 pb-8 border-b border-[#1e1b4b]">
           <div className="w-24 h-24 rounded-full overflow-hidden border-2 border-indigo-500/40 relative group">
             <img src={avatarUrl} alt="Preview Avatar" className="w-full h-full object-cover" />
             <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
@@ -137,7 +137,7 @@ export function SettingsView({ profile, setProfile }: any) {
               type="text" 
               value={avatarUrl}
               onChange={(e) => setAvatarUrl(e.target.value)}
-              className="w-full bg-black/20 border border-white/10 rounded-xl px-4 py-3 text-sm text-slate-200 outline-none focus:border-indigo-500/50 transition-colors"
+              className="w-full bg-black/20 border border-[#1e1b4b] rounded-xl px-4 py-3 text-sm text-slate-200 outline-none focus:border-indigo-500/50 transition-colors"
               placeholder="https://example.com/avatar.jpg"
             />
           </div>
@@ -151,7 +151,7 @@ export function SettingsView({ profile, setProfile }: any) {
               type="text" 
               value={name}
               onChange={(e) => setName(e.target.value)}
-              className="w-full bg-black/20 border border-white/10 rounded-xl px-4 py-3 text-sm text-slate-200 outline-none focus:border-indigo-500/50 transition-colors"
+              className="w-full bg-black/20 border border-[#1e1b4b] rounded-xl px-4 py-3 text-sm text-slate-200 outline-none focus:border-indigo-500/50 transition-colors"
               placeholder="Seu Nome"
             />
           </div>
@@ -164,13 +164,13 @@ export function SettingsView({ profile, setProfile }: any) {
               type="text" 
               value={phoneNumber}
               onChange={(e) => setPhoneNumber(e.target.value)}
-              className="w-full bg-black/20 border border-white/10 rounded-xl px-4 py-3 text-sm text-slate-200 outline-none focus:border-indigo-500/50 transition-colors"
+              className="w-full bg-black/20 border border-[#1e1b4b] rounded-xl px-4 py-3 text-sm text-slate-200 outline-none focus:border-indigo-500/50 transition-colors"
               placeholder="+55 (11) 99999-9999"
             />
           </div>
 
           {/* SMS MFA Card */}
-          <div className="p-6 rounded-2xl border border-indigo-500/20 bg-indigo-500/[0.02] flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+          <div className="p-6 rounded-2xl border border-[#312e81] bg-indigo-500/[0.02] flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
             <div className="flex gap-4">
               <div className="w-10 h-10 rounded-xl bg-indigo-500/10 border border-indigo-500/30 flex items-center justify-center shrink-0">
                 <Shield className="w-5 h-5 text-indigo-400" />
@@ -213,7 +213,7 @@ export function SettingsView({ profile, setProfile }: any) {
             </button>
           </div>
           {/* FCM Push Notifications Card */}
-          <div className="p-6 rounded-2xl border border-indigo-500/20 bg-indigo-500/[0.02] flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+          <div className="p-6 rounded-2xl border border-[#312e81] bg-indigo-500/[0.02] flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
             <div className="flex gap-4">
               <div className="w-10 h-10 rounded-xl bg-indigo-500/10 border border-indigo-500/30 flex items-center justify-center shrink-0">
                 <Bell className="w-5 h-5 text-indigo-400" />
@@ -268,7 +268,7 @@ export function SettingsView({ profile, setProfile }: any) {
 
           {/* GUIA DE CREDENCIAIS & AMBIENTE SANDBOX MERCADO PAGO */}
           <div className="p-6 rounded-2xl border border-amber-500/20 bg-amber-500/[0.02] flex flex-col gap-4 mt-6">
-             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-white/5 pb-4">
+             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-[#1e1b4b] pb-4">
                 <div className="flex gap-4">
                    <div className="w-10 h-10 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center shrink-0">
                       <Shield className="w-5 h-5 text-amber-500" />
@@ -309,7 +309,7 @@ export function SettingsView({ profile, setProfile }: any) {
                    <p className="text-slate-400">
                       Para efetuar a conexão segura, configure a seguinte variável no seu painel ou arquivo <span className="text-indigo-400 font-mono">.env</span>:
                    </p>
-                   <div className="bg-black/60 p-2.5 rounded-lg border border-white/5 font-mono text-[10px] text-indigo-300 select-all">
+                   <div className="bg-black/60 p-2.5 rounded-lg border border-[#1e1b4b] font-mono text-[10px] text-indigo-300 select-all">
                       MERCADO_PAGO_ACCESS_TOKEN=APP_USR-... ou TEST-...
                    </div>
                    <p className="text-[10px] text-zinc-500 italic">
@@ -320,12 +320,12 @@ export function SettingsView({ profile, setProfile }: any) {
           </div>
 
           {/* WALLET / WITHDRAWAL SECTION (Mercado Pago API connected) */}
-          <div className="mt-8 mb-4 p-8 rounded-2xl border border-indigo-500/20 bg-gradient-to-br from-indigo-950/20 to-black relative overflow-hidden">
+          <div className="mt-8 mb-4 p-8 rounded-2xl border border-[#312e81] bg-gradient-to-br from-indigo-950/20 to-black relative overflow-hidden">
              <div className="absolute top-0 right-0 p-4 opacity-10">
                <Wallet className="w-24 h-24" />
              </div>
              
-             <div className="relative z-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-8 border-b border-indigo-500/20 pb-6 mb-6">
+             <div className="relative z-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-8 border-b border-[#312e81] pb-6 mb-6">
                 <div>
                    <h3 className="text-2xl font-serif text-slate-100 flex items-center gap-3">
                      <Wallet className="w-6 h-6 text-indigo-400" />
@@ -354,7 +354,7 @@ export function SettingsView({ profile, setProfile }: any) {
                       <select 
                         value={pixType}
                         onChange={(e) => setPixType(e.target.value)}
-                        className="w-full bg-black/20 border border-white/10 rounded-xl px-3 py-2 text-sm text-slate-200 outline-none"
+                        className="w-full bg-black/20 border border-[#1e1b4b] rounded-xl px-3 py-2 text-sm text-slate-200 outline-none"
                       >
                         <option value="cpf">CPF / CNPJ</option>
                         <option value="email">E-mail</option>
@@ -370,7 +370,7 @@ export function SettingsView({ profile, setProfile }: any) {
                         max={walletBalance}
                         value={withdrawAmount}
                         onChange={(e) => setWithdrawAmount(e.target.value)}
-                        className="w-full bg-black/20 border border-white/10 rounded-xl px-3 py-2 text-sm text-slate-200 outline-none focus:border-indigo-500/50"
+                        className="w-full bg-black/20 border border-[#1e1b4b] rounded-xl px-3 py-2 text-sm text-slate-200 outline-none focus:border-indigo-500/50"
                         placeholder="0.00"
                       />
                     </div>
@@ -382,7 +382,7 @@ export function SettingsView({ profile, setProfile }: any) {
                       type="text"
                       value={pixKey}
                       onChange={(e) => setPixKey(e.target.value)}
-                      className="w-full bg-black/20 border border-white/10 rounded-xl px-3 py-2 text-sm text-slate-200 outline-none focus:border-indigo-500/50"
+                      className="w-full bg-black/20 border border-[#1e1b4b] rounded-xl px-3 py-2 text-sm text-slate-200 outline-none focus:border-indigo-500/50"
                       placeholder="Sua chave..."
                     />
                   </div>
@@ -404,8 +404,8 @@ export function SettingsView({ profile, setProfile }: any) {
                 </div>
 
                 {/* Information / Rules */}
-                <div className="bg-black/30 p-5 border border-indigo-500/10 rounded-xl">
-                  <h4 className="text-xs font-bold text-indigo-400 uppercase tracking-widest border-b border-indigo-500/20 pb-2 mb-3">
+                <div className="bg-black/30 p-5 border border-[#1e1b4b] rounded-xl">
+                  <h4 className="text-xs font-bold text-indigo-400 uppercase tracking-widest border-b border-[#312e81] pb-2 mb-3">
                     <DollarSign className="w-4 h-4 inline-block mr-1" />
                     Regras de Monetização
                   </h4>
@@ -423,7 +423,7 @@ export function SettingsView({ profile, setProfile }: any) {
              </div>
 
              {/* Extrato Financeiro */}
-             <div className="relative z-10 mt-8 pt-8 border-t border-indigo-500/20">
+             <div className="relative z-10 mt-8 pt-8 border-t border-[#312e81]">
                 <h4 className="text-sm font-bold text-slate-100 flex items-center gap-2 mb-4">
                   <History className="w-4 h-4 text-indigo-400" />
                   Extrato Financeiro
@@ -433,7 +433,7 @@ export function SettingsView({ profile, setProfile }: any) {
                 ) : transactions.length > 0 ? (
                    <div className="space-y-3 max-h-64 overflow-y-auto pr-2 custom-scrollbar">
                      {transactions.map(tx => (
-                        <div key={tx.id} className="flex justify-between items-center bg-black/40 border border-white/5 p-3 rounded-lg hover:border-indigo-500/30 transition-colors">
+                        <div key={tx.id} className="flex justify-between items-center bg-black/40 border border-[#1e1b4b] p-3 rounded-lg hover:border-indigo-500/30 transition-colors">
                            <div>
                               <p className="text-xs font-bold text-slate-200">{tx.title}</p>
                               <div className="flex items-center gap-2 mt-1">
@@ -458,7 +458,7 @@ export function SettingsView({ profile, setProfile }: any) {
                      ))}
                    </div>
                 ) : (
-                   <p className="text-xs text-slate-500 border border-dashed border-white/10 rounded-xl p-4 text-center">
+                   <p className="text-xs text-slate-500 border border-dashed border-[#1e1b4b] rounded-xl p-4 text-center">
                      Nenhuma transação financeira registrada até o momento.
                    </p>
                 )}

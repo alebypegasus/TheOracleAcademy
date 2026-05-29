@@ -2,6 +2,7 @@ import fs from "fs";
 import path from "path";
 import bcrypt from "bcrypt";
 import { pool, query } from "./pool";
+import { createCommunitySchema } from "./community_schema";
 
 // Helper to hash passwords securely
 async function hashPassword(pwd: string): Promise<string> {
@@ -272,6 +273,9 @@ export async function initDB() {
       await client.query(statement);
     }
     console.log("[Database] Relational tables loaded successfully!");
+
+    // Execute separate community advanced schema
+    await createCommunitySchema(client);
 
     // --- SEED SECTIONS ---
     

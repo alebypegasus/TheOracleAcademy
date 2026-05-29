@@ -16,29 +16,22 @@ export function Sidebar({ currentPath, themePreference, setThemePreference, colo
       group: 'Principal',
       items: [
         { name: 'Painel', path: '/dashboard', icon: Home },
-        { name: 'Orientação do Oráculo', path: '/oracle', icon: Eye },
+        { name: 'Comunidade', path: '/community', icon: Users },
+        { name: 'Meus Cursos', path: '/courses', icon: BookOpen },
         { name: 'Grimório', path: '/grimoire', icon: Book },
       ]
     },
     {
-      group: 'Aprendizado',
+      group: 'Ferramentas',
       items: [
-        { name: 'Meus Cursos', path: '/courses', icon: BookOpen },
+        { name: 'Desafios', path: '/challenges', icon: Trophy },
+        { name: 'Orientação do Oráculo', path: '/oracle', icon: Eye },
         { name: 'Mercado Místico', path: '/library', icon: ShoppingBag },
       ]
     },
     {
-      group: 'Conquistas',
+      group: 'Suporte',
       items: [
-        { name: 'Desafios', path: '/challenges', icon: Trophy },
-        { name: 'Certificados', path: '/certificates', icon: FileBadge },
-      ]
-    },
-    {
-      group: 'Extras',
-      items: [
-        { name: 'Comunidade', path: '/community', icon: Users },
-        { name: 'Google Workspace', path: '/workspace', icon: Layers },
         { name: 'Diretrizes', path: '/guidelines', icon: Book },
         { name: 'Ajuda & Suporte', path: '/support', icon: Sparkles },
         ...(currentUser?.role === 'admin' ? [{ name: 'Administração', path: '/admin', icon: ShieldAlert }] : [])
@@ -49,7 +42,7 @@ export function Sidebar({ currentPath, themePreference, setThemePreference, colo
   return (
     <motion.aside
       className={cn(
-        "flex flex-col h-full bg-white/50 dark:bg-black/40 backdrop-blur-3xl border-r border-slate-200/50 dark:border-white/10 relative z-50",
+        "flex flex-col h-full bg-white/50 dark:bg-black/40 backdrop-blur-3xl border-r border-slate-200/50 dark:border-[#1e1b4b] relative z-50",
         className
       )}
       initial={false}
@@ -58,7 +51,7 @@ export function Sidebar({ currentPath, themePreference, setThemePreference, colo
       onMouseLeave={() => setIsExpanded(false)}
       transition={{ type: "spring", stiffness: 300, damping: 30 }}
     >
-      <div className="flex items-center justify-center h-24 border-b border-slate-200/50 dark:border-white/5 relative">
+      <div className="flex items-center justify-center h-24 border-b border-slate-200/50 dark:border-[#1e1b4b] relative">
         <AnimatePresence mode="wait">
           {isExpanded ? (
             <motion.div 
@@ -123,7 +116,7 @@ export function Sidebar({ currentPath, themePreference, setThemePreference, colo
                   {isActive && (
                     <motion.div 
                       layoutId="sidebar-active"
-                      className="absolute inset-0 bg-indigo-500/10 border border-indigo-500/20 rounded-2xl"
+                      className="absolute inset-0 bg-indigo-500/10 border border-[#312e81] rounded-2xl"
                       initial={false}
                       transition={{ type: "spring", stiffness: 300, damping: 30 }}
                     />
@@ -152,7 +145,7 @@ export function Sidebar({ currentPath, themePreference, setThemePreference, colo
         ))}
       </nav>
 
-      <div className="border-t border-slate-200/50 dark:border-white/5 p-3 flex flex-col gap-3">
+      <div className="border-t border-slate-200/50 dark:border-[#1e1b4b] p-3 flex flex-col gap-3">
         <AnimatePresence>
           {isExpanded && (
             <motion.div 
@@ -185,7 +178,7 @@ export function Sidebar({ currentPath, themePreference, setThemePreference, colo
           onClick={() => onNavigate('/profile')}
           className="flex items-center w-full rounded-2xl hover:bg-slate-200/50 dark:hover:bg-white/5 transition-colors p-2"
         >
-          <div className="w-10 h-10 rounded-full overflow-hidden border border-slate-300 dark:border-white/10 flex-shrink-0">
+          <div className="w-10 h-10 rounded-full overflow-hidden border border-slate-300 dark:border-[#1e1b4b] flex-shrink-0">
             <img src={currentUser?.avatar || profile.avatar} alt="Avatar" className="w-full h-full object-cover" />
           </div>
           

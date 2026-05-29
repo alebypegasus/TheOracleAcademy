@@ -118,22 +118,14 @@ export function Header({ searchQuery, setSearchQuery, profile, currentUser, onMe
   };
 
   return (
-    <header className="flex flex-col md:flex-row md:items-end w-full justify-between gap-6 relative z-50">
-      <div className="flex items-center gap-4">
-        <div>
-          <h2 className="text-2xl pt-2 sm:pt-0 sm:text-3xl font-serif font-medium text-slate-100 flex items-center gap-2">
-            Bem-vindo, {profile.name?.split(' ')[0] || 'Usuário'} <Sparkles className="w-5 h-5 sm:w-6 sm:h-6 text-indigo-400" />
-          </h2>
-          <p className="text-sm sm:text-base text-slate-400 mt-1 sm:mt-2">Continue sua jornada de conhecimento místico.</p>
-        </div>
-      </div>
+    <header className="flex items-center w-full justify-end gap-6 relative z-50">
       
       <div className="flex items-center flex-wrap gap-4">
         {/* Search Input click opens the cosmic search modal */}
         <motion.div 
           whileHover={{ scale: 1.02 }}
           onClick={() => setShowSearchModal(true)}
-          className="glass-panel px-4 py-3 rounded-xl flex items-center cursor-pointer hover:bg-white/5 border border-indigo-500/10 hover:border-indigo-400/35 transition-all duration-300 shadow-[0_0_15px_rgba(99,102,241,0.05)] w-full md:w-auto"
+          className="glass-panel px-4 py-3 rounded-xl flex items-center cursor-pointer hover:bg-white/5 border border-[#1e1b4b] hover:border-indigo-400/35 transition-all duration-300 shadow-[0_0_15px_rgba(99,102,241,0.05)] w-full md:w-auto"
         >
           <motion.div animate={{ rotate: [0, 5, -5, 0] }} transition={{ repeat: Infinity, duration: 2.5, ease: "easeInOut" }}>
             <Search className="w-4 h-4 text-slate-400 mr-2" />
@@ -141,7 +133,7 @@ export function Header({ searchQuery, setSearchQuery, profile, currentUser, onMe
           <span className="text-sm text-slate-400 font-sans w-48 text-left truncate">
             Buscar na plataforma...
           </span>
-          <span className="ml-auto text-[10px] bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 px-2 py-0.5 rounded font-mono hidden md:inline">
+          <span className="ml-auto text-[10px] bg-indigo-500/10 border border-[#312e81] text-indigo-400 px-2 py-0.5 rounded font-mono hidden md:inline">
             BUSCAR
           </span>
         </motion.div>
@@ -156,7 +148,7 @@ export function Header({ searchQuery, setSearchQuery, profile, currentUser, onMe
                   handleMarkReadAll();
                 }
               }} 
-              className="glass-panel w-12 h-12 rounded-xl flex items-center justify-center hover:bg-white/5 border border-indigo-500/10 hover:border-indigo-400/35 transition-colors group relative"
+              className="glass-panel w-12 h-12 rounded-xl flex items-center justify-center hover:bg-white/5 border border-[#1e1b4b] hover:border-indigo-400/35 transition-colors group relative"
             >
               <Bell className={`w-5 h-5 ${showNotifications ? 'text-indigo-300' : 'text-indigo-400'} group-hover:scale-110 transition-transform`} />
               {unreadCount > 0 && (
@@ -175,17 +167,17 @@ export function Header({ searchQuery, setSearchQuery, profile, currentUser, onMe
                   animate={{ opacity: 1, y: 0, scale: 1 }} 
                   exit={{ opacity: 0, y: 12, scale: 0.95 }}
                   transition={{ duration: 0.2 }}
-                  className="absolute top-full right-0 mt-3 w-80 sm:w-96 glass-panel border border-white/10 rounded-3xl shadow-2xl overflow-hidden z-50 max-h-[500px] flex flex-col bg-[#090514]/90 backdrop-blur-3xl"
+                  className="absolute top-full right-0 mt-3 w-80 sm:w-96 glass-panel border border-[#1e1b4b] rounded-3xl shadow-2xl overflow-hidden z-50 max-h-[500px] flex flex-col bg-[#090514]/90 backdrop-blur-3xl"
                 >
                   <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-500/5 blur-[40px] rounded-full pointer-events-none" />
                   
-                  <div className="p-5 border-b border-white/5 flex items-center justify-between shrink-0 relative z-10">
+                  <div className="p-5 border-b border-[#1e1b4b] flex items-center justify-between shrink-0 relative z-10">
                     <div className="flex items-center gap-2">
                       <Bell className="w-4 h-4 text-indigo-400" />
                       <h4 className="text-base font-serif text-slate-100">Atividades</h4>
                     </div>
                     {unreadCount > 0 && (
-                      <span className="text-[10px] font-bold tracking-widest uppercase bg-indigo-500/20 text-indigo-300 px-2.5 py-1 rounded-full border border-indigo-500/20 cursor-pointer hover:bg-indigo-500/30 transition-colors" onClick={handleMarkReadAll}>
+                      <span className="text-[10px] font-bold tracking-widest uppercase bg-indigo-500/20 text-indigo-300 px-2.5 py-1 rounded-full border border-[#312e81] cursor-pointer hover:bg-indigo-500/30 transition-colors" onClick={handleMarkReadAll}>
                         {unreadCount} Novas
                       </span>
                     )}
@@ -195,7 +187,7 @@ export function Header({ searchQuery, setSearchQuery, profile, currentUser, onMe
                     {notifications.length > 0 ? (
                       notifications.map((n, i) => {
                         let Icon = Sparkles;
-                        let borderColor = 'border-indigo-500/20';
+                        let borderColor = 'border-[#312e81]';
                         let iconColor = 'text-indigo-400';
                         
                         if (n.type === 'like') {
@@ -226,7 +218,7 @@ export function Header({ searchQuery, setSearchQuery, profile, currentUser, onMe
                             className={`flex items-start gap-4 p-4 rounded-2xl border bg-black/20 hover:bg-white/5 transition-all duration-300 cursor-pointer group hover:scale-[1.02] shadow-sm hover:shadow-xl hover:shadow-black/50 ${borderColor}`}
                           >
                             <div className="flex-shrink-0 mt-0.5">
-                              <div className="w-8 h-8 rounded-full flex items-center justify-center bg-black/40 border border-white/5 group-hover:scale-110 group-hover:rotate-12 transition-transform duration-300">
+                              <div className="w-8 h-8 rounded-full flex items-center justify-center bg-black/40 border border-[#1e1b4b] group-hover:scale-110 group-hover:rotate-12 transition-transform duration-300">
                                 <Icon className={`w-4 h-4 ${iconColor}`} />
                               </div>
                             </div>
@@ -246,7 +238,7 @@ export function Header({ searchQuery, setSearchQuery, profile, currentUser, onMe
                       })
                     ) : (
                       <div className="py-8 text-center flex flex-col items-center justify-center">
-                        <div className="w-12 h-12 rounded-full bg-black/40 border border-white/5 flex items-center justify-center mb-3">
+                        <div className="w-12 h-12 rounded-full bg-black/40 border border-[#1e1b4b] flex items-center justify-center mb-3">
                           <Bell className="w-5 h-5 text-slate-600" />
                         </div>
                         <p className="text-xs text-slate-500">Nenhuma atividade no momento.</p>
@@ -254,8 +246,8 @@ export function Header({ searchQuery, setSearchQuery, profile, currentUser, onMe
                     )}
                   </div>
                   
-                  <div className="p-4 border-t border-white/5 shrink-0 relative z-10">
-                    <button className="w-full py-2.5 text-xs font-bold uppercase tracking-wider text-slate-400 hover:text-indigo-300 transition-colors border border-transparent hover:border-indigo-500/20 rounded-xl hover:bg-indigo-500/10">
+                  <div className="p-4 border-t border-[#1e1b4b] shrink-0 relative z-10">
+                    <button className="w-full py-2.5 text-xs font-bold uppercase tracking-wider text-slate-400 hover:text-indigo-300 transition-colors border border-transparent hover:border-[#312e81] rounded-xl hover:bg-indigo-500/10">
                       Histórico Completo
                     </button>
                   </div>
@@ -285,7 +277,7 @@ export function Header({ searchQuery, setSearchQuery, profile, currentUser, onMe
               animate={{ scale: 1, opacity: 1, y: 0 }} 
               exit={{ scale: 0.96, opacity: 0, y: -20 }}
               transition={{ duration: 0.2 }}
-              className="relative w-full max-w-4xl bg-[#090615] border border-indigo-500/20 rounded-3xl overflow-hidden shadow-[0_0_50px_rgba(99,102,241,0.15)] flex flex-col max-h-[80vh]"
+              className="relative w-full max-w-4xl bg-[#090615] border border-[#312e81] rounded-3xl overflow-hidden shadow-[0_0_50px_rgba(99,102,241,0.15)] flex flex-col max-h-[80vh]"
             >
               <div className="absolute top-0 right-0 w-80 h-80 bg-indigo-500/5 rounded-full blur-[80px] pointer-events-none -mr-40 -mt-40" />
               
@@ -309,7 +301,7 @@ export function Header({ searchQuery, setSearchQuery, profile, currentUser, onMe
                 )}
                 <button 
                   onClick={() => setShowSearchModal(false)}
-                  className="px-3 py-1.5 border border-white/10 hover:border-white/20 hover:bg-white/5 text-slate-400 hover:text-slate-200 rounded-xl text-xs uppercase tracking-wider font-semibold transition-all cursor-pointer flex items-center gap-1.5"
+                  className="px-3 py-1.5 border border-[#1e1b4b] hover:border-[#312e81] hover:bg-white/5 text-slate-400 hover:text-slate-200 rounded-xl text-xs uppercase tracking-wider font-semibold transition-all cursor-pointer flex items-center gap-1.5"
                 >
                   <X className="w-3.5 h-3.5" /> Fechar
                 </button>
@@ -343,7 +335,7 @@ export function Header({ searchQuery, setSearchQuery, profile, currentUser, onMe
                               <div 
                                 key={course.id}
                                 onClick={() => handleResultClick('/courses')}
-                                className="glass-panel p-4 rounded-xl border border-white/5 hover:border-[#a855f7]/30 hover:bg-[#a855f7]/5 cursor-pointer transition-all duration-300 group flex items-start justify-between"
+                                className="glass-panel p-4 rounded-xl border border-[#1e1b4b] hover:border-[#a855f7]/30 hover:bg-[#a855f7]/5 cursor-pointer transition-all duration-300 group flex items-start justify-between"
                               >
                                 <div>
                                   <h5 className="font-serif font-medium text-slate-200 text-sm group-hover:text-slate-100 transition-colors">{course.name}</h5>
@@ -372,11 +364,11 @@ export function Header({ searchQuery, setSearchQuery, profile, currentUser, onMe
                                 <div 
                                   key={post.id}
                                   onClick={() => handleResultClick('/community')}
-                                  className="glass-panel p-4 rounded-xl border border-white/5 hover:border-indigo-500/30 hover:bg-indigo-500/5 cursor-pointer transition-all duration-300 group flex items-center justify-between gap-4"
+                                  className="glass-panel p-4 rounded-xl border border-[#1e1b4b] hover:border-indigo-500/30 hover:bg-indigo-500/5 cursor-pointer transition-all duration-300 group flex items-center justify-between gap-4"
                                 >
                                   <div>
                                     <div className="flex items-center gap-2 mb-1.5">
-                                      <div className="w-5 h-5 rounded-full overflow-hidden border border-white/10 bg-slate-800">
+                                      <div className="w-5 h-5 rounded-full overflow-hidden border border-[#1e1b4b] bg-slate-800">
                                         <img src={post.avatar || 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&q=80&w=150'} className="w-full h-full object-cover" alt="" />
                                       </div>
                                       <span className="text-[11px] font-medium text-slate-300">{post.authorName}</span>
@@ -403,10 +395,10 @@ export function Header({ searchQuery, setSearchQuery, profile, currentUser, onMe
                               <div 
                                 key={item.id}
                                 onClick={() => handleResultClick('/library')}
-                                className="glass-panel p-4 rounded-xl border border-white/5 hover:border-amber-500/30 hover:bg-amber-500/5 cursor-pointer transition-all duration-300 group flex items-center justify-between gap-4"
+                                className="glass-panel p-4 rounded-xl border border-[#1e1b4b] hover:border-amber-500/30 hover:bg-amber-500/5 cursor-pointer transition-all duration-300 group flex items-center justify-between gap-4"
                               >
                                 <div className="flex gap-3">
-                                  <div className="w-10 h-14 rounded bg-slate-800 shrink-0 overflow-hidden border border-white/10 flex items-center justify-center">
+                                  <div className="w-10 h-14 rounded bg-slate-800 shrink-0 overflow-hidden border border-[#1e1b4b] flex items-center justify-center">
                                     <img src={item.coverImage || 'https://images.unsplash.com/photo-1541963463532-d68292c34b19?auto=format&fit=crop&q=80&w=150'} className="w-full h-full object-cover" alt="" />
                                   </div>
                                   <div>
@@ -434,22 +426,22 @@ export function Header({ searchQuery, setSearchQuery, profile, currentUser, onMe
                     <div>
                       <h4 className="text-[11px] font-bold uppercase tracking-widest text-slate-500 mb-3">Atalhos Sugeridos</h4>
                       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                        <button onClick={() => handleResultClick('/courses')} className="glass-panel p-3 rounded-xl border border-white/5 hover:bg-indigo-500/5 hover:border-indigo-500/20 text-xs text-slate-300 text-left transition-all">
+                        <button onClick={() => handleResultClick('/courses')} className="glass-panel p-3 rounded-xl border border-[#1e1b4b] hover:bg-indigo-500/5 hover:border-[#312e81] text-xs text-slate-300 text-left transition-all">
                           <BookOpen className="w-4 h-4 text-[#a855f7] mb-1.5" />
                           <span className="font-medium inline-block mb-0.5">Explorar Cursos</span>
                           <p className="text-[10px] text-slate-500">Aprender oráculos</p>
                         </button>
-                        <button onClick={() => handleResultClick('/community')} className="glass-panel p-3 rounded-xl border border-white/5 hover:bg-indigo-500/5 hover:border-indigo-500/20 text-xs text-slate-300 text-left transition-all">
+                        <button onClick={() => handleResultClick('/community')} className="glass-panel p-3 rounded-xl border border-[#1e1b4b] hover:bg-indigo-500/5 hover:border-[#312e81] text-xs text-slate-300 text-left transition-all">
                           <MessageSquare className="w-4 h-4 text-indigo-400 mb-1.5" />
                           <span className="font-medium inline-block mb-0.5">Comunidade</span>
                           <p className="text-[10px] text-slate-500">Trocas místicas</p>
                         </button>
-                        <button onClick={() => handleResultClick('/library')} className="glass-panel p-3 rounded-xl border border-white/5 hover:bg-indigo-500/5 hover:border-indigo-500/20 text-xs text-slate-300 text-left transition-all">
+                        <button onClick={() => handleResultClick('/library')} className="glass-panel p-3 rounded-xl border border-[#1e1b4b] hover:bg-indigo-500/5 hover:border-[#312e81] text-xs text-slate-300 text-left transition-all">
                           <BookMarked className="w-4 h-4 text-amber-500 mb-1.5" />
                           <span className="font-medium inline-block mb-0.5">Biblioteca</span>
                           <p className="text-[10px] text-slate-500">Grimórios e lojinha</p>
                         </button>
-                        <button onClick={() => handleResultClick('/oracle')} className="glass-panel p-3 rounded-xl border border-white/5 hover:bg-indigo-500/5 hover:border-indigo-500/20 text-xs text-slate-300 text-left transition-all">
+                        <button onClick={() => handleResultClick('/oracle')} className="glass-panel p-3 rounded-xl border border-[#1e1b4b] hover:bg-indigo-500/5 hover:border-[#312e81] text-xs text-slate-300 text-left transition-all">
                           <Sparkles className="w-4 h-4 text-rose-400 mb-1.5" />
                           <span className="font-medium inline-block mb-0.5">Leitura IA</span>
                           <p className="text-[10px] text-slate-500">Consultar oráculo</p>
@@ -457,7 +449,7 @@ export function Header({ searchQuery, setSearchQuery, profile, currentUser, onMe
                       </div>
                     </div>
 
-                    <div className="bg-white/[0.01] rounded-2xl p-4 border border-white/5 flex items-center justify-between text-xs text-slate-400 gap-3">
+                    <div className="bg-white/[0.01] rounded-2xl p-4 border border-[#1e1b4b] flex items-center justify-between text-xs text-slate-400 gap-3">
                       <div className="flex items-center gap-2">
                         <Sparkles className="w-4 h-4 text-indigo-400 shrink-0 animate-pulse" />
                         <span>Sua jornada de aprendizado do éter é atualizada dinamicamente.</span>

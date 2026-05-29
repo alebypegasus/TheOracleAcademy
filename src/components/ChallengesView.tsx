@@ -99,7 +99,7 @@ export function ChallengesView({ profile, setProfile, grimoireEntries = [], curr
              </div>
            </div>
            {/* Level Progress */}
-           <div className="w-full h-2 bg-black/40 rounded-full mt-2 overflow-hidden border border-white/5">
+           <div className="w-full h-2 bg-black/40 rounded-full mt-2 overflow-hidden border border-[#1e1b4b]">
               <div className="h-full bg-gradient-to-r from-amber-600 to-amber-400" style={{ width: '45%' }} />
            </div>
            <p className="text-[10px] text-slate-500 w-full text-right">Mais 150 XP para o Nível 4</p>
@@ -126,7 +126,7 @@ export function ChallengesView({ profile, setProfile, grimoireEntries = [], curr
           
           <div className="xl:col-span-8 flex flex-col space-y-8">
              {/* Navigation Tabs */}
-             <div className="flex gap-2 overflow-x-auto hide-scrollbar pb-2 glass-panel p-2 rounded-[1.5rem] border-white/5">
+             <div className="flex gap-2 overflow-x-auto hide-scrollbar pb-2 glass-panel p-2 rounded-[1.5rem] border-[#1e1b4b]">
                 {[
                   { id: 'daily', title: 'Missões Diárias', icon: Zap },
                   { id: 'weekly', title: 'Desafios Semanais', icon: CalendarDays },
@@ -175,7 +175,7 @@ export function ChallengesView({ profile, setProfile, grimoireEntries = [], curr
                    <p className="text-slate-500 text-xs mt-1">Os oráculos mais ativos da nossa egrégora.</p>
                  </div>
                  
-                 <div className="flex bg-black/40 p-1 rounded-xl border border-white/5">
+                 <div className="flex bg-black/40 p-1 rounded-xl border border-[#1e1b4b]">
                    <button 
                     onClick={() => setRankingTab('state')}
                     className={`flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-bold transition-all ${rankingTab === 'state' ? 'bg-indigo-600 text-white shadow-lg' : 'text-slate-500 hover:text-slate-300'}`}
@@ -191,7 +191,7 @@ export function ChallengesView({ profile, setProfile, grimoireEntries = [], curr
                  </div>
                </div>
 
-               <div className="glass-panel overflow-hidden rounded-[2.5rem] border border-white/10 bg-black/20 shadow-2xl">
+               <div className="glass-panel overflow-hidden rounded-[2.5rem] border border-[#1e1b4b] bg-black/20 shadow-2xl">
                  <div className="overflow-x-auto">
                    <table className="w-full text-left">
                      <thead>
@@ -202,7 +202,7 @@ export function ChallengesView({ profile, setProfile, grimoireEntries = [], curr
                          <th className="px-8 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 text-right">Frequência/XP</th>
                        </tr>
                      </thead>
-                     <tbody className="divide-y divide-white/5">
+                     <tbody className="divide-y divide-[#1e1b4b]">
                        <AnimatePresence mode="popLayout">
                          {currentRanking.map((user, idx) => (
                            <motion.tr 
@@ -229,7 +229,7 @@ export function ChallengesView({ profile, setProfile, grimoireEntries = [], curr
                              </td>
                              <td className="px-8 py-6">
                                <div className="flex items-center gap-4">
-                                 <div className="w-12 h-12 rounded-xl overflow-hidden border border-white/10 group-hover:border-indigo-500/50 transition-colors shadow-lg">
+                                 <div className="w-12 h-12 rounded-xl overflow-hidden border border-[#1e1b4b] group-hover:border-indigo-500/50 transition-colors shadow-lg">
                                    <img src={user.avatar} className="w-full h-full object-cover" alt="" />
                                  </div>
                                  <div>
@@ -242,7 +242,7 @@ export function ChallengesView({ profile, setProfile, grimoireEntries = [], curr
                                </div>
                              </td>
                              <td className="px-8 py-6">
-                               <span className="text-xs font-mono font-black text-slate-400 opacity-60 px-3 py-1 bg-white/5 rounded-lg border border-white/5">
+                               <span className="text-xs font-mono font-black text-slate-400 opacity-60 px-3 py-1 bg-white/5 rounded-lg border border-[#1e1b4b]">
                                  {user.state}
                                </span>
                              </td>
@@ -284,7 +284,7 @@ export function ChallengesView({ profile, setProfile, grimoireEntries = [], curr
           </div>
 
           <div className="xl:col-span-4 space-y-8">
-            <div className="glass-panel p-8 rounded-[3rem] border-white/10 relative overflow-hidden bg-gradient-to-b from-indigo-900/10 to-transparent shadow-xl">
+            <div className="glass-panel p-8 rounded-[3rem] border-[#1e1b4b] relative overflow-hidden bg-gradient-to-b from-indigo-900/10 to-transparent shadow-xl">
               <div className="absolute top-0 right-0 w-40 h-40 bg-indigo-500/10 rounded-full blur-[50px] pointer-events-none" />
               
               <h3 className="text-2xl font-serif text-slate-100 mb-6 flex items-center gap-3">
@@ -300,11 +300,11 @@ export function ChallengesView({ profile, setProfile, grimoireEntries = [], curr
                   const Icon = badge.icon;
                   return (
                     <div key={badge.id} className={`flex flex-col items-center justify-center p-6 rounded-[2rem] border transition-all text-center group/badge
-                      ${badge.unlocked ? `${badge.bg} ${badge.border} shadow-[0_15px_30px_-10px_rgba(0,0,0,0.5)] hover:scale-105 cursor-pointer` : 'bg-black/30 border-white/5 opacity-50 grayscale hover:opacity-70'}`}>
+                      ${badge.unlocked ? `${badge.bg} ${badge.border} shadow-[0_15px_30px_-10px_rgba(0,0,0,0.5)] hover:scale-105 cursor-pointer` : 'bg-black/30 border-[#1e1b4b] opacity-50 grayscale hover:opacity-70'}`}>
                       <Icon className={`w-12 h-12 mb-4 drop-shadow-2xl transition-transform group-hover/badge:scale-110 ${badge.unlocked ? badge.color : 'text-slate-500'}`} />
                       <span className="text-[10px] font-black text-slate-300 uppercase tracking-widest mb-1">{badge.name}</span>
                       {!badge.unlocked && (
-                        <div className="flex items-center gap-1.5 bg-black/60 px-3 py-1 rounded-full border border-white/5 mt-2">
+                        <div className="flex items-center gap-1.5 bg-black/60 px-3 py-1 rounded-full border border-[#1e1b4b] mt-2">
                            <Lock className="w-2.5 h-2.5 text-slate-500"/>
                            <span className="text-[8px] text-slate-500 font-black uppercase tracking-widest">Oculto</span>
                         </div>
@@ -322,7 +322,7 @@ export function ChallengesView({ profile, setProfile, grimoireEntries = [], curr
               </div>
               <p className="text-sm text-slate-300 mb-6 leading-relaxed">Alcance o <span className="text-amber-400 font-bold">Nível 5</span> para destravar uma Leitura de Tarot Personalizada em Áudio feita pela IA avançada.</p>
               <div className="relative pt-4">
-                 <div className="w-full bg-black/60 h-2.5 rounded-full overflow-hidden border border-white/5 shadow-inner">
+                 <div className="w-full bg-black/60 h-2.5 rounded-full overflow-hidden border border-[#1e1b4b] shadow-inner">
                     <motion.div 
                       className="bg-gradient-to-r from-amber-600 to-amber-400 h-full relative" 
                       initial={{ width: 0 }}
@@ -362,7 +362,7 @@ function ChallengeCard({ challenge, index }: { challenge: any, index: number }) 
       initial={{ opacity: 0, x: -20 }}
       animate={{ opacity: 1, x: 0 }}
       transition={{ duration: 0.3, delay: index * 0.1 }}
-      className={`glass-panel p-8 rounded-[2.5rem] border ${isCompleted ? 'border-emerald-500/30 bg-emerald-900/10 shadow-[0_20px_50px_-20px_rgba(16,185,129,0.3)]' : 'border-white/10 hover:border-indigo-500/40'} relative overflow-hidden transition-all group cursor-default`}
+      className={`glass-panel p-8 rounded-[2.5rem] border ${isCompleted ? 'border-emerald-500/30 bg-emerald-900/10 shadow-[0_20px_50px_-20px_rgba(16,185,129,0.3)]' : 'border-[#1e1b4b] hover:border-indigo-500/40'} relative overflow-hidden transition-all group cursor-default`}
     >
       {isCompleted && (
         <div className="absolute -top-20 -right-20 w-60 h-60 bg-emerald-500/10 rounded-full blur-[60px] pointer-events-none" />
@@ -381,7 +381,7 @@ function ChallengeCard({ challenge, index }: { challenge: any, index: number }) 
           </div>
           
           <div className="flex items-center gap-6 mt-6">
-            <div className="flex-1 h-3 bg-black/60 rounded-full overflow-hidden border border-white/5 shadow-inner">
+            <div className="flex-1 h-3 bg-black/60 rounded-full overflow-hidden border border-[#1e1b4b] shadow-inner">
               <motion.div 
                 className={`h-full relative overflow-hidden ${isCompleted ? 'bg-gradient-to-r from-emerald-600 to-emerald-400' : 'bg-gradient-to-r from-indigo-600/80 to-indigo-400/80 group-hover:from-indigo-600 group-hover:to-indigo-400'}`} 
                 initial={{ width: 0 }}
@@ -391,13 +391,13 @@ function ChallengeCard({ challenge, index }: { challenge: any, index: number }) 
                  <div className="absolute inset-0 bg-[linear-gradient(90deg,transparent,rgba(255,255,255,0.3),transparent)] -translate-x-[100%] animate-[shimmer_2s_infinite]" />
               </motion.div>
             </div>
-            <span className="text-[11px] font-black text-slate-300 font-mono tracking-widest bg-white/5 px-3 py-1.5 rounded-lg border border-white/5">
+            <span className="text-[11px] font-black text-slate-300 font-mono tracking-widest bg-white/5 px-3 py-1.5 rounded-lg border border-[#1e1b4b]">
               {challenge.isPercent ? `${challenge.progress}%` : `${challenge.progress} / ${challenge.total}`}
             </span>
           </div>
         </div>
         
-        <div className="flex flex-row md:flex-col items-center md:items-end justify-between md:justify-center shrink-0 md:border-l border-white/10 pt-6 md:pt-0 md:pl-10 space-y-4">
+        <div className="flex flex-row md:flex-col items-center md:items-end justify-between md:justify-center shrink-0 md:border-l border-[#1e1b4b] pt-6 md:pt-0 md:pl-10 space-y-4">
           <div className="flex flex-col items-end">
              <span className="text-[9px] text-slate-500 uppercase tracking-[0.3em] font-black mb-2 px-1">Recompensa Arcana</span>
              <div className="group/xp flex items-center gap-2.5 px-6 py-3 rounded-2xl bg-amber-500/10 border border-amber-500/20 text-amber-500 font-black shadow-[0_15px_25px_-10px_rgba(245,158,11,0.2)] transition-all hover:scale-110 cursor-pointer">
@@ -415,7 +415,7 @@ function ChallengeCard({ challenge, index }: { challenge: any, index: number }) 
                <Award className="w-3.5 h-3.5" /> Manifestado
             </motion.div>
           ) : (
-            <button className="text-[10px] uppercase tracking-[0.2em] text-slate-500 font-black px-4 py-2 rounded-xl border border-white/5 bg-black/40 hover:bg-indigo-600/20 hover:text-indigo-400 hover:border-indigo-500/30 transition-all">
+            <button className="text-[10px] uppercase tracking-[0.2em] text-slate-500 font-black px-4 py-2 rounded-xl border border-[#1e1b4b] bg-black/40 hover:bg-indigo-600/20 hover:text-indigo-400 hover:border-indigo-500/30 transition-all">
                Trabalhar Aura
             </button>
           )}

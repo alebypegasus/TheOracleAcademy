@@ -655,14 +655,14 @@ export function WorkspaceView({ currentUser }: WorkspaceViewProps) {
   };
 
   return (
-    <div className="w-full max-w-7xl mx-auto py-10 px-4 md:px-8 bg-[#050505] text-slate-100 rounded-[3rem] border border-white/5 relative overflow-hidden">
+    <div className="w-full mx-auto py-10 px-4 md:px-8 bg-[#050505] text-slate-100 rounded-[3rem] border border-[#1e1b4b] relative overflow-hidden">
       
       {/* Background radial effects */}
       <div className="absolute top-[-20%] left-[-10%] w-[60%] h-[60%] rounded-full bg-purple-900/10 blur-[130px] pointer-events-none z-0" />
       <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] rounded-full bg-indigo-900/10 blur-[110px] pointer-events-none z-0" />
 
       {/* Hero Header */}
-      <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-6 mb-16 border-b border-white/5 pb-10">
+      <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-6 mb-16 border-b border-[#1e1b4b] pb-10">
         <div>
           <div className="flex items-center gap-3 mb-3 text-indigo-400">
             <Sparkles className="w-5 h-5" />
@@ -743,7 +743,7 @@ export function WorkspaceView({ currentUser }: WorkspaceViewProps) {
       {/* Workspace App Layout */}
       {!token ? (
         <div className="py-20 flex flex-col items-center justify-center text-center">
-          <div className="w-24 h-24 rounded-[2rem] bg-indigo-500/5 border border-indigo-500/10 flex items-center justify-center mb-6">
+          <div className="w-24 h-24 rounded-[2rem] bg-indigo-500/5 border border-[#1e1b4b] flex items-center justify-center mb-6">
             <Lock className="w-10 h-10 text-indigo-400" />
           </div>
           <h2 className="text-2xl font-serif text-slate-300">Conexão Necessária</h2>
@@ -755,7 +755,7 @@ export function WorkspaceView({ currentUser }: WorkspaceViewProps) {
         <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
           
           {/* Tabs Menu Column (Left) */}
-          <div className="lg:col-span-3 flex flex-col gap-2 bg-white/[0.02] border border-white/5 p-4 rounded-3xl">
+          <div className="lg:col-span-3 flex flex-col gap-2 bg-white/[0.02] border border-[#1e1b4b] p-4 rounded-3xl">
             {[
               { id: 'calendar', label: 'Calendário', icon: CalendarIcon, color: 'text-blue-400' },
               { id: 'tasks', label: 'Google Tasks', icon: ListTodo, color: 'text-indigo-400' },
@@ -794,7 +794,7 @@ export function WorkspaceView({ currentUser }: WorkspaceViewProps) {
           </div>
 
           {/* Active Tab Workspace Panel (Right Column) */}
-          <div className="lg:col-span-9 bg-white/[0.02] border border-white/5 rounded-3xl p-6 md:p-8 min-h-[500px]">
+          <div className="lg:col-span-9 bg-white/[0.02] border border-[#1e1b4b] rounded-3xl p-6 md:p-8 min-h-[500px]">
             {isLoading && (
               <div className="flex flex-col items-center justify-center py-12">
                 <RefreshCw className="w-8 h-8 text-indigo-400 animate-spin mb-4" />
@@ -820,7 +820,7 @@ export function WorkspaceView({ currentUser }: WorkspaceViewProps) {
                       <div className="space-y-4">
                         <h4 className="text-xs font-black uppercase tracking-wider text-slate-500">Eventos Vindo Por Aí</h4>
                         {events.length === 0 ? (
-                          <div className="p-6 rounded-2xl border border-white/5 bg-white/[0.01] text-center">
+                          <div className="p-6 rounded-2xl border border-[#1e1b4b] bg-white/[0.01] text-center">
                             <p className="text-xs text-slate-500">Nenhum evento agendado nos próximos dias.</p>
                           </div>
                         ) : (
@@ -828,7 +828,7 @@ export function WorkspaceView({ currentUser }: WorkspaceViewProps) {
                             {events.map((evt) => {
                               const dt = new Date(evt.start?.dateTime || evt.start?.date);
                               return (
-                                <div key={evt.id} className="p-4 rounded-2xl border border-white/5 bg-white/[0.01] hover:bg-white/[0.03] transition-all flex items-center justify-between gap-4 group">
+                                <div key={evt.id} className="p-4 rounded-2xl border border-[#1e1b4b] bg-white/[0.01] hover:bg-white/[0.03] transition-all flex items-center justify-between gap-4 group">
                                   <div className="min-w-0">
                                     <h5 className="text-sm font-medium text-slate-200 truncate">{evt.summary}</h5>
                                     <p className="text-xs text-slate-500 mt-1">{dt.toLocaleDateString()} às {dt.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</p>
@@ -845,7 +845,7 @@ export function WorkspaceView({ currentUser }: WorkspaceViewProps) {
                       </div>
 
                       {/* Add Event Form */}
-                      <form onSubmit={handleCreateEvent} className="p-6 rounded-2xl border border-white/5 bg-white/[0.02] space-y-4">
+                      <form onSubmit={handleCreateEvent} className="p-6 rounded-2xl border border-[#1e1b4b] bg-white/[0.02] space-y-4">
                         <h4 className="text-xs font-black uppercase tracking-wider text-slate-300">Agendar Novo Evento Celestial</h4>
                         
                         <div>
@@ -855,7 +855,7 @@ export function WorkspaceView({ currentUser }: WorkspaceViewProps) {
                             value={newEvent.summary} 
                             placeholder="Ex: Meditação Alinhamento Solar"
                             onChange={(e) => setNewEvent({...newEvent, summary: e.target.value})}
-                            className="w-full bg-white/[0.03] border border-white/10 rounded-xl py-2 px-3 text-sm text-slate-200 outline-none focus:border-blue-500"
+                            className="w-full bg-white/[0.03] border border-[#1e1b4b] rounded-xl py-2 px-3 text-sm text-slate-200 outline-none focus:border-blue-500"
                           />
                         </div>
 
@@ -865,7 +865,7 @@ export function WorkspaceView({ currentUser }: WorkspaceViewProps) {
                             value={newEvent.description} 
                             placeholder="Insira detalhes adicionais do rito ou curso..."
                             onChange={(e) => setNewEvent({...newEvent, description: e.target.value})}
-                            className="w-full bg-white/[0.03] border border-white/10 rounded-xl py-2 px-3 text-sm text-slate-200 outline-none focus:border-blue-500 h-20 resize-none"
+                            className="w-full bg-white/[0.03] border border-[#1e1b4b] rounded-xl py-2 px-3 text-sm text-slate-200 outline-none focus:border-blue-500 h-20 resize-none"
                           />
                         </div>
 
@@ -876,7 +876,7 @@ export function WorkspaceView({ currentUser }: WorkspaceViewProps) {
                               type="date" 
                               value={newEvent.date} 
                               onChange={(e) => setNewEvent({...newEvent, date: e.target.value})}
-                              className="w-full bg-white/[0.03] border border-white/10 rounded-xl py-2 px-3 text-sm text-slate-200 outline-none focus:border-blue-500"
+                              className="w-full bg-white/[0.03] border border-[#1e1b4b] rounded-xl py-2 px-3 text-sm text-slate-200 outline-none focus:border-blue-500"
                             />
                           </div>
                           <div>
@@ -885,7 +885,7 @@ export function WorkspaceView({ currentUser }: WorkspaceViewProps) {
                               type="time" 
                               value={newEvent.time} 
                               onChange={(e) => setNewEvent({...newEvent, time: e.target.value})}
-                              className="w-full bg-white/[0.03] border border-white/10 rounded-xl py-2 px-3 text-sm text-slate-200 outline-none focus:border-blue-500"
+                              className="w-full bg-white/[0.03] border border-[#1e1b4b] rounded-xl py-2 px-3 text-sm text-slate-200 outline-none focus:border-blue-500"
                             />
                           </div>
                         </div>
@@ -914,19 +914,19 @@ export function WorkspaceView({ currentUser }: WorkspaceViewProps) {
                       <div className="space-y-4">
                         <h4 className="text-xs font-black uppercase tracking-wider text-slate-500">Minhas Descobertas e Pendências</h4>
                         {tasks.length === 0 ? (
-                          <div className="p-6 rounded-2xl border border-white/5 bg-white/[0.01] text-center">
+                          <div className="p-6 rounded-2xl border border-[#1e1b4b] bg-white/[0.01] text-center">
                             <p className="text-xs text-slate-500">Nenhuma tarefa pendente no Google Tasks.</p>
                           </div>
                         ) : (
                           <div className="space-y-3">
                             {tasks.map((task) => (
-                              <div key={task.id} className="p-4 rounded-2xl border border-white/5 bg-white/[0.01] hover:bg-white/[0.03] transition-all flex items-center justify-between gap-4">
+                              <div key={task.id} className="p-4 rounded-2xl border border-[#1e1b4b] bg-white/[0.01] hover:bg-white/[0.03] transition-all flex items-center justify-between gap-4">
                                 <div className="flex items-center gap-3 min-w-0">
                                   <input 
                                     type="checkbox" 
                                     checked={task.status === 'completed'} 
                                     onChange={() => handleToggleTask(task.id, task.status, task.title)}
-                                    className="w-4 h-4 border-2 border-white/10 rounded-md bg-transparent focus:ring-0 text-indigo-500 cursor-pointer"
+                                    className="w-4 h-4 border-2 border-[#1e1b4b] rounded-md bg-transparent focus:ring-0 text-indigo-500 cursor-pointer"
                                   />
                                   <span className={`text-sm tracking-wide truncate ${task.status === 'completed' ? 'line-through text-slate-600' : 'text-slate-200'}`}>
                                     {task.title}
@@ -942,7 +942,7 @@ export function WorkspaceView({ currentUser }: WorkspaceViewProps) {
                       </div>
 
                       {/* Create Task Box */}
-                      <form onSubmit={handleCreateTask} className="p-6 rounded-2xl border border-white/5 bg-white/[0.02] space-y-4">
+                      <form onSubmit={handleCreateTask} className="p-6 rounded-2xl border border-[#1e1b4b] bg-white/[0.02] space-y-4">
                         <h4 className="text-xs font-black uppercase tracking-wider text-slate-300">Adicionar Compromisso ou Rota</h4>
                         <div>
                           <label className="block text-[10px] uppercase font-black tracking-widest text-slate-500 mb-1">Nome do Item</label>
@@ -951,7 +951,7 @@ export function WorkspaceView({ currentUser }: WorkspaceViewProps) {
                             value={newTask.title} 
                             placeholder="Ex: Terminar leitura do livro místico de Cagliostro"
                             onChange={(e) => setNewTask({ title: e.target.value })}
-                            className="w-full bg-white/[0.03] border border-white/10 rounded-xl py-3 px-4 text-sm text-slate-200 outline-none focus:border-indigo-500"
+                            className="w-full bg-white/[0.03] border border-[#1e1b4b] rounded-xl py-3 px-4 text-sm text-slate-200 outline-none focus:border-indigo-500"
                           />
                         </div>
                         <button type="submit" className="w-full py-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 transition-all font-medium text-xs tracking-wider uppercase text-white flex items-center justify-center gap-2 shadow-[0_10px_20px_rgba(99,102,241,0.3)]">
@@ -975,20 +975,20 @@ export function WorkspaceView({ currentUser }: WorkspaceViewProps) {
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
                       {/* Log Input */}
-                      <form onSubmit={handleAppendToSheet} className="p-6 rounded-2xl border border-white/5 bg-white/[0.02] space-y-4">
+                      <form onSubmit={handleAppendToSheet} className="p-6 rounded-2xl border border-[#1e1b4b] bg-white/[0.02] space-y-4">
                         <h4 className="text-xs font-black uppercase tracking-wider text-slate-300 font-serif">Inserir Linha de Log Cósmico</h4>
                         
                         <div>
                           <label className="block text-[10px] uppercase font-black tracking-widest text-slate-500 mb-1">Selecione uma Planilha de Destino</label>
                           {spreadsheets.length === 0 ? (
-                            <div className="p-3 bg-white/[0.01] border border-white/5 rounded-xl text-center">
+                            <div className="p-3 bg-white/[0.01] border border-[#1e1b4b] rounded-xl text-center">
                               <p className="text-xs text-slate-600">Nenhuma planilha encontrada no seu Drive. Crie uma planilha no Sheets antes de exportar rituais.</p>
                             </div>
                           ) : (
                             <select 
                               value={selectedSpreadsheet} 
                               onChange={(e) => setSelectedSpreadsheet(e.target.value)}
-                              className="w-full bg-white/[0.03] border border-white/10 rounded-xl py-2 px-3 text-sm text-slate-200 outline-none focus:border-emerald-500 cursor-pointer"
+                              className="w-full bg-white/[0.03] border border-[#1e1b4b] rounded-xl py-2 px-3 text-sm text-slate-200 outline-none focus:border-emerald-500 cursor-pointer"
                             >
                               {spreadsheets.map(s => (
                                 <option key={s.id} value={s.id} className="bg-[#050505] text-slate-200">{s.name}</option>
@@ -1003,7 +1003,7 @@ export function WorkspaceView({ currentUser }: WorkspaceViewProps) {
                             type="text" 
                             value={sheetLog.activity} 
                             onChange={(e) => setSheetLog({ ...sheetLog, activity: e.target.value })}
-                            className="w-full bg-white/[0.03] border border-white/10 rounded-xl py-2 px-3 text-sm text-slate-200 outline-none focus:border-emerald-500"
+                            className="w-full bg-white/[0.03] border border-[#1e1b4b] rounded-xl py-2 px-3 text-sm text-slate-200 outline-none focus:border-emerald-500"
                           />
                         </div>
 
@@ -1013,7 +1013,7 @@ export function WorkspaceView({ currentUser }: WorkspaceViewProps) {
                             type="number" 
                             value={sheetLog.xpGained} 
                             onChange={(e) => setSheetLog({ ...sheetLog, xpGained: e.target.value })}
-                            className="w-full bg-white/[0.03] border border-white/10 rounded-xl py-2 px-3 text-sm text-slate-200 outline-none focus:border-emerald-500"
+                            className="w-full bg-white/[0.03] border border-[#1e1b4b] rounded-xl py-2 px-3 text-sm text-slate-200 outline-none focus:border-emerald-500"
                           />
                         </div>
 
@@ -1023,7 +1023,7 @@ export function WorkspaceView({ currentUser }: WorkspaceViewProps) {
                             value={sheetLog.notes} 
                             placeholder="Adicione insights colhidos neste log ..."
                             onChange={(e) => setSheetLog({ ...sheetLog, notes: e.target.value })}
-                            className="w-full bg-white/[0.03] border border-white/10 rounded-xl py-2 px-3 text-sm text-slate-200 outline-none focus:border-emerald-500 h-16 resize-none"
+                            className="w-full bg-white/[0.03] border border-[#1e1b4b] rounded-xl py-2 px-3 text-sm text-slate-200 outline-none focus:border-emerald-500 h-16 resize-none"
                           />
                         </div>
 
@@ -1040,13 +1040,13 @@ export function WorkspaceView({ currentUser }: WorkspaceViewProps) {
                       <div className="space-y-4">
                         <h4 className="text-xs font-black uppercase tracking-wider text-slate-500">Planilhas Ativas no Drive</h4>
                         {spreadsheets.length === 0 ? (
-                          <div className="p-6 rounded-2xl border border-white/5 bg-white/[0.01] text-center">
+                          <div className="p-6 rounded-2xl border border-[#1e1b4b] bg-white/[0.01] text-center">
                             <p className="text-xs text-slate-500">Nenhuma Planilha mapeada no Google Drive.</p>
                           </div>
                         ) : (
                           <div className="space-y-3">
                             {spreadsheets.map((sheet) => (
-                              <div key={sheet.id} className="p-4 rounded-2xl border border-white/5 bg-white/[0.01] flex items-center justify-between gap-4">
+                              <div key={sheet.id} className="p-4 rounded-2xl border border-[#1e1b4b] bg-white/[0.01] flex items-center justify-between gap-4">
                                 <div className="flex items-center gap-3">
                                   <TableProperties className="w-4 h-4 text-emerald-400" />
                                   <span className="text-sm tracking-wide text-slate-200">{sheet.name}</span>
@@ -1074,7 +1074,7 @@ export function WorkspaceView({ currentUser }: WorkspaceViewProps) {
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
                       {/* Left: Create Presentation */}
-                      <form onSubmit={handleCreatePresentation} className="p-6 rounded-2xl border border-white/5 bg-white/[0.02] space-y-4">
+                      <form onSubmit={handleCreatePresentation} className="p-6 rounded-2xl border border-[#1e1b4b] bg-white/[0.02] space-y-4">
                         <h4 className="text-xs font-black uppercase tracking-wider text-slate-300">Nova Apresentação de Aprendizados</h4>
                         <div>
                           <label className="block text-[10px] uppercase font-black tracking-widest text-slate-500 mb-1">Título do Slide Deck</label>
@@ -1083,7 +1083,7 @@ export function WorkspaceView({ currentUser }: WorkspaceViewProps) {
                             value={newPresentationTitle} 
                             placeholder="Ex: Conexões Zodiacais de Outono"
                             onChange={(e) => setNewPresentationTitle(e.target.value)}
-                            className="w-full bg-white/[0.03] border border-white/10 rounded-xl py-3 px-4 text-sm text-slate-200 outline-none focus:border-yellow-500"
+                            className="w-full bg-white/[0.03] border border-[#1e1b4b] rounded-xl py-3 px-4 text-sm text-slate-200 outline-none focus:border-yellow-500"
                           />
                         </div>
                         <button type="submit" className="w-full py-3 rounded-xl bg-yellow-600 hover:bg-yellow-500 transition-all font-medium text-xs tracking-wider uppercase text-white flex items-center justify-center gap-2 shadow-[0_10px_20px_rgba(234,179,8,0.3)]">
@@ -1095,13 +1095,13 @@ export function WorkspaceView({ currentUser }: WorkspaceViewProps) {
                       <div className="space-y-4">
                         <h4 className="text-xs font-black uppercase tracking-wider text-slate-500">Minhas Apresentações no Drive</h4>
                         {presentations.length === 0 ? (
-                          <div className="p-6 rounded-2xl border border-white/5 bg-white/[0.01] text-center">
+                          <div className="p-6 rounded-2xl border border-[#1e1b4b] bg-white/[0.01] text-center">
                             <p className="text-xs text-slate-500">Nenhum slide localizado no seu ecossistema Drive.</p>
                           </div>
                         ) : (
                           <div className="space-y-3">
                             {presentations.map((pres) => (
-                              <div key={pres.id} className="p-4 rounded-2xl border border-white/5 bg-white/[0.01] flex items-center gap-3">
+                              <div key={pres.id} className="p-4 rounded-2xl border border-[#1e1b4b] bg-white/[0.01] flex items-center gap-3">
                                 <Presentation className="w-4 h-4 text-yellow-400" />
                                 <span className="text-sm tracking-wide text-slate-200 truncate">{pres.name}</span>
                               </div>
@@ -1125,7 +1125,7 @@ export function WorkspaceView({ currentUser }: WorkspaceViewProps) {
                     </div>
 
                     {contacts.length === 0 ? (
-                      <div className="p-10 rounded-2xl border border-white/5 bg-white/[0.01] text-center max-w-lg mx-auto">
+                      <div className="p-10 rounded-2xl border border-[#1e1b4b] bg-white/[0.01] text-center max-w-lg mx-auto">
                         <p className="text-sm text-slate-500">Nenhum contato encontrado no seu Google Contacts.</p>
                       </div>
                     ) : (
@@ -1135,8 +1135,8 @@ export function WorkspaceView({ currentUser }: WorkspaceViewProps) {
                           const email = contact.emailAddresses?.[0]?.value || 'Sem e-mail cadastrado';
                           const photoUrl = contact.photos?.[0]?.url;
                           return (
-                            <div key={i} className="p-5 rounded-3xl border border-white/5 bg-gradient-to-br from-white/[0.02] to-transparent flex items-center gap-4 hover:border-rose-500/30 transition-all duration-300">
-                              <div className="w-12 h-12 rounded-2xl overflow-hidden bg-slate-800 flex-shrink-0 border border-white/10">
+                            <div key={i} className="p-5 rounded-3xl border border-[#1e1b4b] bg-gradient-to-br from-white/[0.02] to-transparent flex items-center gap-4 hover:border-rose-500/30 transition-all duration-300">
+                              <div className="w-12 h-12 rounded-2xl overflow-hidden bg-slate-800 flex-shrink-0 border border-[#1e1b4b]">
                                 {photoUrl ? (
                                   <img src={photoUrl} alt={name} className="w-full h-full object-cover" />
                                 ) : (
@@ -1170,20 +1170,20 @@ export function WorkspaceView({ currentUser }: WorkspaceViewProps) {
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
                       {/* Space Selector & Message Form */}
-                      <form onSubmit={handleSendChatMessage} className="p-6 rounded-2xl border border-white/5 bg-white/[0.02] space-y-4">
+                      <form onSubmit={handleSendChatMessage} className="p-6 rounded-2xl border border-[#1e1b4b] bg-white/[0.02] space-y-4">
                         <h4 className="text-xs font-black uppercase tracking-wider text-slate-300">Nova Mensagem Celestial</h4>
                         
                         <div>
                           <label className="block text-[10px] uppercase font-black tracking-widest text-slate-500 mb-1">Selecione o Canal / Espaço</label>
                           {chatSpaces.length === 0 ? (
-                            <div className="p-3 bg-white/[0.01] border border-white/5 rounded-xl text-center">
+                            <div className="p-3 bg-white/[0.01] border border-[#1e1b4b] rounded-xl text-center">
                               <p className="text-xs text-slate-600">Nenhum canal/espaço oficial listado. Verifique se o app é membro de canais externos.</p>
                             </div>
                           ) : (
                             <select 
                               value={selectedSpace} 
                               onChange={(e) => setSelectedSpace(e.target.value)}
-                              className="w-full bg-white/[0.03] border border-white/10 rounded-xl py-2 px-3 text-sm text-slate-200 outline-none focus:border-cyan-500 cursor-pointer"
+                              className="w-full bg-white/[0.03] border border-[#1e1b4b] rounded-xl py-2 px-3 text-sm text-slate-200 outline-none focus:border-cyan-500 cursor-pointer"
                             >
                               {chatSpaces.map(s => (
                                 <option key={s.name} value={s.name} className="bg-[#050505] text-slate-200">{s.displayName || s.name}</option>
@@ -1198,7 +1198,7 @@ export function WorkspaceView({ currentUser }: WorkspaceViewProps) {
                             value={chatMessage} 
                             placeholder="Escreva seu insight espiritual ..."
                             onChange={(e) => setChatMessage(e.target.value)}
-                            className="w-full bg-white/[0.03] border border-white/10 rounded-xl py-3 px-4 text-sm text-slate-200 outline-none focus:border-cyan-500 h-28 resize-none"
+                            className="w-full bg-white/[0.03] border border-[#1e1b4b] rounded-xl py-3 px-4 text-sm text-slate-200 outline-none focus:border-cyan-500 h-28 resize-none"
                           />
                         </div>
 
@@ -1213,7 +1213,7 @@ export function WorkspaceView({ currentUser }: WorkspaceViewProps) {
                       {/* Info guides */}
                       <div className="space-y-4">
                         <h4 className="text-xs font-black uppercase tracking-wider text-slate-500">Notificações e Integração</h4>
-                        <div className="p-6 rounded-2xl border border-white/5 bg-white/[0.01] space-y-4">
+                        <div className="p-6 rounded-2xl border border-[#1e1b4b] bg-white/[0.01] space-y-4">
                           <p className="text-xs text-slate-400 leading-relaxed font-light">
                             Ao integrar com o Google Chat, o sistema poderá repassar atualizações de progresso de auto-estudo e novas orientações do oráculo do dia diretamente para as suas conversas em grupo de estudos e amigos.
                           </p>
@@ -1241,7 +1241,7 @@ export function WorkspaceView({ currentUser }: WorkspaceViewProps) {
 
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-start">
                       {/* Add note panel */}
-                      <form onSubmit={handleAddLocalNote} className="p-6 rounded-2xl border border-white/5 bg-white/[0.02] space-y-4 md:col-span-1">
+                      <form onSubmit={handleAddLocalNote} className="p-6 rounded-2xl border border-[#1e1b4b] bg-white/[0.02] space-y-4 md:col-span-1">
                         <h4 className="text-xs font-black uppercase tracking-wider text-slate-300">Nova Nota Cópia Keep</h4>
                         
                         <div>
@@ -1251,7 +1251,7 @@ export function WorkspaceView({ currentUser }: WorkspaceViewProps) {
                             value={newNote.title} 
                             placeholder="Ex: Nota Importante Gnose"
                             onChange={(e) => setNewNote({...newNote, title: e.target.value})}
-                            className="w-full bg-white/[0.03] border border-white/10 rounded-xl py-2 px-3 text-sm text-slate-200 outline-none focus:border-amber-500"
+                            className="w-full bg-white/[0.03] border border-[#1e1b4b] rounded-xl py-2 px-3 text-sm text-slate-200 outline-none focus:border-amber-500"
                           />
                         </div>
 
@@ -1261,7 +1261,7 @@ export function WorkspaceView({ currentUser }: WorkspaceViewProps) {
                             value={newNote.content} 
                             placeholder="Anote aqui..."
                             onChange={(e) => setNewNote({...newNote, content: e.target.value})}
-                            className="w-full bg-white/[0.03] border border-white/10 rounded-xl py-2 px-3 text-sm text-slate-200 outline-none focus:border-amber-500 h-28 resize-none"
+                            className="w-full bg-white/[0.03] border border-[#1e1b4b] rounded-xl py-2 px-3 text-sm text-slate-200 outline-none focus:border-amber-500 h-28 resize-none"
                           />
                         </div>
 
@@ -1274,7 +1274,7 @@ export function WorkspaceView({ currentUser }: WorkspaceViewProps) {
                                 type="button" 
                                 onClick={() => setNewNote({ ...newNote, color: col })}
                                 className={`w-6 h-6 rounded-full border transition-all ${
-                                  newNote.color === col ? 'ring-2 ring-white scale-110' : 'border-white/20'
+                                  newNote.color === col ? 'ring-2 ring-white scale-110' : 'border-[#312e81]'
                                 }`}
                                 style={{
                                   backgroundColor: 
@@ -1302,11 +1302,11 @@ export function WorkspaceView({ currentUser }: WorkspaceViewProps) {
                                 <h5 className="text-sm font-bold font-serif mb-2">{note.title}</h5>
                                 <p className="text-xs text-slate-300 font-light leading-relaxed whitespace-pre-wrap">{note.content}</p>
                               </div>
-                              <div className="mt-4 pt-4 border-t border-white/5 flex items-center justify-between">
+                              <div className="mt-4 pt-4 border-t border-[#1e1b4b] flex items-center justify-between">
                                 <span className="text-[9px] font-mono text-slate-500 uppercase">Bloco Local</span>
                                 <button 
                                   onClick={() => handleExportNoteToDriveDocs(note.title, note.content)}
-                                  className="px-2.5 py-1.5 rounded-lg bg-indigo-500/10 hover:bg-indigo-500/20 text-indigo-400 hover:text-indigo-300 transition-all flex items-center gap-1.5 text-[9px] font-black uppercase tracking-wider border border-indigo-500/20"
+                                  className="px-2.5 py-1.5 rounded-lg bg-indigo-500/10 hover:bg-indigo-500/20 text-indigo-400 hover:text-indigo-300 transition-all flex items-center gap-1.5 text-[9px] font-black uppercase tracking-wider border border-[#312e81]"
                                   title="Exportar como documento oficial do Google Docs"
                                 >
                                   <Share2 className="w-3 h-3" /> Exportar para Docs
@@ -1330,7 +1330,7 @@ export function WorkspaceView({ currentUser }: WorkspaceViewProps) {
                       <p className="text-xs text-slate-500 mt-1 font-light">Gere links instantâneos para encontros astrais online.</p>
                     </div>
 
-                    <div className="p-6 rounded-2xl border border-white/5 bg-white/[0.02]">
+                    <div className="p-6 rounded-2xl border border-[#1e1b4b] bg-white/[0.02]">
                       {meetLink ? (
                         <div className="text-center py-6 space-y-4">
                           <p className="text-sm text-slate-300">Sua sala cósmica está pronta:</p>
@@ -1361,18 +1361,18 @@ export function WorkspaceView({ currentUser }: WorkspaceViewProps) {
                       <p className="text-xs text-slate-500 mt-1 font-light">Envie mensagens diretamente do seu endereço conectado.</p>
                     </div>
 
-                    <form onSubmit={handleSendEmail} className="p-6 rounded-2xl border border-white/5 bg-white/[0.02] space-y-4 max-w-2xl mx-auto">
+                    <form onSubmit={handleSendEmail} className="p-6 rounded-2xl border border-[#1e1b4b] bg-white/[0.02] space-y-4 max-w-2xl mx-auto">
                       <div>
                         <label className="block text-[10px] uppercase font-black tracking-widest text-slate-500 mb-1">Destinatário</label>
-                        <input type="email" required value={emailForm.to} onChange={e => setEmailForm({...emailForm, to: e.target.value})} className="w-full bg-white/[0.03] border border-white/10 rounded-xl py-2 px-3 text-sm text-slate-200 outline-none focus:border-rose-500" placeholder="oraculo@exemplo.com" />
+                        <input type="email" required value={emailForm.to} onChange={e => setEmailForm({...emailForm, to: e.target.value})} className="w-full bg-white/[0.03] border border-[#1e1b4b] rounded-xl py-2 px-3 text-sm text-slate-200 outline-none focus:border-rose-500" placeholder="oraculo@exemplo.com" />
                       </div>
                       <div>
                         <label className="block text-[10px] uppercase font-black tracking-widest text-slate-500 mb-1">Assunto</label>
-                        <input type="text" required value={emailForm.subject} onChange={e => setEmailForm({...emailForm, subject: e.target.value})} className="w-full bg-white/[0.03] border border-white/10 rounded-xl py-2 px-3 text-sm text-slate-200 outline-none focus:border-rose-500" placeholder="Novas reflexões" />
+                        <input type="text" required value={emailForm.subject} onChange={e => setEmailForm({...emailForm, subject: e.target.value})} className="w-full bg-white/[0.03] border border-[#1e1b4b] rounded-xl py-2 px-3 text-sm text-slate-200 outline-none focus:border-rose-500" placeholder="Novas reflexões" />
                       </div>
                       <div>
                         <label className="block text-[10px] uppercase font-black tracking-widest text-slate-500 mb-1">Mensagem</label>
-                        <textarea required value={emailForm.body} onChange={e => setEmailForm({...emailForm, body: e.target.value})} className="w-full bg-white/[0.03] border border-white/10 rounded-xl py-2 px-3 text-sm text-slate-200 outline-none focus:border-rose-500 h-32 resize-none" placeholder="Escreva os ensinamentos..." />
+                        <textarea required value={emailForm.body} onChange={e => setEmailForm({...emailForm, body: e.target.value})} className="w-full bg-white/[0.03] border border-[#1e1b4b] rounded-xl py-2 px-3 text-sm text-slate-200 outline-none focus:border-rose-500 h-32 resize-none" placeholder="Escreva os ensinamentos..." />
                       </div>
                       <button type="submit" className="w-full py-3 rounded-xl bg-rose-600 hover:bg-rose-500 transition-all font-medium text-xs tracking-wider uppercase text-white shadow-[0_10px_20px_rgba(225,29,72,0.3)]">
                         Enviar Transmissão
@@ -1392,11 +1392,11 @@ export function WorkspaceView({ currentUser }: WorkspaceViewProps) {
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
-                      <form onSubmit={handleCreateForm} className="p-6 rounded-2xl border border-white/5 bg-white/[0.02] space-y-4">
+                      <form onSubmit={handleCreateForm} className="p-6 rounded-2xl border border-[#1e1b4b] bg-white/[0.02] space-y-4">
                         <h4 className="text-xs font-black uppercase tracking-wider text-slate-300">Novo Formulário</h4>
                         <div>
                           <label className="block text-[10px] uppercase font-black tracking-widest text-slate-500 mb-1">Título da Pesquisa</label>
-                          <input type="text" required value={formTitle} onChange={e => setFormTitle(e.target.value)} className="w-full bg-white/[0.03] border border-white/10 rounded-xl py-2 px-3 text-sm text-slate-200 outline-none focus:border-purple-500" placeholder="Questionário de Iniciação" />
+                          <input type="text" required value={formTitle} onChange={e => setFormTitle(e.target.value)} className="w-full bg-white/[0.03] border border-[#1e1b4b] rounded-xl py-2 px-3 text-sm text-slate-200 outline-none focus:border-purple-500" placeholder="Questionário de Iniciação" />
                         </div>
                         <button type="submit" className="w-full py-3 rounded-xl bg-purple-600 hover:bg-purple-500 transition-all font-medium text-xs tracking-wider uppercase text-white shadow-[0_10px_20px_rgba(147,51,234,0.3)]">
                           Criar Pesquisa

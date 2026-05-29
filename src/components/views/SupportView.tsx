@@ -115,14 +115,15 @@ export function SupportView({ currentUser }: { currentUser: any }) {
   const filteredFaqs = FAQS.filter(f => f.q.toLowerCase().includes(searchQuery.toLowerCase()) || f.tag.toLowerCase().includes(searchQuery.toLowerCase()));
 
   return (
-    <div className="min-h-screen bg-[#050505] text-slate-100 overflow-x-hidden">
-      {/* Mystic Background Elements */}
-      <div className="fixed inset-0 pointer-events-none opacity-20 overflow-hidden">
-        <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-indigo-500/20 blur-[120px] rounded-full animate-pulse" />
-        <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-emerald-500/10 blur-[100px] rounded-full" />
-      </div>
+    <div className="relative min-h-screen bg-[#050505] text-slate-100 overflow-hidden font-sans">
+      
+      {/* Background gradients and noise overlay */}
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-indigo-900/10 via-[#050505] to-[#050505] z-0"></div>
+      <div className="absolute top-[-20%] left-[-10%] w-[60%] h-[60%] rounded-full bg-blue-900/10 blur-[130px] pointer-events-none z-0" />
+      <div className="absolute bottom-[-20%] right-[-10%] w-[60%] h-[60%] rounded-full bg-purple-900/10 blur-[130px] pointer-events-none z-0" />
 
-      <div className="relative z-10 w-full max-w-7xl mx-auto py-16 px-6 lg:px-8">
+      {/* Main Content Container */}
+      <div className="relative z-10 w-full mx-auto py-16 px-6 lg:px-8">
         
         {/* Hero Header */}
         <div className="text-center mb-16">
@@ -144,7 +145,7 @@ export function SupportView({ currentUser }: { currentUser: any }) {
         <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="max-w-3xl mx-auto mb-16">
           <div className="relative group">
             <div className="absolute inset-0 bg-indigo-500/20 blur-2xl opacity-0 group-focus-within:opacity-100 transition-opacity" />
-            <div className="relative flex items-center bg-indigo-950/20 border border-indigo-500/20 rounded-[2rem] p-2 backdrop-blur-2xl">
+            <div className="relative flex items-center bg-indigo-950/20 border border-[#312e81] rounded-[2rem] p-2 backdrop-blur-2xl">
               <Search className="w-6 h-6 text-indigo-400 ml-6" />
               <input 
                 type="text" 
@@ -159,7 +160,7 @@ export function SupportView({ currentUser }: { currentUser: any }) {
 
         {/* Support Actions Quick Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-16">
-          <div className="glass-panel p-6 rounded-2xl border border-indigo-500/20 bg-indigo-950/10 flex items-center gap-5 group hover:bg-indigo-500/10 transition-all">
+          <div className="glass-panel p-6 rounded-2xl border border-[#312e81] bg-indigo-950/10 flex items-center gap-5 group hover:bg-indigo-500/10 transition-all">
             <div className="w-14 h-14 rounded-2xl bg-indigo-500/15 border border-indigo-500/30 flex items-center justify-center group-hover:scale-115 transition-transform">
               <PhoneCall className="w-6 h-6 text-indigo-400" />
             </div>
@@ -191,12 +192,12 @@ export function SupportView({ currentUser }: { currentUser: any }) {
                 <h3 className="text-2xl font-serif text-slate-200">Oráculo Presencial (Chat de Suporte)</h3>
               </div>
               
-              <div className="glass-panel overflow-hidden rounded-[2.5rem] border border-white/10 bg-black/50 flex flex-col h-[550px] shadow-2xl relative">
+              <div className="glass-panel overflow-hidden rounded-[2.5rem] border border-[#1e1b4b] bg-black/50 flex flex-col h-[550px] shadow-2xl relative">
                 {/* Chat Header */}
-                <div className="p-4 bg-indigo-950/80 backdrop-blur-xl flex items-center justify-between z-10 border-b border-white/10">
+                <div className="p-4 bg-indigo-950/80 backdrop-blur-xl flex items-center justify-between z-10 border-b border-[#1e1b4b]">
                   <div className="flex items-center gap-4">
                     <div className="relative">
-                      <div className="w-11 h-11 rounded-xl bg-slate-200 border border-white/10 overflow-hidden shadow-md">
+                      <div className="w-11 h-11 rounded-xl bg-slate-200 border border-[#1e1b4b] overflow-hidden shadow-md">
                         <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80" className="w-full h-full object-cover" alt="Oráculo de Suporte" />
                       </div>
                       <div className="absolute -bottom-1 -right-1 w-3.5 h-3.5 bg-emerald-400 border-2 border-indigo-950 rounded-full shadow-lg" />
@@ -233,7 +234,7 @@ export function SupportView({ currentUser }: { currentUser: any }) {
                       <div className={`max-w-[80%] rounded-2xl p-4 shadow-xl border ${
                         chat.sender === 'user' 
                         ? 'bg-indigo-600/25 border-indigo-500/30 text-indigo-50 rounded-tr-none' 
-                        : 'bg-white/[0.04] border-white/10 text-slate-100 rounded-tl-none'
+                        : 'bg-white/[0.04] border-[#1e1b4b] text-slate-100 rounded-tl-none'
                       }`}>
                         {chat.sender === 'support' && (
                           <div className="text-[9px] font-extrabold text-indigo-400 uppercase tracking-widest mb-1.5 flex items-center gap-1">
@@ -250,7 +251,7 @@ export function SupportView({ currentUser }: { currentUser: any }) {
                 </div>
 
                 {/* Chat Footer Input */}
-                <div className="p-4 bg-indigo-950/40 backdrop-blur-xl border-t border-white/10 flex items-center gap-4">
+                <div className="p-4 bg-indigo-950/40 backdrop-blur-xl border-t border-[#1e1b4b] flex items-center gap-4">
                   <div className="flex gap-2.5 text-slate-500">
                     <Sparkles className="w-5 h-5 cursor-pointer hover:text-indigo-400 transition-colors" />
                     <ImageIcon className="w-5 h-5 cursor-pointer hover:text-indigo-400 transition-colors" />
@@ -262,7 +263,7 @@ export function SupportView({ currentUser }: { currentUser: any }) {
                       onChange={(e) => setChatMessage(e.target.value)}
                       onKeyDown={(e) => e.key === 'Enter' && handleSupportChat()}
                       placeholder="Sintonize e digite sua prece técnica..." 
-                      className="w-full bg-black/40 border border-white/10 rounded-2xl py-2 px-4 text-slate-100 outline-none focus:border-indigo-500/50 transition-all font-light text-sm"
+                      className="w-full bg-black/40 border border-[#1e1b4b] rounded-2xl py-2 px-4 text-slate-100 outline-none focus:border-indigo-500/50 transition-all font-light text-sm"
                     />
                   </div>
                   <button 
@@ -277,7 +278,7 @@ export function SupportView({ currentUser }: { currentUser: any }) {
 
             {/* Tomos de Auxílio FAQ */}
             <div className="space-y-6">
-              <div className="border-b border-white/10 pb-3 flex items-center justify-between">
+              <div className="border-b border-[#1e1b4b] pb-3 flex items-center justify-between">
                 <h3 className="text-2xl font-serif text-slate-200">Tomos de Conhecimento Comum</h3>
                 <span className="text-slate-500 text-xs font-mono">Exibindo {filteredFaqs.length} tópicos</span>
               </div>
@@ -290,11 +291,11 @@ export function SupportView({ currentUser }: { currentUser: any }) {
                       key={faq.q}
                       initial={{ opacity: 0, y: 15 }}
                       animate={{ opacity: 1, y: 0 }}
-                      className="p-5 rounded-2xl border border-white/5 bg-indigo-950/5 flex flex-col justify-between hover:border-indigo-500/30 transition-all"
+                      className="p-5 rounded-2xl border border-[#1e1b4b] bg-indigo-950/5 flex flex-col justify-between hover:border-indigo-500/30 transition-all"
                     >
                       <div>
                         <div className="flex justify-between items-start mb-3">
-                          <span className="px-2 py-0.5 rounded-md bg-indigo-500/10 border border-indigo-500/20 text-[9px] font-black text-indigo-400 uppercase tracking-widest">
+                          <span className="px-2 py-0.5 rounded-md bg-indigo-500/10 border border-[#312e81] text-[9px] font-black text-indigo-400 uppercase tracking-widest">
                             {faq.tag}
                           </span>
                           <HelpCircle className="w-4 h-4 text-slate-650" />
@@ -315,7 +316,7 @@ export function SupportView({ currentUser }: { currentUser: any }) {
           <div className="lg:col-span-5 space-y-8">
             
             {/* Create support Ticket Card */}
-            <div className="glass-panel p-6 rounded-3xl border border-indigo-500/20 bg-indigo-950/10 relative overflow-hidden">
+            <div className="glass-panel p-6 rounded-3xl border border-[#312e81] bg-indigo-950/10 relative overflow-hidden">
               <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none" />
               <h3 className="text-xl font-serif text-slate-200 mb-4 flex items-center gap-2">
                 <FileText className="w-5 h-5 text-indigo-400" />
@@ -332,7 +333,7 @@ export function SupportView({ currentUser }: { currentUser: any }) {
                     value={ticketTitle}
                     onChange={(e) => setTicketTitle(e.target.value)}
                     placeholder="Ex: Falha no salvamento do Certificado ao Drive"
-                    className="w-full bg-black/40 border border-white/10 rounded-xl py-2 px-3 text-xs text-slate-200 outline-none focus:border-indigo-400"
+                    className="w-full bg-black/40 border border-[#1e1b4b] rounded-xl py-2 px-3 text-xs text-slate-200 outline-none focus:border-indigo-400"
                   />
                 </div>
 
@@ -342,7 +343,7 @@ export function SupportView({ currentUser }: { currentUser: any }) {
                     <select
                       value={ticketCategory}
                       onChange={(e) => setTicketCategory(e.target.value)}
-                      className="w-full bg-black/40 border border-white/10 rounded-xl py-2 px-3 text-xs text-slate-200 outline-none h-9 text-left"
+                      className="w-full bg-black/40 border border-[#1e1b4b] rounded-xl py-2 px-3 text-xs text-slate-200 outline-none h-9 text-left"
                     >
                       <option value="Dúvida Mística">Dúvida Mística</option>
                       <option value="Bug de Sistema">Bug de Sistema</option>
@@ -356,7 +357,7 @@ export function SupportView({ currentUser }: { currentUser: any }) {
                     <select
                       value={ticketUrgency}
                       onChange={(e) => setTicketUrgency(e.target.value)}
-                      className="w-full bg-black/40 border border-white/10 rounded-xl py-2 px-3 text-xs text-slate-200 outline-none h-9 text-left"
+                      className="w-full bg-black/40 border border-[#1e1b4b] rounded-xl py-2 px-3 text-xs text-slate-200 outline-none h-9 text-left"
                     >
                       <option value="fisico">Físico (Leve / Suave)</option>
                       <option value="mental">Mental (Moderado)</option>
@@ -373,7 +374,7 @@ export function SupportView({ currentUser }: { currentUser: any }) {
                     value={ticketDescription}
                     onChange={(e) => setTicketDescription(e.target.value)}
                     placeholder="Descreva minuciosamente todos os fatos místicas ou erros técnicos encontrados..."
-                    className="w-full bg-black/40 border border-white/10 rounded-xl p-3 text-xs text-slate-200 outline-none focus:border-indigo-400 resize-none h-24"
+                    className="w-full bg-black/40 border border-[#1e1b4b] rounded-xl p-3 text-xs text-slate-200 outline-none focus:border-indigo-400 resize-none h-24"
                   />
                 </div>
 
@@ -395,7 +396,7 @@ export function SupportView({ currentUser }: { currentUser: any }) {
 
               <div className="space-y-4 max-h-[500px] overflow-y-auto pr-1 custom-scrollbar">
                 {tickets.length === 0 ? (
-                  <div className="p-6 border border-dashed border-white/10 rounded-2xl text-center text-slate-500 text-xs">
+                  <div className="p-6 border border-dashed border-[#1e1b4b] rounded-2xl text-center text-slate-500 text-xs">
                     Nenhum chamado de suporte ativo nas estrelas.
                   </div>
                 ) : (
@@ -414,7 +415,7 @@ export function SupportView({ currentUser }: { currentUser: any }) {
                           <span className={`px-2 py-0.5 rounded text-[8px] font-black uppercase tracking-wider ${
                             t.urgency === 'astral' ? 'bg-rose-500/10 text-rose-400 border border-rose-500/20' :
                             t.urgency === 'mental' ? 'bg-amber-500/10 text-amber-400 border border-amber-500/20' :
-                            'bg-indigo-500/10 text-indigo-400 border border-indigo-500/20'
+                            'bg-indigo-500/10 text-indigo-400 border border-[#312e81]'
                           }`}>
                             {t.urgency === 'astral' ? '🔴 Frequência Astral' :
                              t.urgency === 'mental' ? '🟡 Frequência Mental' :
@@ -426,7 +427,7 @@ export function SupportView({ currentUser }: { currentUser: any }) {
                           <span className={`px-2 py-1 rounded-full text-[9px] font-bold ${
                             t.status === 'Resolvido' 
                             ? 'bg-emerald-500/15 text-emerald-400 border border-emerald-500/20' 
-                            : 'bg-indigo-500/15 text-indigo-400 border border-indigo-500/20'
+                            : 'bg-indigo-500/15 text-indigo-400 border border-[#312e81]'
                           }`}>
                             {t.status}
                           </span>

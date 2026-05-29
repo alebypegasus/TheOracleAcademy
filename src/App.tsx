@@ -2,6 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Compass, Bell, Menu } from 'lucide-react';
 import { HashRouter, Routes, Route, Navigate, useLocation, useNavigate } from 'react-router-dom';
+import { HeroUIProvider } from "@heroui/system";
+// @ts-ignore
+import { ThemeProvider as NextThemesProvider } from "next-themes";
+import { ErrorBoundary } from './components/ErrorBoundary';
 
 import { LevelUpModal } from './components/LevelUpModal';
 import { Sidebar } from './components/layout/Sidebar';
@@ -16,8 +20,6 @@ import CoursesView from './pages/Courses';
 import CommunityView from './pages/Community';
 import SettingsView from './pages/Settings';
 import ProfileView from './pages/Profile';
-import CertificatesView from './pages/Certificates';
-import WorkspaceView from './pages/Workspace';
 import SellerPage from './pages/SellerPage';
 import CartPage from './pages/CartPage';
 import AdminDashboard from './pages/AdminDashboard';
@@ -64,8 +66,17 @@ function AppContent({
     setPrevXp(profile.xp);
   }, [profile.xp, prevXp]);
 
-  // Redireciona o usuário para a landing page se não estiver logado
-  // mantendo /landing livre
+  // Global Navigation Listener
+  useEffect(() => {
+    const handleNav = (e: any) => {
+      if (e.detail) navigate(`/${e.detail}`);
+    };
+    document.addEventListener('NAVIGATE_TO', handleNav);
+    return () => document.removeEventListener('NAVIGATE_TO', handleNav);
+  }, [navigate]);
+
+  // Guard de sessão: currentUser é lido do localStorage de forma síncrona no App,
+  // portanto se for null aqui é porque realmente não há sessão.
   useEffect(() => {
     if (!currentUser && location.pathname !== '/landing') {
       navigate('/landing');
@@ -95,6 +106,8 @@ function AppContent({
             profile={profile}
             onNavigate={(path: string) => navigate(path)}
             onLogout={() => {
+              localStorage.removeItem('oracle_user');
+              localStorage.removeItem('oracle_jwt_token');
               setCurrentUser(null);
               navigate('/landing');
             }}
@@ -134,6 +147,8 @@ function AppContent({
                       setIsMobileMenuOpen(false);
                     }}
                     onLogout={() => {
+                      localStorage.removeItem('oracle_user');
+                      localStorage.removeItem('oracle_jwt_token');
                       setCurrentUser(null);
                       navigate('/landing');
                     }}
@@ -149,7 +164,7 @@ function AppContent({
       {location.pathname !== '/landing' && currentUser && (
         <button 
           onClick={() => setIsZenMode(!isZenMode)}
-          className={`fixed bottom-6 right-6 p-3 rounded-full z-40 transition-all duration-500 hover:scale-110 ${isZenMode ? 'bg-[#15151A] text-indigo-400 border border-indigo-500/20 shadow-[0_0_40px_rgba(99,102,241,0.2)]' : 'bg-slate-800 text-slate-400 hover:text-white border border-white/10 shadow-lg'}`}
+          className={`fixed bottom-6 right-6 p-3 rounded-full z-40 transition-all duration-500 hover:scale-110 ${isZenMode ? 'bg-[#15151A] text-indigo-400 border border-[#312e81] shadow-[0_0_40px_rgba(99,102,241,0.2)]' : 'bg-slate-800 text-slate-400 hover:text-white border border-[#1e1b4b] shadow-lg'}`}
           title={isZenMode ? "Sair do Modo Zen" : "Entrar no Modo Zen"}
         >
           {isZenMode ? <Compass className="w-5 h-5 animate-pulse" /> : <Compass className="w-5 h-5" />}
@@ -159,14 +174,14 @@ function AppContent({
       <div className="flex flex-col flex-1 w-full h-full relative overflow-hidden">
         {/* Global Mobile Top Bar */}
         {location.pathname !== '/landing' && currentUser && !isZenMode && (
-          <div className="xl:hidden flex items-center justify-between p-4 border-b border-indigo-500/10 bg-slate-50/80 dark:bg-[#080510]/80 backdrop-blur-md z-30 flex-shrink-0">
+          <div className="xl:hidden flex items-center justify-between p-4 border-b border-[#1e1b4b] bg-slate-50/80 dark:bg-[#080510]/80 backdrop-blur-md z-30 flex-shrink-0">
             <div className="flex items-center gap-2 theme-logo-glow">
               <div className="h-10 w-10 theme-logo-image" />
               <div className="h-5 w-[80px] theme-logo-text" />
             </div>
             <button 
               onClick={() => setIsMobileMenuOpen(true)}
-              className="p-2 rounded-xl bg-white/5 border border-indigo-500/10 text-slate-500 hover:text-indigo-400 transition-colors"
+              className="p-2 rounded-xl bg-white/5 border border-[#1e1b4b] text-slate-500 hover:text-indigo-400 transition-colors"
             >
               <Menu className="w-6 h-6" />
             </button>
@@ -191,7 +206,7 @@ function AppContent({
             
             {/* Dashboard Redirect */}
             <Route path="/" element={<Navigate to="/dashboard" replace />} />
-                        <Route path="/dashboard" element={
+            <Route path="/dashboard" element={
               <DashboardPage 
                 searchQuery={searchQuery}
                 setSearchQuery={setSearchQuery}
@@ -243,7 +258,7 @@ function AppContent({
             } />
             
             <Route path="/library" element={
-              <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} transition={{ duration: 0.3 }} className="h-full flex items-center justify-center p-4 lg:p-10">
+              <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} transition={{ duration: 0.3 }} className="w-full py-4">
                 <LibraryView currentUser={currentUser} />
               </motion.div>
             } />
@@ -255,7 +270,7 @@ function AppContent({
             } />
             
             <Route path="/community" element={
-              <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} transition={{ duration: 0.3 }} className="w-full">
+              <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} transition={{ duration: 0.3 }} className="w-full py-4">
                 <CommunityView currentUser={currentUser} />
               </motion.div>
             } />
@@ -301,17 +316,9 @@ function AppContent({
               </motion.div>
             } />
             
-            <Route path="/certificates" element={
-              <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} transition={{ duration: 0.3 }} className="h-full px-4 lg:px-10 overflow-y-auto">
-                <CertificatesView />
-              </motion.div>
-            } />
+            <Route path="/certificates" element={<Navigate to="/profile" replace />} />
             
-            <Route path="/workspace" element={
-              <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} transition={{ duration: 0.3 }} className="py-10">
-                <WorkspaceView currentUser={currentUser} />
-              </motion.div>
-            } />
+            <Route path="/workspace" element={<Navigate to="/profile" replace />} />
             
             <Route path="*" element={
                <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="h-full flex flex-col items-center justify-center text-slate-500">
@@ -333,11 +340,14 @@ function AppContent({
 }
 
 export default function App() {
-  const [currentUser, setCurrentUser] = useState<any>(null);
+  const [currentUser, setCurrentUser] = useState<any>(() => {
+    const saved = localStorage.getItem('oracle_user');
+    return saved ? JSON.parse(saved) : null;
+  });
   const [themePreference, setThemePreference] = useState('dark');
   const [isDarkMode, setIsDarkMode] = useState(true);
   const [colorTheme, setColorTheme] = useState('oracle');
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false); // Inicia false: usuário do localStorage é lido imediatamente
   const [savedBirthChart, setSavedBirthChart] = useState<any>(null);
 
   const [profile, setProfile] = useState({
@@ -355,7 +365,7 @@ export default function App() {
     completedJournal: false
   });
 
-  // Fetch Global Settings first
+  // Fetch Global Settings (não-bloqueante — não impede o app de renderizar)
   useEffect(() => {
     fetch('/api/system/global')
       .then(r => r.json())
@@ -395,11 +405,11 @@ export default function App() {
       return;
     }
 
-    setIsLoading(true);
+    // Carrega dados do usuário em background (não bloqueia o render)
     const pullData = async () => {
       try {
         const res = await fetch('/api/user/sync', {
-          headers: { 'x-user-id': currentUser.id.toString() }
+          headers: { 'x-user-id': currentUser.id.toString(), 'Authorization': `Bearer ${localStorage.getItem('oracle_jwt_token') || ''}` }
         });
         if (!res.ok) throw new Error('Offline');
         const data = await res.json();
@@ -419,8 +429,6 @@ export default function App() {
             data.grimoireEntries.forEach((entry: any) => saveGrimoireEntryLocal(entry));
           }
           if (data.savedBirthChart) setSavedBirthChart(data.savedBirthChart);
-          // Merge plan info into currentUser without triggering a re-sync loop
-          // Only update if plan actually changed to avoid re-renders
           if (data.user && data.user.plan && data.user.plan !== currentUser.plan) {
             setCurrentUser((prev: any) => ({
               ...prev,
@@ -429,6 +437,9 @@ export default function App() {
               isPaid: data.user.isPaid
             }));
           }
+          // Atualizar oracle_user no localStorage com dados frescos do servidor
+          const freshUser = { ...currentUser, ...(data.user || {}) };
+          localStorage.setItem('oracle_user', JSON.stringify(freshUser));
         }
       } catch (err) {
         console.warn("Offline, loading from IndexedDB");
@@ -438,13 +449,11 @@ export default function App() {
         if (localProgress && localProgress.length > 0) {
           setProfile(prev => ({ ...prev, ...localProgress[0] }));
         }
-      } finally {
-        setIsLoading(false);
       }
     };
     
     pullData();
-  }, [currentUser?.id]); // ← depende APENAS do ID, não do objeto inteiro
+  }, [currentUser?.id]);
 
   // Sync mechanism
   useEffect(() => {
@@ -652,28 +661,21 @@ export default function App() {
 
   return (
     <HashRouter>
-      {isLoading ? (
-        <div className="h-screen w-screen flex flex-col items-center justify-center bg-[#080510] text-slate-200">
-          <div className="w-16 h-16 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin mb-4" />
-          <p className="font-serif text-lg tracking-widest text-indigo-300 animate-pulse">SINTONIZANDO COM A INFRAESTRUTURA CÓSMICA...</p>
-        </div>
-      ) : (
-        <AppContent 
-          isDarkMode={isDarkMode} 
-          themePreference={themePreference} 
-          setThemePreference={setThemePreference}
-          colorTheme={colorTheme}
-          setColorTheme={setColorTheme}
-          profile={profile} setProfile={updateProfile}
-          grimoireEntries={grimoireEntries} setGrimoireEntries={setGrimoireEntries}
-          addGrimoireEntry={addGrimoireEntry}
-          updateGrimoireEntry={updateGrimoireEntry}
-          deleteGrimoireEntry={deleteGrimoireEntry}
-          currentUser={currentUser} setCurrentUser={setCurrentUser}
-          challenges={challenges} setChallenges={updateChallenges}
-          savedBirthChart={savedBirthChart} setSavedBirthChart={setSavedBirthChart}
-        />
-      )}
+      <AppContent 
+        isDarkMode={isDarkMode} 
+        themePreference={themePreference} 
+        setThemePreference={setThemePreference}
+        colorTheme={colorTheme}
+        setColorTheme={setColorTheme}
+        profile={profile} setProfile={updateProfile}
+        grimoireEntries={grimoireEntries} setGrimoireEntries={setGrimoireEntries}
+        addGrimoireEntry={addGrimoireEntry}
+        updateGrimoireEntry={updateGrimoireEntry}
+        deleteGrimoireEntry={deleteGrimoireEntry}
+        currentUser={currentUser} setCurrentUser={setCurrentUser}
+        challenges={challenges} setChallenges={updateChallenges}
+        savedBirthChart={savedBirthChart} setSavedBirthChart={setSavedBirthChart}
+      />
     </HashRouter>
   );
 }

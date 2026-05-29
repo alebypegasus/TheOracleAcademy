@@ -96,14 +96,14 @@ function Overview() {
         </div>
       </div>
 
-      <div className="p-6 rounded-xl bg-[#110D1A] border border-white/5">
+      <div className="p-6 rounded-xl bg-[#110D1A] border border-[#1e1b4b]">
         <h3 className="text-xl font-serif mb-6 text-slate-300">Logs de Moderação</h3>
         {logs.length === 0 ? (
           <p className="text-slate-500">Nenhum log registrado ainda.</p>
         ) : (
           <div className="space-y-4">
             {logs.map((log: any) => (
-              <div key={log.id} className="flex flex-col sm:flex-row gap-4 justify-between items-start sm:items-center p-4 rounded-lg bg-black/20 border border-white/5">
+              <div key={log.id} className="flex flex-col sm:flex-row gap-4 justify-between items-start sm:items-center p-4 rounded-lg bg-black/20 border border-[#1e1b4b]">
                 <div>
                   <p className="text-sm text-slate-300">
                     <span className="font-bold text-red-400">{log.admin_email}</span> executou <span className="font-bold text-indigo-300">{log.action}</span>

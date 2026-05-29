@@ -172,7 +172,7 @@ export default function SellerPage() {
       <div className="flex flex-col lg:flex-row gap-8">
         {/* Profile Card & Details */}
         <div className="w-full lg:w-80 flex flex-col gap-6">
-          <div className="glass-panel p-6 rounded-2xl border border-white/5 flex flex-col items-center text-center">
+          <div className="glass-panel p-6 rounded-2xl border border-[#1e1b4b] flex flex-col items-center text-center">
             <div className="relative mb-4">
               <div className="h-24 w-24 rounded-full overflow-hidden border-2 border-indigo-500/40 p-1 bg-black/40">
                 <img src={profile.avatar} alt={profile.name} className="w-full h-full object-cover rounded-full" />
@@ -184,7 +184,7 @@ export default function SellerPage() {
 
             <h2 className="text-2xl font-serif text-slate-100 font-bold">{profile.name}</h2>
             <p className="text-indigo-400 text-xs font-bold uppercase tracking-wider mt-1">{profile.authorTitle}</p>
-            <span className="text-slate-400 text-xs px-2.5 py-0.5 rounded bg-white/5 border border-white/10 mt-2">
+            <span className="text-slate-400 text-xs px-2.5 py-0.5 rounded bg-white/5 border border-[#1e1b4b] mt-2">
               {profile.grau}
             </span>
 
@@ -200,29 +200,29 @@ export default function SellerPage() {
               <span className="text-xs text-slate-300 ml-1.5 font-bold">5.0 (Vendedor Ouro)</span>
             </div>
 
-            <div className="w-full border-t border-white/5 my-5"></div>
+            <div className="w-full border-t border-[#1e1b4b] my-5"></div>
 
             <p className="text-slate-300 text-xs md:text-sm leading-relaxed text-justify">
               {profile.description}
             </p>
 
-            <div className="w-full border-t border-white/5 my-5"></div>
+            <div className="w-full border-t border-[#1e1b4b] my-5"></div>
 
             <div className="w-full flex flex-col gap-2">
               {profile.whatsapp && (
-                <a href={`https://wa.me/${profile.whatsapp}`} target="_blank" rel="noreferrer" className="flex items-center justify-between text-xs text-slate-300 bg-white/5 hover:bg-white/10 p-2.5 rounded-xl border border-white/5 transition-all">
+                <a href={`https://wa.me/${profile.whatsapp}`} target="_blank" rel="noreferrer" className="flex items-center justify-between text-xs text-slate-300 bg-white/5 hover:bg-white/10 p-2.5 rounded-xl border border-[#1e1b4b] transition-all">
                   <span className="flex items-center gap-2 font-semibold"><Phone className="w-4 h-4 text-emerald-400" /> WhatsApp</span>
                   <ExternalLink className="w-3.5 h-3.5 opacity-60" />
                 </a>
               )}
               {profile.telegram && (
-                <a href={`https://t.me/${profile.telegram}`} target="_blank" rel="noreferrer" className="flex items-center justify-between text-xs text-slate-300 bg-white/5 hover:bg-white/10 p-2.5 rounded-xl border border-white/5 transition-all">
+                <a href={`https://t.me/${profile.telegram}`} target="_blank" rel="noreferrer" className="flex items-center justify-between text-xs text-slate-300 bg-white/5 hover:bg-white/10 p-2.5 rounded-xl border border-[#1e1b4b] transition-all">
                   <span className="flex items-center gap-2 font-semibold"><Send className="w-4 h-4 text-sky-400" /> Telegram</span>
                   <ExternalLink className="w-3.5 h-3.5 opacity-60" />
                 </a>
               )}
               {profile.website && (
-                <a href={profile.website} target="_blank" rel="noreferrer" className="flex items-center justify-between text-xs text-slate-300 bg-white/5 hover:bg-white/10 p-2.5 rounded-xl border border-white/5 transition-all">
+                <a href={profile.website} target="_blank" rel="noreferrer" className="flex items-center justify-between text-xs text-slate-300 bg-white/5 hover:bg-white/10 p-2.5 rounded-xl border border-[#1e1b4b] transition-all">
                   <span className="flex items-center gap-2 font-semibold"><ExternalLink className="w-4 h-4 text-purple-400" /> Website</span>
                   <ExternalLink className="w-3.5 h-3.5 opacity-60" />
                 </a>
@@ -232,12 +232,12 @@ export default function SellerPage() {
 
           {/* Wallet and Payout for Self-Seller */}
           {profile.isSelf && (
-            <div className="glass-panel p-6 rounded-2xl border border-indigo-500/20 bg-indigo-950/20">
+            <div className="glass-panel p-6 rounded-2xl border border-[#312e81] bg-indigo-950/20">
               <h3 className="text-lg font-serif text-slate-100 flex items-center gap-2 mb-4">
                 <Wallet className="w-5 h-5 text-indigo-400" /> Portal Financeiro
               </h3>
               
-              <div className="flex justify-between items-center bg-black/20 p-3.5 rounded-xl border border-white/5">
+              <div className="flex justify-between items-center bg-black/20 p-3.5 rounded-xl border border-[#1e1b4b]">
                 <span className="text-slate-400 text-xs">Saldo Disponível</span>
                 <span className="font-serif text-xl font-bold text-emerald-400">R$ {(profile.balance || 0).toFixed(2)}</span>
               </div>
@@ -251,7 +251,7 @@ export default function SellerPage() {
                     placeholder="R$ 0.00"
                     value={withdrawAmount}
                     onChange={(e) => setWithdrawAmount(e.target.value)}
-                    className="w-full bg-black/40 text-slate-200 border border-white/10 rounded-lg p-2 text-sm focus:border-indigo-500/50 outline-none"
+                    className="w-full bg-black/40 text-slate-200 border border-[#1e1b4b] rounded-lg p-2 text-sm focus:border-indigo-500/50 outline-none"
                   />
                 </div>
                 <div className="flex flex-col gap-1.5">
@@ -261,7 +261,7 @@ export default function SellerPage() {
                     placeholder="Chave para transferência"
                     value={pixKey}
                     onChange={(e) => setPixKey(e.target.value)}
-                    className="w-full bg-black/40 text-slate-200 border border-white/10 rounded-lg p-2 text-sm focus:border-indigo-500/50 outline-none"
+                    className="w-full bg-black/40 text-slate-200 border border-[#1e1b4b] rounded-lg p-2 text-sm focus:border-indigo-500/50 outline-none"
                   />
                 </div>
 
@@ -298,17 +298,17 @@ export default function SellerPage() {
 
         {/* Listings Portfolio */}
         <div className="flex-1 flex flex-col gap-6">
-          <div className="border-b border-indigo-500/10 pb-4 flex items-center justify-between">
+          <div className="border-b border-[#1e1b4b] pb-4 flex items-center justify-between">
             <h3 className="text-2xl font-serif text-slate-100 flex items-center gap-2">
               <ShoppingBag className="w-6 h-6 text-indigo-400" /> Relíquias do Vendedor
             </h3>
-            <span className="text-xs text-slate-400 font-semibold bg-white/5 border border-white/10 px-3 py-1 rounded-full">
+            <span className="text-xs text-slate-400 font-semibold bg-white/5 border border-[#1e1b4b] px-3 py-1 rounded-full">
               {products.length} {products.length === 1 ? 'produto cadastrado' : 'produtos cadastrados'}
             </span>
           </div>
 
           {products.length === 0 ? (
-            <div className="glass-panel p-16 rounded-2xl border border-white/5 text-center flex flex-col items-center gap-4">
+            <div className="glass-panel p-16 rounded-2xl border border-[#1e1b4b] text-center flex flex-col items-center gap-4">
               <Sparkles className="w-8 h-8 text-indigo-400 opacity-40 animate-pulse" />
               <h4 className="text-lg font-serif text-slate-200">Sem Relíquias Ativas</h4>
               <p className="text-slate-400 text-xs max-w-xs">
@@ -323,9 +323,9 @@ export default function SellerPage() {
                   <motion.div
                     key={product.id}
                     whileHover={{ y: -4 }}
-                    className="glass-panel rounded-xl overflow-hidden border border-white/5 hover:border-indigo-500/20 flex flex-col transition-all"
+                    className="glass-panel rounded-xl overflow-hidden border border-[#1e1b4b] hover:border-[#312e81] flex flex-col transition-all"
                   >
-                    <div className="h-44 w-full bg-slate-900 overflow-hidden relative border-b border-white/5">
+                    <div className="h-44 w-full bg-slate-900 overflow-hidden relative border-b border-[#1e1b4b]">
                       {product.cover_image ? (
                         <img src={product.cover_image} alt={product.title} className="w-full h-full object-cover" />
                       ) : (
@@ -333,7 +333,7 @@ export default function SellerPage() {
                           <Sparkles className="w-8 h-8" />
                         </div>
                       )}
-                      <span className="absolute top-3 right-3 text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-indigo-950/80 text-indigo-300 border border-indigo-500/20 backdrop-blur-md">
+                      <span className="absolute top-3 right-3 text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-indigo-950/80 text-indigo-300 border border-[#312e81] backdrop-blur-md">
                         {product.category}
                       </span>
                     </div>
@@ -347,7 +347,7 @@ export default function SellerPage() {
                         </p>
                       </div>
 
-                      <div className="mt-5 border-t border-white/5 pt-4 flex items-center justify-between">
+                      <div className="mt-5 border-t border-[#1e1b4b] pt-4 flex items-center justify-between">
                         <span className="text-xl font-serif font-bold text-slate-100">
                           R$ {Number(product.price).toFixed(2)}
                         </span>

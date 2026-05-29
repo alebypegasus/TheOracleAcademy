@@ -242,7 +242,7 @@ export function CalendarWidget({ grimoireEntries = [], addGrimoireEntry }: any) 
               initial={{ opacity: 0, height: 0 }} 
               animate={{ opacity: 1, height: 'auto' }} 
               exit={{ opacity: 0, height: 0 }}
-              className="border-t border-white/5 pt-4 text-sm relative overflow-hidden"
+              className="border-t border-[#1e1b4b] pt-4 text-sm relative overflow-hidden"
             >
               <div className="flex items-center justify-between mb-3">
                 <span className="text-slate-300 font-medium">
@@ -266,7 +266,7 @@ export function CalendarWidget({ grimoireEntries = [], addGrimoireEntry }: any) 
               {selectedDateEvents.length > 0 ? (
                 <div className="space-y-2 max-h-[120px] overflow-y-auto custom-scrollbar pr-1">
                   {selectedDateEvents.map((evt: any) => (
-                    <div key={evt.id} className="bg-white/5 border border-white/5 p-2.5 rounded-lg">
+                    <div key={evt.id} className="bg-white/5 border border-[#1e1b4b] p-2.5 rounded-lg">
                       <div className="text-slate-200 text-xs font-medium mb-1 line-clamp-1">{evt.question.replace('Evento: ', '')}</div>
                       <div className="text-slate-500 text-[10px] line-clamp-2">{evt.interpretation}</div>
                     </div>
@@ -284,7 +284,7 @@ export function CalendarWidget({ grimoireEntries = [], addGrimoireEntry }: any) 
               initial={{ opacity: 0, height: 0 }} 
               animate={{ opacity: 1, height: 'auto' }} 
               exit={{ opacity: 0, height: 0 }}
-              className="border-t border-white/5 pt-4 relative overflow-hidden"
+              className="border-t border-[#1e1b4b] pt-4 relative overflow-hidden"
             >
               <div className="flex items-center justify-between mb-3">
                 <span className="text-slate-300 font-medium text-sm">
@@ -304,14 +304,14 @@ export function CalendarWidget({ grimoireEntries = [], addGrimoireEntry }: any) 
                   placeholder="Título do evento ou estudo..." 
                   value={eventTitle}
                   onChange={(e) => setEventTitle(e.target.value)}
-                  className="w-full bg-black/20 border border-white/10 rounded-lg px-3 py-2 text-xs text-slate-200 outline-none focus:border-indigo-500/50"
+                  className="w-full bg-black/20 border border-[#1e1b4b] rounded-lg px-3 py-2 text-xs text-slate-200 outline-none focus:border-indigo-500/50"
                   autoFocus
                 />
                 <textarea 
                   placeholder="Notas detalhadas..." 
                   value={eventDescription}
                   onChange={(e) => setEventDescription(e.target.value)}
-                  className="w-full bg-black/20 border border-white/10 rounded-lg px-3 py-2 text-xs text-slate-200 outline-none focus:border-indigo-500/50 min-h-[60px] resize-none"
+                  className="w-full bg-black/20 border border-[#1e1b4b] rounded-lg px-3 py-2 text-xs text-slate-200 outline-none focus:border-indigo-500/50 min-h-[60px] resize-none"
                 />
                 <div className="flex items-center gap-2 py-1">
                   <input
@@ -320,7 +320,7 @@ export function CalendarWidget({ grimoireEntries = [], addGrimoireEntry }: any) 
                     checked={syncToGoogle}
                     onChange={(e) => setSyncToGoogle(e.target.checked)}
                     disabled={!googleToken}
-                    className="w-3.5 h-3.5 rounded text-indigo-600 bg-black/40 border-white/10 focus:ring-indigo-500/50 cursor-pointer disabled:cursor-not-allowed"
+                    className="w-3.5 h-3.5 rounded text-indigo-600 bg-black/40 border-[#1e1b4b] focus:ring-indigo-500/50 cursor-pointer disabled:cursor-not-allowed"
                   />
                   <label htmlFor="calendarSyncToggle" className={`text-[10px] cursor-pointer select-none ${googleToken ? 'text-indigo-400 font-medium' : 'text-slate-500'}`}>
                     {googleToken ? 'Sincronizar no Google Agenda' : 'Google Agenda desconectado'}

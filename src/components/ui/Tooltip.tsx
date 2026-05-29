@@ -1,6 +1,6 @@
 import React from 'react';
 
-export function Tooltip({ children, content }: { children: React.ReactNode, content: React.ReactNode }) {
+export function Tooltip({ children, content, placement }: { children: React.ReactNode, content: React.ReactNode, placement?: string }) {
   return (
     <div className="relative group/tooltip inline-block">
       {children}

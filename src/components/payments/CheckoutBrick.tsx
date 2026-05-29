@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { initMercadoPago, Payment } from '@mercadopago/sdk-react';
 
+// @ts-ignore
 const mpPublicKey = import.meta.env.VITE_MERCADO_PAGO_PUBLIC_KEY || "TEST-YOUR-PUBLIC-KEY-HERE";
 initMercadoPago(mpPublicKey, { locale: 'pt-BR' });
 

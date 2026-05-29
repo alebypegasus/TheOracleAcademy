@@ -49,7 +49,7 @@ export function DailyChallenges({ onNavigate, profile, grimoireEntries, currentU
             return (
               <div key={i} className="flex flex-col gap-5 bg-white/[0.03] border border-white/[0.05] p-6 rounded-2xl hover:bg-white/[0.06] transition-all hover:-translate-y-1">
                 <div className="flex items-center justify-between">
-                  <div className="w-14 h-14 rounded-2xl border border-indigo-500/20 bg-indigo-500/10 flex items-center justify-center">
+                  <div className="w-14 h-14 rounded-2xl border border-[#312e81] bg-indigo-500/10 flex items-center justify-center">
                     <Icon className="w-7 h-7 text-indigo-400 shadow-[0_0_15px_rgba(99,102,241,0.3)]" />
                   </div>
                   <div className="text-right">
@@ -63,14 +63,14 @@ export function DailyChallenges({ onNavigate, profile, grimoireEntries, currentU
                   <p className="text-sm text-slate-500 leading-relaxed">{c.desc}</p>
                 </div>
 
-                <div className="pt-4 border-t border-white/5 flex items-center justify-between">
+                <div className="pt-4 border-t border-[#1e1b4b] flex items-center justify-between">
                   <Tooltip content={`Ganhe ${c.xp} XP`}>
-                    <div className="px-3 py-1 bg-indigo-500/10 border border-indigo-500/20 rounded-full flex items-center gap-2 cursor-help transition-colors hover:bg-indigo-500/20">
+                    <div className="px-3 py-1 bg-indigo-500/10 border border-[#312e81] rounded-full flex items-center gap-2 cursor-help transition-colors hover:bg-indigo-500/20">
                       <Sparkles className="w-3.5 h-3.5 text-indigo-400" />
                       <span className="text-xs font-bold text-indigo-300 tracking-wide">{c.xp} XP</span>
                     </div>
                   </Tooltip>
-                  <div className="w-8 h-8 rounded-full border border-white/10 flex items-center justify-center text-slate-600 hover:text-indigo-400 transition-colors">
+                  <div className="w-8 h-8 rounded-full border border-[#1e1b4b] flex items-center justify-center text-slate-600 hover:text-indigo-400 transition-colors">
                     <Circle className="w-4 h-4" />
                   </div>
                 </div>
@@ -79,7 +79,7 @@ export function DailyChallenges({ onNavigate, profile, grimoireEntries, currentU
           })}
         </div>
         
-        <div className="mt-6 pt-4 border-t border-white/5 flex items-center gap-2 text-xs text-slate-500">
+        <div className="mt-6 pt-4 border-t border-[#1e1b4b] flex items-center gap-2 text-xs text-slate-500">
           <Circle className="w-3 h-3" />
           <p>Novos desafios em <span className="font-mono text-slate-400">10:24:18</span></p>
         </div>

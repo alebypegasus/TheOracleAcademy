@@ -28,7 +28,7 @@ export const AnimatedSidebar = ({
   return (
     <motion.div
       className={cn(
-        "h-full flex flex-col glass-panel border-r border-white/5 dark:border-white/10 z-50",
+        "h-full flex flex-col glass-panel border-r border-[#1e1b4b] dark:border-[#1e1b4b] z-50",
         isOpen ? "w-[240px]" : "w-[80px]"
       )}
       animate={{ width: isOpen ? 240 : 80 }}
@@ -36,7 +36,7 @@ export const AnimatedSidebar = ({
       onMouseLeave={() => setIsOpen(false)}
       transition={{ type: "spring", stiffness: 300, damping: 30 }}
     >
-      <div className="p-4 flex items-center justify-center overflow-hidden h-20 shrink-0 border-b border-white/5">
+      <div className="p-4 flex items-center justify-center overflow-hidden h-20 shrink-0 border-b border-[#1e1b4b]">
         <AnimatePresence mode="wait">
           {isOpen ? (
             <motion.div 
@@ -106,7 +106,7 @@ export const AnimatedSidebar = ({
       </div>
 
       {bottomContent && (
-        <div className="p-4 border-t border-white/5 overflow-hidden">
+        <div className="p-4 border-t border-[#1e1b4b] overflow-hidden">
            {bottomContent}
         </div>
       )}

@@ -153,7 +153,7 @@ export function SubscriptionView({ currentUser }: { currentUser?: any }) {
   };
 
   return (
-    <div className="w-full max-w-6xl mx-auto flex flex-col items-center flex-1 py-10 px-4">
+    <div className="w-full mx-auto flex flex-col items-center flex-1 py-10 px-4 md:px-8">
       {/* Header */}
       <div className="mb-10 text-center flex flex-col items-center w-full max-w-3xl">
         <div className="inline-flex items-center gap-2 text-xs uppercase tracking-widest text-amber-500/70 border border-amber-500/20 rounded-full px-4 py-1.5 mb-5">
@@ -169,7 +169,7 @@ export function SubscriptionView({ currentUser }: { currentUser?: any }) {
 
         {/* Current plan status */}
         <div className={`w-full border rounded-3xl p-6 flex flex-col sm:flex-row justify-between items-center text-left mb-10 shadow-2xl relative overflow-hidden
-          ${currentPlan === 'master' ? 'bg-amber-900/10 border-amber-500/30' : currentPlan === 'medium' ? 'bg-purple-900/10 border-purple-500/30' : 'bg-indigo-900/10 border-indigo-500/20'}`}>
+          ${currentPlan === 'master' ? 'bg-amber-900/10 border-amber-500/30' : currentPlan === 'medium' ? 'bg-purple-900/10 border-purple-500/30' : 'bg-indigo-900/10 border-[#312e81]'}`}>
           
           <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full blur-3xl pointer-events-none -mr-32 -mt-32" />
           
@@ -221,11 +221,11 @@ export function SubscriptionView({ currentUser }: { currentUser?: any }) {
       </div>
 
       {/* Main Pricing Form (Watermelon UI Inspired) */}
-      <div className="w-full max-w-2xl bg-[#080512] rounded-[32px] p-2 border border-indigo-500/10 shadow-[0_20px_40px_rgba(0,0,0,0.5)] mb-16 relative">
+      <div className="w-full max-w-2xl bg-[#080512] rounded-[32px] p-2 border border-[#1e1b4b] shadow-[0_20px_40px_rgba(0,0,0,0.5)] mb-16 relative">
         <div className="absolute top-0 right-10 w-40 h-40 bg-indigo-500/10 rounded-full blur-[60px] pointer-events-none" />
         
         {/* Billing cycle toggle */}
-        <div className="flex bg-[#0c081c] border border-indigo-500/10 rounded-[24px] p-1.5 w-full shadow-inner mb-4 relative z-10">
+        <div className="flex bg-[#0c081c] border border-[#1e1b4b] rounded-[24px] p-1.5 w-full shadow-inner mb-4 relative z-10">
           {(['mensal', 'trimestral', 'anual'] as const).map(c => (
             <button
               key={c}
@@ -233,7 +233,7 @@ export function SubscriptionView({ currentUser }: { currentUser?: any }) {
               className={`flex-1 py-3 px-3 rounded-[20px] text-[11px] font-bold uppercase tracking-widest transition-all flex items-center justify-center gap-1.5
                 ${cycle === c
                   ? c === 'anual' ? 'bg-amber-500/20 border border-amber-500/30 text-amber-400 shadow-[0_0_15px_rgba(245,158,11,0.2)]'
-                    : 'bg-white/10 text-white shadow-sm border border-white/5'
+                    : 'bg-white/10 text-white shadow-sm border border-[#1e1b4b]'
                   : 'text-slate-500 hover:text-slate-300'
                 }`}
             >
@@ -266,7 +266,7 @@ export function SubscriptionView({ currentUser }: { currentUser?: any }) {
                     ? isAmber ? "border border-amber-500/40 shadow-[0_4px_24px_rgba(245,158,11,0.15)] bg-amber-900/10" 
                       : isPurple ? "border border-purple-500/40 shadow-[0_4px_24px_rgba(168,85,247,0.15)] bg-purple-900/10"
                       : "border border-indigo-500/40 shadow-[0_4px_24px_rgba(99,102,241,0.15)] bg-indigo-900/10"
-                    : "border border-white/5 hover:border-white/10 hover:bg-white/5"
+                    : "border border-[#1e1b4b] hover:border-[#312e81] hover:bg-white/5"
                 }`}
               >
                 <div className="px-5 py-5 sm:px-6 sm:py-5">
@@ -338,7 +338,7 @@ export function SubscriptionView({ currentUser }: { currentUser?: any }) {
                         transition={{ opacity: { duration: 0.2 }, height: { duration: 0.3, ease: "easeOut" } }}
                         className="overflow-hidden"
                       >
-                        <div className="pt-4 mt-4 border-t border-dashed border-white/10">
+                        <div className="pt-4 mt-4 border-t border-dashed border-[#312e81]">
                           <p className="text-[9px] font-black text-slate-500 tracking-widest uppercase mb-4 font-mono">
                             O que está incluso:
                           </p>
@@ -376,7 +376,7 @@ export function SubscriptionView({ currentUser }: { currentUser?: any }) {
                         ? 'bg-gradient-to-r from-amber-600 to-amber-500 hover:from-amber-500 hover:to-amber-400 text-slate-950 shadow-amber-500/20' 
                         : selectedPlan === 'medium'
                         ? 'bg-gradient-to-r from-purple-600 to-purple-500 hover:from-purple-500 hover:to-purple-400 text-white shadow-purple-500/20'
-                        : 'bg-white/5 border border-white/10 text-slate-300 hover:bg-white/10 hover:text-white'
+                        : 'bg-white/5 border border-[#312e81] text-slate-300 hover:bg-white/10 hover:text-white'
                 }`}
             >
                 {loading && <Loader2 className="w-4 h-4 animate-spin" />}

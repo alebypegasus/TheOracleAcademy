@@ -52,11 +52,11 @@ export default function UsersAdmin() {
     <div className="animate-fade-in">
       <h2 className="text-3xl font-serif mb-6 text-white">Moderação de Usuários</h2>
       
-      <div className="bg-[#110D1A] rounded-xl border border-white/5 overflow-hidden">
+      <div className="bg-[#110D1A] rounded-xl border border-[#1e1b4b] overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="bg-black/20 text-slate-400 text-sm border-b border-white/5">
+              <tr className="bg-black/20 text-slate-400 text-sm border-b border-[#1e1b4b]">
                 <th className="p-4 font-medium">Usuário</th>
                 <th className="p-4 font-medium">Papel</th>
                 <th className="p-4 font-medium">Status</th>
@@ -64,7 +64,7 @@ export default function UsersAdmin() {
                 <th className="p-4 font-medium text-right">Ações</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-white/5">
+            <tbody className="divide-y divide-[#1e1b4b]">
               {users.map(u => (
                 <tr key={u.id} className="text-slate-300 hover:bg-white/5 transition-colors">
                   <td className="p-4">

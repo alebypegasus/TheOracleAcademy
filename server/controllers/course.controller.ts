@@ -34,7 +34,7 @@ export class CourseController {
 
   // 3. POST /api/courses/complete-step
   public static async completeStep(req: AuthenticatedRequest, res: Response) {
-    const userId = req.headers["x-user-id"] || req.user?.id;
+    const userId = (req.headers["x-user-id"] as string) || req.user?.id;
     const { nodeName, lessonTitle, isQuiz, score = 0 } = req.body;
     if (!userId) {
       return res.status(401).json({ error: "Não autorizado" });
@@ -51,7 +51,7 @@ export class CourseController {
 
   // 4. GET /api/courses/node/:nodeId
   public static async getNodeContent(req: AuthenticatedRequest, res: Response) {
-    const { nodeId } = req.params;
+    const nodeId = req.params.nodeId as string;
     try {
       let nodeContent = await CourseService.getNodeContent(nodeId);
       
@@ -149,8 +149,8 @@ ${sourcesAndLocationsPrompt}`;
 
   // 5. POST /api/courses/node/:nodeId
   public static async saveNodeContent(req: AuthenticatedRequest, res: Response) {
-    const userId = req.headers["x-user-id"] || req.user?.id;
-    const { nodeId } = req.params;
+    const userId = (req.headers["x-user-id"] as string) || req.user?.id;
+    const nodeId = req.params.nodeId as string;
     const { markdownContent, courseId = 1 } = req.body;
     
     if (!userId) {

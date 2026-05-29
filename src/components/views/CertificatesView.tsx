@@ -233,7 +233,7 @@ ID: OC-${id}-${Date.now()}
   };
 
   return (
-    <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, ease: "easeOut" }} className="max-w-6xl mx-auto py-10 w-full h-full flex flex-col" id="certificates-view-root">
+    <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, ease: "easeOut" }} className="w-full px-4 md:px-8 mx-auto py-10 h-full flex flex-col" id="certificates-view-root">
       <div className="mb-10 text-center lg:text-left relative">
         <h2 className="text-4xl font-serif text-slate-100 uppercase tracking-widest mb-3 flex items-center justify-center lg:justify-start gap-4">
           <Award className="w-8 h-8 text-amber-400 animate-pulse" />
@@ -250,7 +250,7 @@ ID: OC-${id}-${Date.now()}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4, delay: index * 0.1 }}
-            className={`glass-panel rounded-2xl overflow-hidden border relative flex flex-col ${course.completed ? 'border-amber-500/30 bg-indigo-950/20 shadow-[0_0_15px_rgba(245,158,11,0.1)]' : 'border-white/5 opacity-80'}`}
+            className={`glass-panel rounded-2xl overflow-hidden border relative flex flex-col ${course.completed ? 'border-amber-500/30 bg-indigo-950/20 shadow-[0_0_15px_rgba(245,158,11,0.1)]' : 'border-[#1e1b4b] opacity-80'}`}
           >
             <div className="h-40 relative">
               <img src={course.image} alt={course.title} className={`w-full h-full object-cover ${!course.completed ? 'grayscale opacity-40' : 'mix-blend-luminosity opacity-85'}`} />
@@ -258,7 +258,7 @@ ID: OC-${id}-${Date.now()}
               
               {!course.completed && (
                 <div className="absolute inset-0 flex items-center justify-center bg-black/50 backdrop-blur-sm">
-                  <div className="p-4 rounded-full bg-black/60 border border-white/10">
+                  <div className="p-4 rounded-full bg-black/60 border border-[#1e1b4b]">
                     <Lock className="w-8 h-8 text-slate-400" />
                   </div>
                 </div>
@@ -276,7 +276,7 @@ ID: OC-${id}-${Date.now()}
                 ) : (
                   <div>
                     <p className="text-xs text-slate-500 mb-2 uppercase tracking-widest">Curso Trancado</p>
-                    <div className="w-full bg-black/40 rounded-full h-1.5 mb-4 border border-white/5">
+                    <div className="w-full bg-black/40 rounded-full h-1.5 mb-4 border border-[#1e1b4b]">
                       <div className="bg-indigo-500/50 h-1.5 rounded-full" style={{ width: `${course.progress}%` }}></div>
                     </div>
                   </div>
@@ -319,7 +319,7 @@ ID: OC-${id}-${Date.now()}
                   </button>
                 </div>
               ) : (
-                <button disabled className="w-full mt-4 px-3 py-2 bg-black/40 text-slate-600 border border-white/5 rounded-lg text-xs font-semibold flex items-center justify-center gap-2 cursor-not-allowed">
+                <button disabled className="w-full mt-4 px-3 py-2 bg-black/40 text-slate-600 border border-[#1e1b4b] rounded-lg text-xs font-semibold flex items-center justify-center gap-2 cursor-not-allowed">
                   <Lock className="w-4 h-4" /> Indisponível
                 </button>
               )}
@@ -329,7 +329,7 @@ ID: OC-${id}-${Date.now()}
       </div>
 
       {/* External Certificates Management with Local Storage Persistence */}
-      <div className="mt-12 pt-12 border-t border-white/10">
+      <div className="mt-12 pt-12 border-t border-[#1e1b4b]">
         <div className="mb-8 flex items-center justify-between">
           <div>
             <h3 className="text-2xl font-serif text-slate-100 uppercase tracking-wider mb-2 flex items-center gap-2">
@@ -352,7 +352,7 @@ ID: OC-${id}-${Date.now()}
               key={cert.id}
               initial={{ opacity: 0, y: 20 }} 
               animate={{ opacity: 1, y: 0 }} 
-              className="glass-panel p-5 rounded-2xl border border-white/5 bg-indigo-950/10 flex flex-col justify-between gap-4"
+              className="glass-panel p-5 rounded-2xl border border-[#1e1b4b] bg-indigo-950/10 flex flex-col justify-between gap-4"
             >
               <div>
                 <div className="flex items-start justify-between mb-3">
@@ -374,13 +374,13 @@ ID: OC-${id}-${Date.now()}
                 {cert.date && <p className="text-[10px] text-slate-500">Conclusão: {cert.date}</p>}
 
                 {cert.file && (
-                  <div className="mt-2 text-xs text-indigo-300/80 bg-indigo-500/5 border border-indigo-500/10 rounded px-2.5 py-1 inline-block truncate w-full">
+                  <div className="mt-2 text-xs text-indigo-300/80 bg-indigo-500/5 border border-[#1e1b4b] rounded px-2.5 py-1 inline-block truncate w-full">
                     📎 Arquivo Digital Anexado
                   </div>
                 )}
               </div>
 
-              <div className="mt-4 pt-4 border-t border-white/5 flex flex-col gap-2">
+              <div className="mt-4 pt-4 border-t border-[#1e1b4b] flex flex-col gap-2">
                 <div className="flex gap-2">
                   <button 
                     onClick={() => handleDownloadCertificate(cert)}
@@ -403,20 +403,20 @@ ID: OC-${id}-${Date.now()}
                     className={`flex-1 py-1.5 rounded-lg text-[10px] font-extrabold uppercase transition-colors flex items-center justify-center gap-1 border ${
                       syncedDrive[cert.id]
                         ? 'border-emerald-500/40 bg-emerald-500/10 text-emerald-400'
-                        : 'border-white/10 hover:border-indigo-500/40 text-indigo-300'
+                        : 'border-[#1e1b4b] hover:border-indigo-500/40 text-indigo-300'
                     }`}
                   >
                     {isUploading[cert.id] ? 'Carregando...' : syncedDrive[cert.id] ? '✓ No Drive' : '💾 Drive'}
                   </button>
                   <button 
                     onClick={() => openEditModal(cert)}
-                    className="py-1.5 px-3 border border-white/10 hover:border-indigo-500/40 rounded-lg text-xs text-slate-300 flex items-center justify-center gap-1 transition-colors"
+                    className="py-1.5 px-3 border border-[#1e1b4b] hover:border-indigo-500/40 rounded-lg text-xs text-slate-300 flex items-center justify-center gap-1 transition-colors"
                   >
                     <Edit className="w-3.5 h-3.5 text-indigo-400" />
                   </button>
                   <button 
                     onClick={() => handleDeleteCert(cert.id)}
-                    className="py-1.5 px-3 border border-white/10 hover:border-rose-500/40 rounded-lg text-xs text-rose-400 flex items-center justify-center gap-1 transition-colors"
+                    className="py-1.5 px-3 border border-[#1e1b4b] hover:border-rose-500/40 rounded-lg text-xs text-rose-400 flex items-center justify-center gap-1 transition-colors"
                   >
                     <Trash2 className="w-3.5 h-3.5 text-rose-500" />
                   </button>
@@ -428,9 +428,9 @@ ID: OC-${id}-${Date.now()}
           {/* Empty Placecard to Upload / Create */}
           <div 
             onClick={openAddModal}
-            className="glass-panel p-6 rounded-2xl border border-dashed border-white/20 hover:border-indigo-500/50 flex flex-col items-center justify-center gap-3 cursor-pointer text-center group transition-colors min-h-[220px]"
+            className="glass-panel p-6 rounded-2xl border border-dashed border-[#312e81] hover:border-indigo-500/50 flex flex-col items-center justify-center gap-3 cursor-pointer text-center group transition-colors min-h-[220px]"
           >
-            <div className="w-16 h-16 rounded-full bg-white/5 border border-white/10 flex items-center justify-center group-hover:-translate-y-1 transition-transform group-hover:bg-indigo-500/10">
+            <div className="w-16 h-16 rounded-full bg-white/5 border border-[#1e1b4b] flex items-center justify-center group-hover:-translate-y-1 transition-transform group-hover:bg-indigo-500/10">
               <Upload className="w-6 h-6 text-slate-400 group-hover:text-indigo-400 transition-colors" />
             </div>
             <div>
@@ -449,7 +449,7 @@ ID: OC-${id}-${Date.now()}
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
-              className="bg-slate-950 border border-indigo-500/20 w-full max-w-lg rounded-2xl overflow-hidden p-6 relative"
+              className="bg-slate-950 border border-[#312e81] w-full max-w-lg rounded-2xl overflow-hidden p-6 relative"
             >
               <button 
                 onClick={() => setShowModal(false)}
@@ -458,7 +458,7 @@ ID: OC-${id}-${Date.now()}
                 <X className="w-5 h-5" />
               </button>
 
-              <h3 className="text-2xl font-serif text-slate-100 uppercase tracking-widest mb-6 border-b border-indigo-500/20 pb-3 flex items-center gap-2">
+              <h3 className="text-2xl font-serif text-slate-100 uppercase tracking-widest mb-6 border-b border-[#312e81] pb-3 flex items-center gap-2">
                 <Award className="w-6 h-6 text-amber-400" />
                 {modalMode === 'create' ? 'Anexar Certificado Externo' : 'Editar Certificado'}
               </h3>
@@ -471,7 +471,7 @@ ID: OC-${id}-${Date.now()}
                     required
                     value={formData.title}
                     onChange={(e) => setFormData(prev => ({ ...prev, title: e.target.value }))}
-                    className="w-full bg-black/40 border border-white/10 rounded-xl py-2 px-4 text-sm text-slate-200 outline-none focus:border-indigo-400"
+                    className="w-full bg-black/40 border border-[#1e1b4b] rounded-xl py-2 px-4 text-sm text-slate-200 outline-none focus:border-indigo-400"
                     placeholder="Ex: Terapeuta Prânico Estelar"
                   />
                 </div>
@@ -483,7 +483,7 @@ ID: OC-${id}-${Date.now()}
                     required
                     value={formData.issuer}
                     onChange={(e) => setFormData(prev => ({ ...prev, issuer: e.target.value }))}
-                    className="w-full bg-black/40 border border-white/10 rounded-xl py-2 px-4 text-sm text-slate-200 outline-none focus:border-indigo-400"
+                    className="w-full bg-black/40 border border-[#1e1b4b] rounded-xl py-2 px-4 text-sm text-slate-200 outline-none focus:border-indigo-400"
                     placeholder="Ex: Templo Esotérico Urânia"
                   />
                 </div>
@@ -495,7 +495,7 @@ ID: OC-${id}-${Date.now()}
                       type="text"
                       value={formData.date}
                       onChange={(e) => setFormData(prev => ({ ...prev, date: e.target.value }))}
-                      className="w-full bg-black/40 border border-white/10 rounded-xl py-2 px-4 text-sm text-slate-200 outline-none focus:border-indigo-400"
+                      className="w-full bg-black/40 border border-[#1e1b4b] rounded-xl py-2 px-4 text-sm text-slate-200 outline-none focus:border-indigo-400"
                       placeholder="Ex: 12/10/2023"
                     />
                   </div>
@@ -507,7 +507,7 @@ ID: OC-${id}-${Date.now()}
                         type="checkbox"
                         checked={formData.visible}
                         onChange={(e) => setFormData(prev => ({ ...prev, visible: e.target.checked }))}
-                        className="rounded bg-black/40 border-white/15 text-indigo-600 focus:ring-indigo-500 w-4 h-4"
+                        className="rounded bg-black/40 border-[#2e2a5f] text-indigo-600 focus:ring-indigo-500 w-4 h-4"
                       />
                       <span className="text-xs text-slate-300 font-medium">Exibir no perfil público</span>
                     </label>
@@ -516,7 +516,7 @@ ID: OC-${id}-${Date.now()}
 
                 <div>
                   <label className="text-xs text-indigo-300 uppercase tracking-wider block mb-1 font-bold">Upload de Comprovante (Imagem / PDF)</label>
-                  <div className="border border-dashed border-white/10 hover:border-indigo-500/40 rounded-xl p-4 text-center cursor-pointer relative">
+                  <div className="border border-dashed border-[#1e1b4b] hover:border-indigo-500/40 rounded-xl p-4 text-center cursor-pointer relative">
                     <input 
                       type="file" 
                       accept="image/*,application/pdf"
@@ -530,7 +530,7 @@ ID: OC-${id}-${Date.now()}
                   </div>
                 </div>
 
-                <div className="flex gap-3 justify-end pt-4 border-t border-white/10">
+                <div className="flex gap-3 justify-end pt-4 border-t border-[#1e1b4b]">
                   <button 
                     type="button" 
                     onClick={() => setShowModal(false)}

@@ -18,9 +18,9 @@ export function getCoursesPool(): pg.Pool {
 }
 
 export const coursesPool = {
-  connect: (...args: any[]) => getCoursesPool().connect(...args),
-  query: (...args: any[]) => getCoursesPool().query(...args),
-  end: (...args: any[]) => getCoursesPool().end(...args),
+  connect: () => getCoursesPool().connect(),
+  query: (text: string, values?: any[]) => getCoursesPool().query(text, values),
+  end: () => getCoursesPool().end(),
 };
 
 export let useCoursesFallback = false;

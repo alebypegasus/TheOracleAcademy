@@ -78,7 +78,7 @@ export default function CartPage() {
             </button>
             <button 
               onClick={() => navigate('/library')}
-              className="py-3 px-6 rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 text-slate-300 font-bold transition-all"
+              className="py-3 px-6 rounded-xl border border-[#1e1b4b] bg-white/5 hover:bg-white/10 text-slate-300 font-bold transition-all"
             >
               Voltar ao Mercado
             </button>
@@ -100,19 +100,19 @@ export default function CartPage() {
       <div className="flex flex-col lg:flex-row gap-8">
         {/* Cart items list */}
         <div className="flex-1 flex flex-col gap-6">
-          <div className="flex items-center justify-between border-b border-indigo-500/10 pb-4">
+          <div className="flex items-center justify-between border-b border-[#1e1b4b] pb-4">
             <div className="flex items-center gap-3">
               <ShoppingCart className="w-6 h-6 text-indigo-400" />
               <h1 className="text-3xl font-serif text-slate-100">Seu Carrinho</h1>
             </div>
-            <span className="text-sm bg-indigo-500/10 border border-indigo-500/20 text-indigo-300 px-3 py-1 rounded-full font-semibold">
+            <span className="text-sm bg-indigo-500/10 border border-[#312e81] text-indigo-300 px-3 py-1 rounded-full font-semibold">
               {cartItems.length} {cartItems.length === 1 ? 'item' : 'itens'}
             </span>
           </div>
 
           {cartItems.length === 0 ? (
-            <div className="glass-panel p-16 rounded-2xl border border-white/5 flex flex-col items-center gap-4 text-center">
-              <div className="h-16 w-16 bg-white/5 border border-white/10 rounded-full flex items-center justify-center text-slate-400 mb-2">
+            <div className="glass-panel p-16 rounded-2xl border border-[#1e1b4b] flex flex-col items-center gap-4 text-center">
+              <div className="h-16 w-16 bg-white/5 border border-[#1e1b4b] rounded-full flex items-center justify-center text-slate-400 mb-2">
                 <ShoppingCart className="w-8 h-8" />
               </div>
               <h3 className="text-xl font-serif text-slate-200">Seu Caldeirão está Vazio!</h3>
@@ -134,9 +134,9 @@ export default function CartPage() {
                     key={item.id}
                     layout
                     exit={{ opacity: 0, x: -50 }}
-                    className="glass-panel p-4 rounded-xl border border-white/5 hover:border-indigo-500/20 flex flex-col sm:flex-row items-center gap-4 transition-all"
+                    className="glass-panel p-4 rounded-xl border border-[#1e1b4b] hover:border-[#312e81] flex flex-col sm:flex-row items-center gap-4 transition-all"
                   >
-                    <div className="h-16 w-16 rounded-lg bg-indigo-900/40 overflow-hidden flex-shrink-0 border border-indigo-500/10">
+                    <div className="h-16 w-16 rounded-lg bg-indigo-900/40 overflow-hidden flex-shrink-0 border border-[#1e1b4b]">
                       {item.cover_image ? (
                         <img src={item.cover_image} alt={item.title} className="w-full h-full object-cover" />
                       ) : (
@@ -148,7 +148,7 @@ export default function CartPage() {
 
                     <div className="flex-1 text-center sm:text-left">
                       <div className="flex items-center justify-center sm:justify-start gap-2">
-                        <span className="text-xs px-2 py-0.5 rounded bg-indigo-500/10 text-indigo-300 border border-indigo-500/10 font-bold uppercase">
+                        <span className="text-xs px-2 py-0.5 rounded bg-indigo-500/10 text-indigo-300 border border-[#1e1b4b] font-bold uppercase">
                           {item.category}
                         </span>
                         <span className="text-xs text-slate-400 font-semibold cursor-pointer hover:text-indigo-400" onClick={() => navigate(`/seller/${item.author_name}`)}>
@@ -181,8 +181,8 @@ export default function CartPage() {
         {/* Pricing Summary Sidepanel */}
         {cartItems.length > 0 && (
           <div className="w-full lg:w-96 flex flex-col gap-6">
-            <div className="glass-panel p-6 rounded-2xl border border-white/5 flex flex-col gap-6">
-              <h3 className="text-xl font-serif text-slate-100 border-b border-indigo-500/10 pb-3 flex items-center gap-2">
+            <div className="glass-panel p-6 rounded-2xl border border-[#1e1b4b] flex flex-col gap-6">
+              <h3 className="text-xl font-serif text-slate-100 border-b border-[#1e1b4b] pb-3 flex items-center gap-2">
                 <Wallet className="w-5 h-5 text-indigo-400" /> Resumo do Pedido
               </h3>
 
@@ -195,7 +195,7 @@ export default function CartPage() {
                   <span>Taxas da Egrégora</span>
                   <span className="font-semibold text-slate-200">R$ {getTax().toFixed(2)}</span>
                 </div>
-                <div className="border-t border-white/5 my-2"></div>
+                <div className="border-t border-[#1e1b4b] my-2"></div>
                 <div className="flex justify-between text-lg font-bold text-slate-100">
                   <span className="font-serif">Total Místico</span>
                   <span className="font-serif gold-text">R$ {getTotal().toFixed(2)}</span>
@@ -203,7 +203,7 @@ export default function CartPage() {
               </div>
 
               {/* Commission split indicator info */}
-              <div className="bg-indigo-500/5 border border-indigo-500/10 p-3 rounded-xl flex gap-2.5 text-xs text-indigo-300">
+              <div className="bg-indigo-500/5 border border-[#1e1b4b] p-3 rounded-xl flex gap-2.5 text-xs text-indigo-300">
                 <HelpCircle className="w-4 h-4 mt-0.5 flex-shrink-0" />
                 <p className="leading-relaxed">
                   <strong>Arquitetura de Split Seguro:</strong> 15% deste valor é retido para manter a infraestrutura da plataforma, e 85% é depositado instantaneamente na carteira de cada vendedor.
@@ -223,13 +223,13 @@ export default function CartPage() {
                     </button>
                     <button 
                       onClick={triggerPixSimulation}
-                      className="w-full py-2.5 px-6 rounded-xl border border-white/10 hover:bg-white/5 text-slate-300 font-semibold text-xs transition-all text-center"
+                      className="w-full py-2.5 px-6 rounded-xl border border-[#1e1b4b] hover:bg-white/5 text-slate-300 font-semibold text-xs transition-all text-center"
                     >
                       Ou Simular PIX Interno (Modo Sandbox)
                     </button>
                   </>
                 ) : (
-                  <div className="flex flex-col gap-4 bg-slate-900/60 p-4 rounded-xl border border-indigo-500/20 text-center animate-fade-in">
+                  <div className="flex flex-col gap-4 bg-slate-900/60 p-4 rounded-xl border border-[#312e81] text-center animate-fade-in">
                     <h4 className="text-sm font-bold text-slate-200">PIX Sandbox Interno</h4>
                     <p className="text-slate-400 text-xs leading-relaxed">
                       Escaneie ou copie a chave PIX abaixo para aprovar instantaneamente o repasse no banco de dados.
@@ -245,7 +245,7 @@ export default function CartPage() {
                     <textarea
                       readOnly
                       value={pixSimulatedCode || ''}
-                      className="w-full h-16 bg-black/40 text-[10px] text-indigo-300 font-mono p-2 rounded border border-white/10 select-all resize-none"
+                      className="w-full h-16 bg-black/40 text-[10px] text-indigo-300 font-mono p-2 rounded border border-[#1e1b4b] select-all resize-none"
                     />
 
                     <button 

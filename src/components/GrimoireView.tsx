@@ -356,7 +356,7 @@ export function GrimoireView({
 
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 flex-1">
         {/* Sidebar */}
-        <div className="lg:col-span-1 border-r border-white/5 pr-4 flex flex-col gap-2">
+        <div className="lg:col-span-1 border-r border-[#1e1b4b] pr-4 flex flex-col gap-2">
           {GRIMOIRE_CATEGORIES.map(category => {
             const Icon = category.icon;
             const isActive = activeCategory === category.id;
@@ -395,7 +395,7 @@ export function GrimoireView({
           <div className={`${isLocked ? 'opacity-30 pointer-events-none' : ''}`}>
             
             <div className="flex justify-between items-center mb-6">
-              <div className="glass-panel px-3 py-2 rounded-xl flex items-center border border-white/5 bg-black/20">
+              <div className="glass-panel px-3 py-2 rounded-xl flex items-center border border-[#1e1b4b] bg-black/20">
                 <ArrowUpDown className="w-4 h-4 text-slate-400 mr-2" />
                 <select 
                   value={sortBy} 
@@ -424,7 +424,7 @@ export function GrimoireView({
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, scale: 0.95 }}
-                  className="glass-panel rounded-3xl p-6 border border-white/10"
+                  className="glass-panel rounded-3xl p-6 border border-[#1e1b4b]"
                 >
                   <div className="flex justify-between items-center mb-6">
                     <h3 className="text-xl font-serif text-slate-200">Adicionar ao Grimório</h3>
@@ -439,7 +439,7 @@ export function GrimoireView({
                       <select 
                         value={newEntryType}
                         onChange={(e) => setNewEntryType(e.target.value)}
-                        className="w-full bg-black/20 border border-white/10 rounded-lg px-4 py-2.5 text-sm text-slate-200 outline-none focus:border-indigo-500/50"
+                        className="w-full bg-black/20 border border-[#1e1b4b] rounded-lg px-4 py-2.5 text-sm text-slate-200 outline-none focus:border-indigo-500/50"
                       >
                         {GRIMOIRE_CATEGORIES.filter(c => c.id !== 'all' && c.id !== 'reading').map(c => (
                           <option key={c.id} value={c.id}>{c.label}</option>
@@ -454,13 +454,13 @@ export function GrimoireView({
                         placeholder="Ex: Sonho com o Lobo de Prata..." 
                         value={newEntryTitle}
                         onChange={(e) => setNewEntryTitle(e.target.value)}
-                        className="w-full bg-black/20 border border-white/10 rounded-lg px-4 py-2.5 text-sm text-slate-200 outline-none focus:border-indigo-500/50"
+                        className="w-full bg-black/20 border border-[#1e1b4b] rounded-lg px-4 py-2.5 text-sm text-slate-200 outline-none focus:border-indigo-500/50"
                       />
                     </div>
 
                     <div>
                       <label className="block text-xs font-medium text-slate-400 mb-1">Anotações / Descrição</label>
-                      <div className="rounded-xl overflow-hidden border border-white/10 bg-black/30 focus-within:border-indigo-500/50 transition-colors">
+                      <div className="rounded-xl overflow-hidden border border-[#1e1b4b] bg-black/30 focus-within:border-indigo-500/50 transition-colors">
                         <Editor
                           editorState={editorState}
                           onEditorStateChange={(newState) => {
@@ -469,7 +469,7 @@ export function GrimoireView({
                           }}
                           wrapperClassName="demo-wrapper"
                           editorClassName="demo-editor px-5 py-4 min-h-[250px] text-slate-200 text-sm"
-                          toolbarClassName="!bg-black/40 !border-b !border-white/10 !border-x-0 !border-t-0 text-slate-300"
+                          toolbarClassName="!bg-black/40 !border-b !border-[#1e1b4b] !border-x-0 !border-t-0 text-slate-300"
                           toolbar={{
                             options: ['inline', 'blockType', 'fontSize', 'fontFamily', 'list', 'textAlign', 'colorPicker', 'link', 'embedded', 'emoji', 'image', 'remove', 'history'],
                             inline: { inDropdown: false },
@@ -521,7 +521,7 @@ export function GrimoireView({
 
                             <div className="flex items-center justify-between gap-4 border-b border-indigo-500/15 pb-2 mb-3">
                               <span className="font-serif text-indigo-300 font-semibold flex items-center gap-1.5">🔮 Mentor Hermético da Oracle Academy</span>
-                              <span className="bg-indigo-500/15 px-2 py-0.5 rounded-full text-[9px] font-black uppercase text-indigo-300 border border-indigo-500/20">Modulação: {aiResult.mysticalResonance}</span>
+                              <span className="bg-indigo-500/15 px-2 py-0.5 rounded-full text-[9px] font-black uppercase text-indigo-300 border border-[#312e81]">Modulação: {aiResult.mysticalResonance}</span>
                             </div>
 
                             <div className="space-y-3 font-light text-slate-300 leading-relaxed">
@@ -547,9 +547,9 @@ export function GrimoireView({
                                 </div>
                               )}
 
-                              <div className="pt-2 border-t border-indigo-500/10 flex flex-col gap-1">
+                              <div className="pt-2 border-t border-[#1e1b4b] flex flex-col gap-1">
                                 <span className="text-[10px] text-indigo-300 font-medium">Visualização da Escrita Refinada:</span>
-                                <div className="italic p-3 rounded-lg bg-black/40 border border-white/5 text-slate-300 leading-relaxed text-[11px]" dangerouslySetInnerHTML={{ __html: aiResult.correctedText }} />
+                                <div className="italic p-3 rounded-lg bg-black/40 border border-[#1e1b4b] text-slate-300 leading-relaxed text-[11px]" dangerouslySetInnerHTML={{ __html: aiResult.correctedText }} />
                               </div>
 
                               <div className="flex justify-end gap-2 pt-2">
@@ -578,7 +578,7 @@ export function GrimoireView({
                       <label className="block text-xs font-medium text-slate-400 mb-2">Anexos (Imagem, Vídeo, Áudio ou Foto)</label>
                       <div className="flex flex-wrap gap-3 mb-3">
                         {attachments.map((file, i) => (
-                          <div key={i} className="flex items-center gap-2 bg-white/5 border border-white/10 rounded-lg px-3 py-1.5 pr-1">
+                          <div key={i} className="flex items-center gap-2 bg-white/5 border border-[#1e1b4b] rounded-lg px-3 py-1.5 pr-1">
                             {file.type === 'image' ? <ImageIcon className="w-3 h-3 text-indigo-400" /> : <FileText className="w-3 h-3 text-emerald-400" />}
                             <span className="text-xs text-slate-300 max-w-[100px] truncate">{file.name}</span>
                             <button 
@@ -602,20 +602,20 @@ export function GrimoireView({
                         />
                         <button 
                           onClick={() => fileInputRef.current?.click()}
-                          className="flex items-center gap-2 px-3 py-1.5 bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg text-xs text-slate-200 transition-colors"
+                          className="flex items-center gap-2 px-3 py-1.5 bg-white/5 hover:bg-white/10 border border-[#1e1b4b] rounded-lg text-xs text-slate-200 transition-colors"
                         >
                           <ImageIcon className="w-4 h-4 text-indigo-400" /> Imagem / Foto
                         </button>
                         <button 
                           onClick={() => fileInputRef.current?.click()}
-                          className="flex items-center gap-2 px-3 py-1.5 bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg text-xs text-slate-200 transition-colors"
+                          className="flex items-center gap-2 px-3 py-1.5 bg-white/5 hover:bg-white/10 border border-[#1e1b4b] rounded-lg text-xs text-slate-200 transition-colors"
                         >
                           <File className="w-4 h-4 text-emerald-400" /> Documento / Áudio / Vídeo
                         </button>
                       </div>
                     </div>
 
-                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pt-4 border-t border-white/5">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pt-4 border-t border-[#1e1b4b]">
                       <div className="flex flex-col gap-2">
                         <div className="flex items-center gap-3">
                           <input
@@ -624,7 +624,7 @@ export function GrimoireView({
                             checked={syncToGoogle}
                             onChange={(e) => setSyncToGoogle(e.target.checked)}
                             disabled={!googleToken}
-                            className="w-4 h-4 rounded text-indigo-600 bg-black/40 border-white/10 focus:ring-indigo-500/50 cursor-pointer disabled:cursor-not-allowed"
+                            className="w-4 h-4 rounded text-indigo-600 bg-black/40 border-[#1e1b4b] focus:ring-indigo-500/50 cursor-pointer disabled:cursor-not-allowed"
                           />
                           <label htmlFor="syncToggle" className={`text-xs cursor-pointer select-none ${googleToken ? 'text-indigo-300 font-medium' : 'text-slate-500'}`}>
                             {googleToken ? 'Exportação automática para o Google Drive ao salvar' : 'Conecte-se ao Google Workspace para sincronizar automaticamente'}
@@ -633,7 +633,7 @@ export function GrimoireView({
                         
                         {/* Auto-export format pills */}
                         {syncToGoogle && (
-                          <div className="flex items-center gap-2 bg-black/40 border border-white/10 px-3 py-1 text-xs rounded-xl w-fit mt-1">
+                          <div className="flex items-center gap-2 bg-black/40 border border-[#1e1b4b] px-3 py-1 text-xs rounded-xl w-fit mt-1">
                             <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Formato:</span>
                             <button
                               type="button"
@@ -674,7 +674,7 @@ export function GrimoireView({
               ) : (
                 <motion.div key="list" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
                   {filteredAndSortedEntries.length === 0 ? (
-                    <div className="glass-panel p-12 rounded-3xl flex flex-col items-center justify-center text-center border-dashed border-white/20 min-h-[400px]">
+                    <div className="glass-panel p-12 rounded-3xl flex flex-col items-center justify-center text-center border-dashed border-[#312e81] min-h-[400px]">
                       <ScrollText className="w-16 h-16 text-slate-600 mb-4 opacity-50" />
                       <h3 className="text-xl font-serif text-slate-300 mb-2">Nenhum registro encontrado</h3>
                       <p className="text-slate-500 max-w-sm">
@@ -686,7 +686,7 @@ export function GrimoireView({
                   ) : (
                     <div className="grid gap-4">
                       {filteredAndSortedEntries.map((entry) => (
-                        <div key={entry.id} className="glass-panel rounded-2xl border border-white/5 hover:border-indigo-500/30 transition-all overflow-hidden bg-black/10">
+                        <div key={entry.id} className="glass-panel rounded-2xl border border-[#1e1b4b] hover:border-indigo-500/30 transition-all overflow-hidden bg-black/10">
                           <div 
                             className="p-5 cursor-pointer flex flex-col md:flex-row justify-between md:items-center gap-4"
                             onClick={() => toggleExpand(entry.id)}
@@ -696,7 +696,7 @@ export function GrimoireView({
                               {entry.cards && entry.cards.length > 0 && (
                                 <div className="flex gap-2 mt-2 overflow-x-auto pb-1 hide-scrollbar">
                                   {entry.cards.map((card: string, i: number) => (
-                                    <span key={i} className="whitespace-nowrap px-2 py-1 bg-indigo-500/10 border border-indigo-500/20 rounded-md text-indigo-300 text-[10px]">
+                                    <span key={i} className="whitespace-nowrap px-2 py-1 bg-indigo-500/10 border border-[#312e81] rounded-md text-indigo-300 text-[10px]">
                                       {card}
                                     </span>
                                   ))}
@@ -743,7 +743,7 @@ export function GrimoireView({
                                 animate={{ height: 'auto', opacity: 1 }}
                                 exit={{ height: 0, opacity: 0 }}
                                 transition={{ duration: 0.3 }}
-                                className="border-t border-white/5"
+                                className="border-t border-[#1e1b4b]"
                               >
                                 <div className="p-6 bg-black/30 text-slate-300 text-sm leading-relaxed prose prose-invert max-w-none">
                                   {/<[a-z][\s\S]*>/i.test(entry.content || entry.interpretation || '') ? (
@@ -753,18 +753,18 @@ export function GrimoireView({
                                   )}
                                   
                                   {entry.attachments && entry.attachments.length > 0 && (
-                                    <div className="mt-6 pt-4 border-t border-white/5">
+                                    <div className="mt-6 pt-4 border-t border-[#1e1b4b]">
                                       <h4 className="text-xs font-semibold uppercase tracking-wider text-slate-500 mb-3">Anexos</h4>
                                       <div className="flex flex-wrap gap-4">
                                         {entry.attachments.map((file: any, i: number) => (
                                           <div key={i}>
                                             {file.type === 'image' ? (
-                                              <div className="rounded-lg overflow-hidden border border-white/10 max-w-[200px]">
+                                              <div className="rounded-lg overflow-hidden border border-[#1e1b4b] max-w-[200px]">
                                                 <img src={file.url} alt={file.name} className="w-full h-auto object-cover" />
                                                 <div className="bg-black/50 p-2 text-[10px] text-slate-400 truncate" title={file.name}>{file.name}</div>
                                               </div>
                                             ) : (
-                                              <a href={file.url} download={file.name} className="flex items-center gap-2 px-3 py-2 bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg text-xs text-indigo-300 transition-colors">
+                                              <a href={file.url} download={file.name} className="flex items-center gap-2 px-3 py-2 bg-white/5 hover:bg-white/10 border border-[#1e1b4b] rounded-lg text-xs text-indigo-300 transition-colors">
                                                 <FileText className="w-4 h-4" /> <span className="max-w-[120px] truncate" title={file.name}>{file.name}</span>
                                               </a>
                                             )}

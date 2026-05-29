@@ -117,7 +117,7 @@ export function OracleTipCard() {
       <div className="relative z-10">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2">
-            <div className="w-9 h-9 rounded-xl border border-indigo-500/20 bg-indigo-500/10 flex items-center justify-center shrink-0">
+            <div className="w-9 h-9 rounded-xl border border-[#312e81] bg-indigo-500/10 flex items-center justify-center shrink-0">
               <Star className="w-5 h-5 text-indigo-400 rotate-12 group-hover:rotate-45 transition-transform duration-500" />
             </div>
             <div>
@@ -125,7 +125,7 @@ export function OracleTipCard() {
               <h3 className="text-sm font-semibold text-slate-300 font-serif">Dica do Oráculo</h3>
             </div>
           </div>
-          <span className="text-[10px] bg-indigo-500/10 border border-indigo-500/20 text-indigo-300 px-2 py-0.5 rounded-full font-mono">
+          <span className="text-[10px] bg-indigo-500/10 border border-[#312e81] text-indigo-300 px-2 py-0.5 rounded-full font-mono">
             {activeTip.type === 'dica' ? 'Dica' : 'Inovação'}
           </span>
         </div>
@@ -140,7 +140,7 @@ export function OracleTipCard() {
         </div>
       </div>
 
-      <div className="relative z-10 mt-4 pt-3 border-t border-white/5 flex items-center justify-between text-[11px] text-slate-500 font-mono">
+      <div className="relative z-10 mt-4 pt-3 border-t border-[#1e1b4b] flex items-center justify-between text-[11px] text-slate-500 font-mono">
         <span>Alinhamento em: ~{hoursLeft}h</span>
         <div className="flex items-center gap-1 text-indigo-400/80 group-hover:text-indigo-300 transition-colors">
           <span>Praticar Sabedoria</span>

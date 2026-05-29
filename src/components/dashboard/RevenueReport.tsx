@@ -366,7 +366,7 @@ export function RevenueReport() {
   return (
     <div className="space-y-8 max-w-7xl mx-auto w-full">
       {/* Intro Header */}
-      <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6 pb-6 border-b border-white/5">
+      <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6 pb-6 border-b border-[#1e1b4b]">
         <div>
           <h2 className="text-3xl font-serif font-black text-slate-100 flex items-center gap-3">
             <BarChart3 className="w-8 h-8 text-indigo-400" /> Relatórios de Receita
@@ -388,7 +388,7 @@ export function RevenueReport() {
           </button>
 
           {/* Time range switcher */}
-          <div className="bg-black/40 border border-white/10 p-1 rounded-xl flex items-center shrink-0">
+          <div className="bg-black/40 border border-[#1e1b4b] p-1 rounded-xl flex items-center shrink-0">
             <button 
               onClick={() => setTimeRange('7d')}
               className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${timeRange === '7d' ? 'bg-indigo-600 shadow text-white' : 'text-slate-400 hover:text-white'}`}
@@ -404,7 +404,7 @@ export function RevenueReport() {
           </div>
 
           {/* Category drop selection */}
-          <div className="relative flex items-center bg-black/40 border border-white/10 rounded-xl px-2.5 py-1.5 text-xs text-slate-300 w-full sm:w-auto shrink-0">
+          <div className="relative flex items-center bg-black/40 border border-[#1e1b4b] rounded-xl px-2.5 py-1.5 text-xs text-slate-300 w-full sm:w-auto shrink-0">
             <Filter className="w-3.5 h-3.5 text-slate-500 mr-2 shrink-0" />
             <select
               value={selectedCategory}
@@ -424,7 +424,7 @@ export function RevenueReport() {
       {/* KPI Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         {/* KPI 1 */}
-        <div className="glass-panel p-6 rounded-2xl border border-white/5 bg-gradient-to-br from-[#110d21]/40 to-black relative overflow-hidden">
+        <div className="glass-panel p-6 rounded-2xl border border-[#1e1b4b] bg-gradient-to-br from-[#110d21]/40 to-black relative overflow-hidden">
           <div className="absolute top-0 right-0 p-4 text-emerald-500/10">
             <DollarSign className="w-12 h-12" />
           </div>
@@ -439,7 +439,7 @@ export function RevenueReport() {
         </div>
 
         {/* KPI 2 */}
-        <div className="glass-panel p-6 rounded-2xl border border-white/5 bg-gradient-to-br from-[#110d21]/40 to-black relative overflow-hidden">
+        <div className="glass-panel p-6 rounded-2xl border border-[#1e1b4b] bg-gradient-to-br from-[#110d21]/40 to-black relative overflow-hidden">
           <div className="absolute top-0 right-0 p-4 text-indigo-500/10">
             <ShoppingBag className="w-12 h-12" />
           </div>
@@ -454,7 +454,7 @@ export function RevenueReport() {
         </div>
 
         {/* KPI 3 */}
-        <div className="glass-panel p-6 rounded-2xl border border-white/5 bg-gradient-to-br from-[#110d21]/40 to-black relative overflow-hidden">
+        <div className="glass-panel p-6 rounded-2xl border border-[#1e1b4b] bg-gradient-to-br from-[#110d21]/40 to-black relative overflow-hidden">
           <div className="absolute top-0 right-0 p-4 text-amber-500/10">
             <Sparkles className="w-12 h-12" />
           </div>
@@ -467,7 +467,7 @@ export function RevenueReport() {
         </div>
 
         {/* KPI 4 */}
-        <div className="glass-panel p-6 rounded-2xl border border-white/5 bg-gradient-to-br from-[#110d21]/40 to-black relative overflow-hidden">
+        <div className="glass-panel p-6 rounded-2xl border border-[#1e1b4b] bg-gradient-to-br from-[#110d21]/40 to-black relative overflow-hidden">
           <div className="absolute top-0 right-0 p-4 text-cyan-500/10">
             <TrendingUp className="w-12 h-12" />
           </div>
@@ -484,9 +484,9 @@ export function RevenueReport() {
       <div className="glass-panel p-6 sm:p-8 rounded-[2.2rem] border border-indigo-500/15 bg-gradient-to-br from-[#120930]/30 via-slate-950/40 to-black relative overflow-hidden shadow-2xl">
         <div className="absolute inset-0 bg-gradient-to-r from-indigo-500/5 to-purple-500/5 blur-xl opacity-30 pointer-events-none" />
         
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 relative z-10 border-b border-indigo-500/10 pb-5 mb-5">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 relative z-10 border-b border-[#1e1b4b] pb-5 mb-5">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-full bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-indigo-400">
+            <div className="w-10 h-10 rounded-full bg-indigo-500/10 border border-[#312e81] flex items-center justify-center text-indigo-400">
               <Sparkles className="w-5 h-5 animate-pulse" />
             </div>
             <div>
@@ -500,7 +500,7 @@ export function RevenueReport() {
           <button
             onClick={generateAiSummary}
             disabled={loadingSummary}
-            className="px-5 py-2.5 bg-indigo-600/15 hover:bg-indigo-600/30 border border-indigo-500/20 rounded-xl text-[10px] font-black uppercase tracking-widest text-[#a5b4fc] transition-all flex items-center gap-2"
+            className="px-5 py-2.5 bg-indigo-600/15 hover:bg-indigo-600/30 border border-[#312e81] rounded-xl text-[10px] font-black uppercase tracking-widest text-[#a5b4fc] transition-all flex items-center gap-2"
           >
             {loadingSummary ? <RefreshCw className="w-3.5 h-3.5 animate-spin text-indigo-400" /> : <Sparkles className="w-3.5 h-3.5 text-indigo-400" />}
             Sintonizar IA Oracular
@@ -527,7 +527,7 @@ export function RevenueReport() {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
         
         {/* Trend Area Chart */}
-        <div className="lg:col-span-8 glass-panel p-6 rounded-2xl border border-white/5 bg-black/30 relative">
+        <div className="lg:col-span-8 glass-panel p-6 rounded-2xl border border-[#1e1b4b] bg-black/30 relative">
           <div className="flex items-center justify-between mb-6">
             <div>
               <h3 className="text-lg font-serif font-black text-slate-100 flex items-center gap-2">
@@ -568,7 +568,7 @@ export function RevenueReport() {
         </div>
 
         {/* Share Bar Chart */}
-        <div className="lg:col-span-4 glass-panel p-6 rounded-2xl border border-white/5 bg-black/30 flex flex-col justify-between">
+        <div className="lg:col-span-4 glass-panel p-6 rounded-2xl border border-[#1e1b4b] bg-black/30 flex flex-col justify-between">
           <div>
             <h3 className="text-lg font-serif font-black text-slate-100 mb-1">
               Faturamento por Categoria
@@ -602,7 +602,7 @@ export function RevenueReport() {
             )}
           </div>
 
-          <div className="mt-4 pt-4 border-t border-white/5 grid grid-cols-2 gap-2 text-[10px] text-slate-400">
+          <div className="mt-4 pt-4 border-t border-[#1e1b4b] grid grid-cols-2 gap-2 text-[10px] text-slate-400">
             {categorySplitData.slice(0, 4).map(item => (
               <div key={item.name} className="flex items-center gap-1.5">
                 <span className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: item.color }} />
@@ -615,7 +615,7 @@ export function RevenueReport() {
       </div>
 
       {/* Transaction History Table */}
-      <div className="glass-panel p-6 rounded-2xl border border-white/5 bg-black/30">
+      <div className="glass-panel p-6 rounded-2xl border border-[#1e1b4b] bg-black/30">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
           <div>
             <h3 className="text-lg font-serif font-black text-slate-100">
@@ -633,7 +633,7 @@ export function RevenueReport() {
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs text-slate-300">
             <thead>
-              <tr className="border-b border-white/5 text-slate-400 font-mono text-[10px] uppercase tracking-wider">
+              <tr className="border-b border-[#1e1b4b] text-slate-400 font-mono text-[10px] uppercase tracking-wider">
                 <th className="py-3 px-4">ID Transação</th>
                 <th className="py-3 px-4">Item</th>
                 <th className="py-3 px-4">Categoria</th>
@@ -644,13 +644,13 @@ export function RevenueReport() {
                 <th className="py-3 px-4 text-right">Preço</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-white/5">
+            <tbody className="divide-y divide-[#1e1b4b]">
               {filteredSales.slice().reverse().map((sale) => (
                 <tr key={sale.id} className="hover:bg-white/[0.02] transition-colors group">
                   <td className="py-3.5 px-4 font-mono text-indigo-400 text-[11px]">{sale.id}</td>
                   <td className="py-3.5 px-4 font-bold text-slate-100 group-hover:text-amber-400 transition-colors">{sale.title}</td>
                   <td className="py-3.5 px-4">
-                    <span className="bg-white/5 border border-white/10 px-2 py-0.5 rounded-full text-[10px] capitalize text-slate-400">
+                    <span className="bg-white/5 border border-[#1e1b4b] px-2 py-0.5 rounded-full text-[10px] capitalize text-slate-400">
                       {CATEGORIES.find(c => c.id === sale.category)?.label.split(' ')[0] || sale.category}
                     </span>
                   </td>
