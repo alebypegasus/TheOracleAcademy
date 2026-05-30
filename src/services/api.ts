@@ -18,6 +18,18 @@ const getCurrentUserId = (): string | null => {
   }
 };
 
+/** Utility for components that use fetch() directly instead of apiRequest().
+ *  Returns a headers object with Authorization (if available) and x-user-id.
+ *  Usage: fetch('/api/...', { headers: getAuthHeaders(userId) })
+ */
+export const getAuthHeaders = (overrideUserId?: string | number): Record<string, string> => {
+  const token = getAuthToken();
+  const userId = overrideUserId?.toString() ?? getCurrentUserId() ?? '1';
+  const headers: Record<string, string> = { 'x-user-id': userId };
+  if (token) headers['Authorization'] = `Bearer ${token}`;
+  return headers;
+};
+
 export const setAuthSession = (token: string, user: any) => {
   localStorage.setItem('oracle_jwt_token', token);
   localStorage.setItem('oracle_user', JSON.stringify(user));

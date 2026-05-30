@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import { Info, ChevronRight, Lock, ChevronDown, User, Star, PlayCircle, CheckCircle2 } from 'lucide-react';
 import { Tooltip } from '../ui/Tooltip';
 import { SectionLock } from '../ui/SectionLock';
+import { usePlan } from '../../hooks/usePlan';
 
 export function CurrentCourseCard({ searchQuery, currentUser, onNavigate }: { searchQuery: string, currentUser: any, onNavigate?: (path: string) => void }) {
   const [isExpanded, setIsExpanded] = useState(false);
@@ -47,7 +48,8 @@ export function CurrentCourseCard({ searchQuery, currentUser, onNavigate }: { se
   }
 
   const course = filteredCourses[0];
-  const isLocked = !currentUser?.isPaid;
+  const { isFree } = usePlan(currentUser);
+  const isLocked = isFree;
 
   return (
     <div className="h-full w-full p-1 relative overflow-hidden group transition-colors flex flex-col">
@@ -60,7 +62,7 @@ export function CurrentCourseCard({ searchQuery, currentUser, onNavigate }: { se
           <h3 className="text-2xl font-serif text-slate-200 mb-2 drop-shadow-md">Conteúdo Premium</h3>
           <p className="text-sm text-slate-400 mb-6 text-center max-w-sm">Dê um passo além na sua jornada espiritual. Faça o upgrade para acessar este e outros cursos exclusivos de maestria.</p>
           <button 
-            onClick={() => { if(onNavigate) onNavigate('/subscription'); else window.location.hash = '#/subscription'; }}
+            onClick={() => document.dispatchEvent(new Event('OPEN_SUBSCRIPTION_MODAL'))}
             className="px-8 py-3 bg-gradient-to-r from-amber-600 via-amber-500 to-amber-400 text-slate-900 font-bold rounded-full text-sm uppercase tracking-widest shadow-[0_0_20px_rgba(245,158,11,0.4)] hover:scale-105 transition-transform">
             Destravar Sabedoria
           </button>

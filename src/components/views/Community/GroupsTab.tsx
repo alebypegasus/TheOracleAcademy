@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { motion } from 'motion/react';
 import { Star, Shield, Users, Plus, Settings } from 'lucide-react';
 import { Card } from '@heroui/react';
-import { EgregoraAdminPanel } from './EgregoraAdminPanel';
-import { EgregoraDetailView } from './EgregoraDetailView';
+import { EgregoraRootView } from './Egregora/EgregoraRootView';
+import { EgregoraCreateWizard } from './Egregora/components/EgregoraCreateWizard';
 
 interface GroupsTabProps {
   currentUser: any;
@@ -12,10 +12,7 @@ interface GroupsTabProps {
 export function GroupsTab({ currentUser }: GroupsTabProps) {
   const [groups, setGroups] = useState<any[]>([]);
   const [isOpen, setIsOpen] = useState(false);
-  const [adminPanelGroup, setAdminPanelGroup] = useState<any | null>(null);
   const [activeEgregora, setActiveEgregora] = useState<any | null>(null);
-  
-  const [newGroup, setNewGroup] = useState({ name: '', desc: '', isPrivate: false });
 
   useEffect(() => {
     fetchGroups();
@@ -23,14 +20,15 @@ export function GroupsTab({ currentUser }: GroupsTabProps) {
 
   const fetchGroups = async () => {
     try {
-      const res = await fetch('/api/community/groups', {
-        headers: { 'Authorization': `Bearer fake-jwt`, 'x-user-id': currentUser?.id || '1' }
-      });
+      const token = localStorage.getItem('token');
+      const headers: Record<string, string> = { 'x-user-id': String(currentUser?.id || '1') };
+      if (token) headers['Authorization'] = `Bearer ${token}`;
+      const res = await fetch('/api/community/groups', { headers });
       const data = await res.json();
-      setGroups(Array.isArray(data) && data.length > 0 ? data : getMockGroups());
+      setGroups(Array.isArray(data) ? data : []);
     } catch (e) {
       console.error(e);
-      setGroups(getMockGroups());
+      setGroups([]);
     }
   };
 
@@ -61,24 +59,34 @@ export function GroupsTab({ currentUser }: GroupsTabProps) {
     }
   ];
 
-  const handleCreateGroup = async (onClose: () => void) => {
+  const handleCreateGroup = async (groupData: any) => {
     try {
+      const token = localStorage.getItem('token');
+      const headers: Record<string, string> = {
+        'Content-Type': 'application/json',
+        'x-user-id': String(currentUser?.id || '1')
+      };
+      if (token) headers['Authorization'] = `Bearer ${token}`;
       const res = await fetch('/api/community/groups', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer fake-jwt`, 'x-user-id': currentUser?.id || '1' },
-        body: JSON.stringify({ name: newGroup.name, description: newGroup.desc, isPrivate: newGroup.isPrivate })
+        headers,
+        body: JSON.stringify(groupData)
       });
+      if (!res.ok) {
+        const err = await res.json();
+        console.error('Erro ao criar egrégora:', err);
+        return;
+      }
       const created = await res.json();
-      setGroups([created, ...groups]);
-      onClose();
-      setNewGroup({ name: '', desc: '', isPrivate: false });
+      setGroups(prev => [created, ...prev]);
+      setIsOpen(false);
     } catch (e) {
       console.error(e);
     }
   };
 
   if (activeEgregora) {
-    return <EgregoraDetailView group={activeEgregora} currentUser={currentUser} onBack={() => setActiveEgregora(null)} />;
+    return <EgregoraRootView egregora={activeEgregora} currentUser={currentUser} onBack={() => setActiveEgregora(null)} />;
   }
 
   return (
@@ -116,10 +124,10 @@ export function GroupsTab({ currentUser }: GroupsTabProps) {
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent"></div>
                 {group.owner_id === currentUser?.id && (
                   <button 
-                    onClick={(e) => { e.stopPropagation(); setAdminPanelGroup(group); }}
+                    onClick={(e) => { e.stopPropagation(); setActiveEgregora(group); }}
                     className="absolute top-3 right-3 backdrop-blur-md bg-warning/20 border border-warning/50 hover:bg-warning/40 text-warning px-2 py-1 rounded-full text-xs flex items-center gap-1 transition-colors z-10"
                   >
-                    <Settings size={12}/> Gerir Membros
+                    <Settings size={12}/> Gerir
                   </button>
                 )}
               </div>
@@ -141,57 +149,10 @@ export function GroupsTab({ currentUser }: GroupsTabProps) {
       </div>
 
       {isOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
-          <motion.div 
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            className="bg-zinc-900 border border-white/10 rounded-2xl p-6 w-full max-w-md shadow-2xl"
-          >
-            <h3 className="text-xl font-bold text-white mb-4">Fundar Nova Egrégora</h3>
-            <div className="space-y-4">
-              <div className="flex flex-col gap-1">
-                <label className="text-sm text-gray-400">Nome do Círculo</label>
-                <input 
-                  placeholder="Ex: Alquimistas da Lua Negra" 
-                  value={newGroup.name}
-                  onChange={(e: any) => setNewGroup({...newGroup, name: e.target.value})}
-                  className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-sm text-white placeholder-gray-500 focus:border-purple-500/50 outline-none"
-                />
-              </div>
-              <div className="flex flex-col gap-1">
-                <label className="text-sm text-gray-400">Propósito (Descrição)</label>
-                <textarea 
-                  placeholder="Qual o objetivo desta egrégora?" 
-                  value={newGroup.desc}
-                  onChange={(e: any) => setNewGroup({...newGroup, desc: e.target.value})}
-                  className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-sm text-white placeholder-gray-500 focus:border-purple-500/50 outline-none"
-                  rows={3}
-                />
-              </div>
-              <div className="flex justify-between items-center mt-2">
-                <span className="text-sm text-gray-300">Tornar Egrégora Privada?</span>
-                <button 
-                  onClick={() => setNewGroup({...newGroup, isPrivate: !newGroup.isPrivate})}
-                  className={`w-12 h-6 rounded-full transition-colors relative ${newGroup.isPrivate ? 'bg-purple-600' : 'bg-gray-600'}`}
-                >
-                  <div className={`w-4 h-4 bg-white rounded-full absolute top-1 transition-transform ${newGroup.isPrivate ? 'translate-x-7' : 'translate-x-1'}`}></div>
-                </button>
-              </div>
-            </div>
-            <div className="flex justify-end gap-3 mt-8">
-              <button className="px-4 py-2 text-sm font-medium text-gray-400 hover:text-white transition-colors rounded-xl" onClick={() => setIsOpen(false)}>Cancelar</button>
-              <button className="bg-purple-600 hover:bg-purple-500 text-white px-4 py-2 rounded-xl text-sm font-medium transition-colors" onClick={() => handleCreateGroup(() => setIsOpen(false))}>Consagrar</button>
-            </div>
-          </motion.div>
-        </div>
-      )}
-
-      {/* Admin Panel Modal */}
-      {adminPanelGroup && (
-        <EgregoraAdminPanel 
-          egregoraName={adminPanelGroup.name}
+        <EgregoraCreateWizard 
           currentUser={currentUser}
-          onClose={() => setAdminPanelGroup(null)}
+          onClose={() => setIsOpen(false)}
+          onCreate={handleCreateGroup}
         />
       )}
     </div>

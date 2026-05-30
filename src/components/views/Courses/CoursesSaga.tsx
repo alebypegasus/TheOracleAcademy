@@ -2,7 +2,10 @@ import React from 'react';
 import { motion } from 'motion/react';
 import { Sparkles, Trophy, Lock, Heart, ArrowRight, Zap } from 'lucide-react';
 import { Tooltip } from '../../ui/Tooltip';
+import { PageCard } from '../../ui/PageCard';
 import { MODULES } from './constants';
+
+const MotionPageCard = motion(PageCard as any);
 
 interface CoursesSagaProps {
   canAccess: (tier: string) => boolean;
@@ -93,16 +96,17 @@ export function CoursesSaga({
                        const requiresPlan = levelBlock.level >= 1;
                        const isPlanLocked = requiresPlan && !canAccess('medium');
                        return (
-                        <motion.div 
+                        <MotionPageCard 
                           layoutId={`course-card-${node.id}`}
                           key={node.id}
                           onClick={() => !isPlanLocked && handleNodeClick(node, levelBlock)}
+                          noHover={isPlanLocked || !levelUnlocked}
                           className={`
-                            p-8 sm:p-10 rounded-[2rem] border flex flex-col items-start gap-8 transition-all text-left relative overflow-hidden group/node
+                            p-8 sm:p-10 flex flex-col items-start gap-8 transition-transform text-left group/node
                             ${isPlanLocked ? 'cursor-default' : 'cursor-pointer'}
                             ${levelUnlocked 
-                              ? 'bg-white/[0.02] hover:bg-white/[0.04] border-[#1e1b4b] hover:border-[#312e81] hover:-translate-y-2' 
-                              : 'bg-transparent border-white/[0.02] cursor-not-allowed'}
+                              ? 'hover:-translate-y-2' 
+                              : 'grayscale opacity-50 cursor-not-allowed'}
                           `}
                         >
                            <div className="flex justify-between w-full relative z-10 items-start">
@@ -149,16 +153,18 @@ export function CoursesSaga({
                                  <h4 className="text-base font-serif font-bold text-purple-300">Ascendente</h4>
                                  <p className="text-xs text-slate-500 mt-1">R$ 49,90/mês</p>
                                </div>
-                               <a
-                                  href="#/subscription"
-                                  onClick={e => e.stopPropagation()}
+                               <button
+                                  onClick={e => {
+                                    e.stopPropagation();
+                                    document.dispatchEvent(new Event('OPEN_SUBSCRIPTION_MODAL'));
+                                  }}
                                   className="px-5 py-2 rounded-xl text-xs font-bold bg-purple-600 hover:bg-purple-500 text-white shadow-[0_0_15px_rgba(147,51,234,0.3)] transition-all mt-1"
                                >
                                  Fazer Upgrade →
-                               </a>
+                               </button>
                              </div>
                            )}
-                         </motion.div>
+                         </MotionPageCard>
                         );
                       })}
                     </div>

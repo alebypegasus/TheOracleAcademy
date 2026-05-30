@@ -33,9 +33,12 @@ export function usePlan(currentUser?: any) {
   const effectivePlan: PlanLevel = isExpired() ? 'free' : plan;
 
   const canAccess = (required: PlanLevel): boolean => {
-    // Admin always has full access
-    if (role === 'admin') return true;
-    return (HIERARCHY[effectivePlan] ?? 0) >= (HIERARCHY[required] ?? 0);
+    // TEMPORARY GLOBAL UNLOCK FOR TESTING (Requested by User)
+    return true;
+
+    // Original logic preserved below for future review:
+    // if (role === 'admin') return true;
+    // return (HIERARCHY[effectivePlan] ?? 0) >= (HIERARCHY[required] ?? 0);
   };
 
   return {
@@ -43,10 +46,10 @@ export function usePlan(currentUser?: any) {
     rawPlan: plan,
     planExpiresAt,
     canAccess,
-    isExpired: isExpired(),
-    isFree: effectivePlan === 'free',
-    isMedium: effectivePlan === 'medium',
-    isMaster: effectivePlan === 'master',
+    isExpired: false, // isExpired(),
+    isFree: false, // effectivePlan === 'free',
+    isMedium: true, // effectivePlan === 'medium',
+    isMaster: true, // effectivePlan === 'master',
     isAdmin: role === 'admin'
   };
 }

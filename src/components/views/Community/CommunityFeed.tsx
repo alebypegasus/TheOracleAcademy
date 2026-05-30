@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'motion/react';
 import { RichPostEditor } from './RichPostEditor';
-import { Heart, MessageCircle, Share2, Sparkles, MoreHorizontal, User } from 'lucide-react';
+import { Heart, MessageCircle, Share2, Sparkles, MoreHorizontal } from 'lucide-react';
 import { AdBanner } from '../../AdBanner';
+import { getAuthHeaders } from '../../../services/api';
 
 interface CommunityFeedProps {
   currentUser: any;
@@ -19,7 +20,7 @@ export function CommunityFeed({ currentUser }: CommunityFeedProps) {
   const fetchPosts = async () => {
     try {
       const res = await fetch('/api/community/posts', {
-        headers: { 'Authorization': `Bearer fake-jwt`, 'x-user-id': currentUser?.id || '1' }
+        headers: getAuthHeaders(currentUser?.id)
       });
       const data = await res.json();
       setPosts(Array.isArray(data) ? data : []);
@@ -35,28 +36,14 @@ export function CommunityFeed({ currentUser }: CommunityFeedProps) {
     try {
       const res = await fetch('/api/community/posts', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer fake-jwt`,
-          'x-user-id': currentUser?.id || '1'
-        },
+        headers: { ...getAuthHeaders(currentUser?.id), 'Content-Type': 'application/json' },
         body: JSON.stringify({ content, coven, tags: [] })
       });
-      if (!res.ok) throw new Error("Backend falhou, usando mock local");
+      if (!res.ok) throw new Error('Erro ao publicar post');
       const newPost = await res.json();
-      setPosts([newPost, ...posts]);
+      setPosts(prev => [newPost, ...prev]);
     } catch (e) {
-      // Mock Bypass (já que o banco está vazio/desconectado para a UI Test)
-      const mockPost = {
-        id: Date.now(),
-        content,
-        coven,
-        author: currentUser || { name: 'Mago Sem Nome', avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=150' },
-        createdAt: new Date().toISOString(),
-        likes: 0,
-        comments: []
-      };
-      setPosts([mockPost, ...posts]);
+      console.error(e);
     }
   };
 
@@ -64,7 +51,7 @@ export function CommunityFeed({ currentUser }: CommunityFeedProps) {
     try {
       const res = await fetch(`/api/community/posts/${postId}/like`, {
         method: 'POST',
-        headers: { 'Authorization': `Bearer fake-jwt`, 'x-user-id': currentUser?.id || '1' }
+        headers: getAuthHeaders(currentUser?.id)
       });
       const data = await res.json();
       setPosts(posts.map(p => p.id === postId ? { ...p, likes: data.likes } : p));

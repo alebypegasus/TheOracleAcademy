@@ -3,6 +3,7 @@ import { Camera, Save, Upload, Sparkles, Shield, Flame, Compass, Trophy, Crown, 
 import { motion } from "motion/react";
 import { CertificatesView } from './CertificatesView';
 import { WorkspaceView } from './WorkspaceView';
+import { PageCard } from '../ui/PageCard';
 
 export function getAutoMagicDetails(xp: number = 100) {
   if (xp < 150) {
@@ -187,7 +188,9 @@ export function ProfileView({
         body: JSON.stringify(finalPayload),
       });
       if (res.ok) {
-        setCurrentUser({ ...currentUser, ...finalPayload });
+        const updatedUser = { ...currentUser, ...finalPayload };
+        setCurrentUser(updatedUser);
+        localStorage.setItem('oracle_user', JSON.stringify(updatedUser));
         alert("Perfil místico sincronizado com as estrelas!");
       } else {
         const errorData = await res.json();
@@ -241,9 +244,8 @@ export function ProfileView({
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div className="col-span-1 space-y-6">
           {/* Avatar Section */}
-          <motion.div 
-            whileHover={{ y: -5 }}
-            className="glass-panel p-6 rounded-3xl flex flex-col items-center text-center border-[#1e1b4b] shadow-[0_0_40px_rgba(99,102,241,0.08)] hover:shadow-indigo-500/20 transition-all duration-500"
+          <PageCard 
+            className="p-6 rounded-3xl flex flex-col items-center text-center border-[#1e1b4b] shadow-[0_0_40px_rgba(99,102,241,0.08)] hover:shadow-indigo-500/20 transition-all duration-500"
           >
             <input
               type="file"
@@ -291,10 +293,10 @@ export function ProfileView({
             >
               Alterar Foto
             </button>
-          </motion.div>
+          </PageCard>
 
           {/* Plan Section */}
-          <div className="glass-panel p-6 rounded-2xl relative overflow-hidden group">
+          <PageCard className="p-6 rounded-2xl relative overflow-hidden group">
             {currentUser?.isPaid ? (
               <>
                 <div className="absolute top-0 right-0 w-32 h-32 bg-amber-500/10 rounded-full blur-[40px] pointer-events-none" />
@@ -385,10 +387,10 @@ export function ProfileView({
                 </div>
               </>
             )}
-          </div>
+          </PageCard>
 
           {/* Certificates Shortcut Section - now a tab button */}
-          <div className="glass-panel p-6 rounded-2xl flex flex-col gap-4">
+          <PageCard className="p-6 rounded-2xl flex flex-col gap-4">
             <div>
               <h3 className="text-lg font-serif text-slate-200 mb-2 uppercase tracking-widest text-sm">
                 Meus Certificados
@@ -423,10 +425,10 @@ export function ProfileView({
                 </span>
               </div>
             </div>
-          </div>
+          </PageCard>
 
           {/* Gamification Badge Widget */}
-          <div className="glass-panel p-6 rounded-2xl flex flex-col gap-6" id="gamification-badges">
+          <PageCard className="p-6 rounded-2xl flex flex-col gap-6" id="gamification-badges">
             <div>
               <h3 className="text-lg font-serif text-slate-200 mb-1 uppercase tracking-widest text-sm flex items-center gap-2">
                 <Trophy className="w-5 h-5 text-amber-400" /> Selos de Maestria
@@ -511,11 +513,11 @@ export function ProfileView({
                 );
               })}
             </div>
-          </div>
+          </PageCard>
         </div>
 
         <div className="col-span-2 space-y-6">
-          <div className="glass-panel p-6 md:p-8 rounded-2xl">
+          <PageCard className="p-6 md:p-8 rounded-2xl">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 border-b border-[#1e1b4b] pb-4">
               <h3 className="text-xl font-serif text-slate-200 uppercase tracking-widest text-sm">
                 Informações Pessoais & Altar Místico
@@ -782,9 +784,10 @@ export function ProfileView({
                 Salvar Perfil
               </button>
             </div>
+          </PageCard>
 
             {/* SAVED BIRTH CHART SECTION */}
-            <div className="mt-8 glass-panel p-6 md:p-8 rounded-2xl border border-amber-500/20 bg-gradient-to-r from-slate-950 via-[#120e29] to-slate-950 relative overflow-hidden text-left">
+            <PageCard className="mt-8 p-6 md:p-8 rounded-2xl border-amber-500/20 bg-gradient-to-r from-slate-950 via-[#120e29] to-slate-950 relative overflow-hidden text-left">
               <div className="absolute top-0 right-0 w-48 h-48 bg-amber-500/5 rounded-full blur-3xl" />
               <h3 className="text-xl font-serif text-amber-400 mb-6 uppercase tracking-widest text-sm border-b border-amber-500/20 pb-4 flex items-center gap-2 font-bold">
                 🔮 Seu Mapa Astral Permanente
@@ -848,10 +851,10 @@ export function ProfileView({
                   </a>
                 </div>
               )}
-            </div>
+            </PageCard>
 
             {/* BADGES SECTION */}
-            <div className="mt-8 glass-panel p-6 md:p-8 rounded-2xl border border-[#312e81] bg-gradient-to-r from-[#0d091e] to-[#120e29] relative overflow-hidden text-left">
+            <PageCard className="mt-8 p-6 md:p-8 rounded-2xl border-[#312e81] bg-gradient-to-r from-[#0d091e] to-[#120e29] relative overflow-hidden text-left">
               <h3 className="text-xl font-serif text-indigo-400 mb-6 uppercase tracking-widest text-sm border-b border-[#312e81] pb-4 flex items-center gap-2 font-bold">
                 🏅 Insígnias & Conquistas
               </h3>
@@ -886,11 +889,10 @@ export function ProfileView({
                   <p className="text-xs text-slate-400">Nenhuma insígnia conquistada ainda. Continue sua jornada!</p>
                 </div>
               )}
-            </div>
+            </PageCard>
 
           </div>
         </div>
-      </div>
       )}
     </motion.div>
   );

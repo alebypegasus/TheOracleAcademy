@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'motion/react';
-import { Users, Search, MessageCircle, UserPlus, Circle } from 'lucide-react';
+import { Users, Search, MessageCircle, Circle } from 'lucide-react';
 import { Card } from '@heroui/react';
+import { getAuthHeaders } from '../../../services/api';
 
 interface FriendsTabProps {
   currentUser: any;
@@ -25,7 +26,7 @@ export function FriendsTab({ currentUser }: FriendsTabProps) {
   const fetchFriends = async () => {
     try {
       const res = await fetch('/api/community/friends', {
-        headers: { 'Authorization': `Bearer fake-jwt`, 'x-user-id': currentUser?.id || '1' }
+        headers: getAuthHeaders(currentUser?.id)
       });
       const data = await res.json();
       if (Array.isArray(data) && data.length > 0) {

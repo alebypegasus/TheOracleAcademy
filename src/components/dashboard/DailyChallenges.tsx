@@ -2,9 +2,11 @@ import React from 'react';
 import { BookOpen, Star, Layers, Sparkles, Circle, Lock } from 'lucide-react';
 import { Tooltip } from '../ui/Tooltip';
 import { SectionLock } from '../ui/SectionLock';
+import { usePlan } from '../../hooks/usePlan';
 
 export function DailyChallenges({ onNavigate, profile, grimoireEntries, currentUser, challenges: dbChallenges }: { onNavigate: (path: string) => void, profile: any, grimoireEntries: any[], currentUser: any, challenges: any }) {
-  const isLocked = !currentUser?.isPaid;
+  const { isFree } = usePlan(currentUser);
+  const isLocked = isFree;
 
   const threeCardReadings = grimoireEntries?.filter((e: any) => e.spreadType?.includes('3')).length || 0;
   const quizDoneStatus = dbChallenges?.completedQuiz || false;

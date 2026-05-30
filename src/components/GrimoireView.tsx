@@ -9,6 +9,7 @@ import htmlToDraft from 'html-to-draftjs';
 import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
 import { SectionLock } from './ui/SectionLock';
 import { AdBanner } from './AdBanner';
+import { PageCard } from './ui/PageCard';
 
 const GRIMOIRE_CATEGORIES = [
   { id: 'all', label: 'Tudo', icon: Book },
@@ -429,9 +430,9 @@ export function GrimoireView({
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, scale: 0.95 }}
-                  className="glass-panel rounded-3xl p-6 border border-[#1e1b4b]"
                 >
-                  <div className="flex justify-between items-center mb-6">
+                  <PageCard className="p-6">
+                    <div className="flex justify-between items-center mb-6">
                     <h3 className="text-xl font-serif text-slate-200">Adicionar ao Grimório</h3>
                     <button onClick={() => setIsCreating(false)} className="text-slate-400 hover:text-slate-200">
                       <X className="w-5 h-5" />
@@ -675,11 +676,12 @@ export function GrimoireView({
                       </div>
                     </div>
                   </div>
-                </motion.div>
+                </PageCard>
+              </motion.div>
               ) : (
                 <motion.div key="list" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
                   {filteredAndSortedEntries.length === 0 ? (
-                    <div className="glass-panel p-12 rounded-3xl flex flex-col items-center justify-center text-center border-dashed border-[#312e81] min-h-[400px]">
+                    <PageCard className="p-12 flex flex-col items-center justify-center text-center border-dashed min-h-[400px]">
                       <ScrollText className="w-16 h-16 text-slate-600 mb-4 opacity-50" />
                       <h3 className="text-xl font-serif text-slate-300 mb-2">Nenhum registro encontrado</h3>
                       <p className="text-slate-500 max-w-sm">
@@ -687,11 +689,11 @@ export function GrimoireView({
                           ? "Seu Grimório está vazio. Consulte o Oráculo ou crie uma nova anotação."
                           : "Categoria vazia. Clique em 'Novo Registro' para adicionar."}
                       </p>
-                    </div>
+                    </PageCard>
                   ) : (
                     <div className="grid gap-4">
                       {filteredAndSortedEntries.map((entry) => (
-                        <div key={entry.id} className="glass-panel rounded-2xl border border-[#1e1b4b] hover:border-indigo-500/30 transition-all overflow-hidden bg-black/10">
+                        <PageCard key={entry.id} className="hover:border-indigo-500/30 transition-all overflow-hidden bg-black/10">
                           <div 
                             className="p-5 cursor-pointer flex flex-col md:flex-row justify-between md:items-center gap-4"
                             onClick={() => toggleExpand(entry.id)}
@@ -844,7 +846,7 @@ export function GrimoireView({
                               </motion.div>
                             )}
                           </AnimatePresence>
-                        </div>
+                        </PageCard>
                       ))}
                     </div>
                   )}

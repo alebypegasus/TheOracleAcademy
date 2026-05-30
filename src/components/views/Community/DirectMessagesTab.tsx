@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Send, Image as ImageIcon, Paperclip, Smile, MessageCircle } from 'lucide-react';
-import { Button, Input, Avatar, ScrollShadow } from '@heroui/react';
+import { Send, Image as ImageIcon, MessageCircle } from 'lucide-react';
+import { ScrollShadow } from '@heroui/react';
+import { getAuthHeaders } from '../../../services/api';
 
 interface DirectMessagesTabProps {
   currentUser: any;
@@ -26,16 +27,13 @@ export function DirectMessagesTab({ currentUser }: DirectMessagesTabProps) {
   const fetchMessages = async (friendId: number) => {
     try {
       const res = await fetch(`/api/community/messages/${friendId}`, {
-        headers: { 'Authorization': `Bearer fake-jwt`, 'x-user-id': currentUser?.id || '1' }
+        headers: getAuthHeaders(currentUser?.id)
       });
       const data = await res.json();
       if (Array.isArray(data) && data.length > 0) {
         setMessages(data);
       } else {
-        // Stub
-        setMessages([
-          { id: 1, sender_id: friendId, content: 'Olá! A luz astral o guia.', sent_at: new Date().toISOString() }
-        ]);
+        setMessages([{ id: 1, sender_id: friendId, content: 'Olá! A luz astral o guia.', sent_at: new Date().toISOString() }]);
       }
     } catch (e) {
       console.error(e);
@@ -60,7 +58,7 @@ export function DirectMessagesTab({ currentUser }: DirectMessagesTabProps) {
     try {
       await fetch('/api/community/messages', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer fake-jwt`, 'x-user-id': currentUser?.id || '1' },
+        headers: { ...getAuthHeaders(currentUser?.id), 'Content-Type': 'application/json' },
         body: JSON.stringify({ receiverId: selectedChat.id, content: txt, format: 'text' })
       });
     } catch (e) {

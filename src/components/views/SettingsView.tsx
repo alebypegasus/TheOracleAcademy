@@ -3,6 +3,8 @@ import { motion, AnimatePresence } from 'motion/react';
 import { Settings, Upload, CheckCircle2, Phone, Shield, ShieldCheck, Bell, BellRing, Wallet, DollarSign, ArrowRightLeft, Clock, History } from 'lucide-react';
 import { requestForToken } from '../../lib/firebase';
 
+import { PageCard } from '../ui/PageCard';
+
 export function SettingsView({ profile, setProfile }: any) {
   const [name, setName] = useState(profile.name);
   const [avatarUrl, setAvatarUrl] = useState(profile.avatar);
@@ -109,7 +111,7 @@ export function SettingsView({ profile, setProfile }: any) {
   };
 
   return (
-    <div className="glass-panel p-8 md:p-12 rounded-[2rem] border border-[#1e1b4b] relative overflow-hidden">
+    <PageCard className="p-8 md:p-12 rounded-[2rem] border border-[#1e1b4b] relative overflow-hidden">
       <div className="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-transparent via-indigo-500/30 to-transparent" />
       
       <div className="flex items-center gap-4 mb-8">
@@ -485,6 +487,6 @@ export function SettingsView({ profile, setProfile }: any) {
           </button>
         </div>
       </div>
-    </div>
+    </PageCard>
   );
 }

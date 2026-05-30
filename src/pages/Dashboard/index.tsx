@@ -14,15 +14,9 @@ import { AIStudyPlanCard } from '../../components/dashboard/AIStudyPlanCard';
 import { XPGrowthChartCard } from '../../components/dashboard/XPGrowthChartCard';
 import { RevenueReport } from '../../components/dashboard/RevenueReport';
 
-const cardBaseStyle = "bg-black/40 backdrop-blur-xl border border-[#1e1b4b] rounded-[2rem] relative overflow-hidden shadow-2xl transition-all duration-300 hover:border-[#312e81]";
 
-// Custom Card Wrapper to replace MagicCard without height constraints
-const DashboardCard = ({ children, className }: { children: React.ReactNode, className?: string }) => (
-  <div className={`${cardBaseStyle} ${className || ''}`}>
-    <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent opacity-0 hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
-    {children}
-  </div>
-);
+
+import { PageCard as DashboardCard } from '../../components/ui/PageCard';
 
 interface DashboardPageProps {
   searchQuery: string;

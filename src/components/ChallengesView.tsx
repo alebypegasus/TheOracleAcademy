@@ -8,6 +8,7 @@ import {
 import { Book, Calendar } from 'lucide-react';
 import { SectionLock } from './ui/SectionLock';
 import { ChallengeHub } from './ChallengeHub';
+import { PageCard } from './ui/PageCard';
 
 export function ChallengesView({ profile, setProfile, grimoireEntries = [], currentUser, addGrimoireEntry, challenges: dbChallenges, setChallenges }: any) {
   const isLocked = false;
@@ -81,7 +82,7 @@ export function ChallengesView({ profile, setProfile, grimoireEntries = [], curr
       <SectionLock isPaid={currentUser?.isPaid} className="absolute top-8 right-8 z-50" />
       
       {/* Enhanced Hero Section */}
-      <div className="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-6 shrink-0 pt-8 glass-panel p-8 md:px-12 rounded-[3rem] border border-amber-500/20 bg-gradient-to-r from-indigo-950/40 via-black/40 to-amber-950/20 relative overflow-hidden shadow-2xl shadow-indigo-900/10">
+      <PageCard className="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-6 shrink-0 pt-8 p-8 md:px-12 rounded-[3rem] border-amber-500/20 bg-gradient-to-r from-indigo-950/40 via-black/40 to-amber-950/20 relative overflow-hidden shadow-2xl shadow-indigo-900/10">
         <div className="absolute -top-20 -right-20 w-80 h-80 bg-amber-500/10 rounded-full blur-[80px] pointer-events-none z-0" />
         <div className="absolute -bottom-20 -left-20 w-64 h-64 bg-indigo-500/10 rounded-full blur-[80px] pointer-events-none z-0" />
         
@@ -110,7 +111,7 @@ export function ChallengesView({ profile, setProfile, grimoireEntries = [], curr
            </div>
            <p className="text-[11px] text-amber-500/60 w-full text-right font-bold tracking-wider uppercase">Mais 150 XP para o Nível 4</p>
         </div>
-      </div>
+      </PageCard>
 
       <div className="relative flex-1">
         {isLocked && (
@@ -132,7 +133,7 @@ export function ChallengesView({ profile, setProfile, grimoireEntries = [], curr
           
           <div className="xl:col-span-8 flex flex-col space-y-8">
              {/* Navigation Tabs */}
-             <div className="flex gap-2 overflow-x-auto hide-scrollbar pb-2 glass-panel p-2 rounded-[1.5rem] border-[#1e1b4b]">
+             <PageCard className="flex gap-2 overflow-x-auto hide-scrollbar pb-2 p-2 rounded-[1.5rem]">
                 {[
                   { id: 'daily', title: 'Missões Diárias', icon: Zap },
                   { id: 'weekly', title: 'Desafios Semanais', icon: CalendarDays },
@@ -148,7 +149,7 @@ export function ChallengesView({ profile, setProfile, grimoireEntries = [], curr
                     <tab.icon className="w-4 h-4" /> {tab.title}
                   </button>
                 ))}
-             </div>
+             </PageCard>
 
              <AnimatePresence mode="wait">
                <motion.div
@@ -197,7 +198,7 @@ export function ChallengesView({ profile, setProfile, grimoireEntries = [], curr
                  </div>
                </div>
 
-               <div className="glass-panel overflow-hidden rounded-[2.5rem] border border-[#1e1b4b] bg-black/20 shadow-2xl">
+               <PageCard className="overflow-hidden rounded-[2.5rem] bg-black/20 shadow-2xl">
                  <div className="overflow-x-auto">
                    <table className="w-full text-left">
                      <thead>
@@ -285,12 +286,12 @@ export function ChallengesView({ profile, setProfile, grimoireEntries = [], curr
                        </div>
                     </div>
                  </div>
-               </div>
+               </PageCard>
              </div>
           </div>
 
           <div className="xl:col-span-4 space-y-8">
-            <div className="glass-panel p-8 rounded-[3rem] border-[#1e1b4b] relative overflow-hidden bg-gradient-to-b from-indigo-900/10 to-transparent shadow-xl">
+            <PageCard className="p-8 rounded-[3rem] relative overflow-hidden bg-gradient-to-b from-indigo-900/10 to-transparent shadow-xl">
               <div className="absolute top-0 right-0 w-40 h-40 bg-indigo-500/10 rounded-full blur-[50px] pointer-events-none" />
               
               <h3 className="text-2xl font-serif text-slate-100 mb-6 flex items-center gap-3">
@@ -319,9 +320,9 @@ export function ChallengesView({ profile, setProfile, grimoireEntries = [], curr
                   )
                 })}
               </div>
-            </div>
+            </PageCard>
             
-            <div className="glass-panel p-8 rounded-[3rem] border border-amber-500/20 bg-amber-900/5 group">
+            <PageCard className="p-8 rounded-[3rem] border-amber-500/20 bg-amber-900/5 group">
               <div className="flex items-center justify-between mb-4">
                  <h4 className="text-amber-400 font-black uppercase tracking-[0.2em] text-[10px]">Recompensa Secreta</h4>
                  <Zap className="w-4 h-4 text-amber-500 animate-pulse" />
@@ -343,7 +344,7 @@ export function ChallengesView({ profile, setProfile, grimoireEntries = [], curr
                     <span className="text-amber-500">Nível 3</span>
                  </div>
               </div>
-            </div>
+            </PageCard>
           </div>
         </div>
       </div>
@@ -368,65 +369,66 @@ function ChallengeCard({ challenge, index }: { challenge: any, index: number }) 
       initial={{ opacity: 0, x: -20 }}
       animate={{ opacity: 1, x: 0 }}
       transition={{ duration: 0.3, delay: index * 0.1 }}
-      className={`glass-panel p-8 rounded-[2.5rem] border ${isCompleted ? 'border-emerald-500/30 bg-emerald-900/10 shadow-[0_20px_50px_-20px_rgba(16,185,129,0.3)]' : 'border-[#1e1b4b] hover:border-indigo-500/40'} relative overflow-hidden transition-all group cursor-default`}
     >
-      {isCompleted && (
-        <div className="absolute -top-20 -right-20 w-60 h-60 bg-emerald-500/10 rounded-full blur-[60px] pointer-events-none" />
-      )}
-      
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-8 relative z-10">
-        <div className="flex-1 pr-6">
-          <div className="flex items-center gap-4 mb-3">
-            <div className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-all ${isCompleted ? 'bg-emerald-500/20 text-emerald-400' : 'bg-white/5 text-slate-500 group-hover:bg-indigo-500/20 group-hover:text-indigo-400'}`}>
-               <CheckCircle2 className={`w-6 h-6 transition-all ${isCompleted ? 'opacity-100 scale-110' : 'opacity-40 scale-100'}`} />
-            </div>
-            <div>
-               <h4 className={`text-2xl font-serif ${isCompleted ? 'text-emerald-300' : 'text-slate-100 italic transition-all group-hover:not-italic'}`}>{challenge.title}</h4>
-               <p className="text-sm text-slate-500 mt-1 font-light leading-relaxed">{challenge.desc}</p>
-            </div>
-          </div>
-          
-          <div className="flex items-center gap-6 mt-6">
-            <div className="flex-1 h-3 bg-black/60 rounded-full overflow-hidden border border-[#1e1b4b] shadow-inner">
-              <motion.div 
-                className={`h-full relative overflow-hidden ${isCompleted ? 'bg-gradient-to-r from-emerald-600 to-emerald-400' : 'bg-gradient-to-r from-indigo-600/80 to-indigo-400/80 group-hover:from-indigo-600 group-hover:to-indigo-400'}`} 
-                initial={{ width: 0 }}
-                animate={{ width: `${progressPercent}%` }}
-                transition={{ duration: 1.2, ease: 'circOut' }}
-              >
-                 <div className="absolute inset-0 bg-[linear-gradient(90deg,transparent,rgba(255,255,255,0.3),transparent)] -translate-x-[100%] animate-[shimmer_2s_infinite]" />
-              </motion.div>
-            </div>
-            <span className="text-[11px] font-black text-slate-300 font-mono tracking-widest bg-white/5 px-3 py-1.5 rounded-lg border border-[#1e1b4b]">
-              {challenge.isPercent ? `${challenge.progress}%` : `${challenge.progress} / ${challenge.total}`}
-            </span>
-          </div>
-        </div>
+      <PageCard className={`p-8 rounded-[2.5rem] border ${isCompleted ? 'border-emerald-500/30 bg-emerald-900/10 shadow-[0_20px_50px_-20px_rgba(16,185,129,0.3)]' : 'border-[#1e1b4b] hover:border-indigo-500/40'} relative overflow-hidden transition-all group cursor-default`}>
+        {isCompleted && (
+          <div className="absolute -top-20 -right-20 w-60 h-60 bg-emerald-500/10 rounded-full blur-[60px] pointer-events-none" />
+        )}
         
-        <div className="flex flex-row md:flex-col items-center md:items-end justify-between md:justify-center shrink-0 md:border-l border-[#1e1b4b] pt-6 md:pt-0 md:pl-10 space-y-4">
-          <div className="flex flex-col items-end">
-             <span className="text-[9px] text-slate-500 uppercase tracking-[0.3em] font-black mb-2 px-1">Recompensa Arcana</span>
-             <div className="group/xp flex items-center gap-2.5 px-6 py-3 rounded-2xl bg-amber-500/10 border border-amber-500/20 text-amber-500 font-black shadow-[0_15px_25px_-10px_rgba(245,158,11,0.2)] transition-all hover:scale-110 cursor-pointer">
-                <Star className="w-5 h-5 fill-amber-500 group-hover/xp:rotate-180 transition-transform duration-700" /> 
-                <span className="text-lg">+{challenge.xp} XP</span>
-             </div>
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-8 relative z-10">
+          <div className="flex-1 pr-6">
+            <div className="flex items-center gap-4 mb-3">
+              <div className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-all ${isCompleted ? 'bg-emerald-500/20 text-emerald-400' : 'bg-white/5 text-slate-500 group-hover:bg-indigo-500/20 group-hover:text-indigo-400'}`}>
+                 <CheckCircle2 className={`w-6 h-6 transition-all ${isCompleted ? 'opacity-100 scale-110' : 'opacity-40 scale-100'}`} />
+              </div>
+              <div>
+                 <h4 className={`text-2xl font-serif ${isCompleted ? 'text-emerald-300' : 'text-slate-100 italic transition-all group-hover:not-italic'}`}>{challenge.title}</h4>
+                 <p className="text-sm text-slate-500 mt-1 font-light leading-relaxed">{challenge.desc}</p>
+              </div>
+            </div>
+            
+            <div className="flex items-center gap-6 mt-6">
+              <div className="flex-1 h-3 bg-black/60 rounded-full overflow-hidden border border-[#1e1b4b] shadow-inner">
+                <motion.div 
+                  className={`h-full relative overflow-hidden ${isCompleted ? 'bg-gradient-to-r from-emerald-600 to-emerald-400' : 'bg-gradient-to-r from-indigo-600/80 to-indigo-400/80 group-hover:from-indigo-600 group-hover:to-indigo-400'}`} 
+                  initial={{ width: 0 }}
+                  animate={{ width: `${progressPercent}%` }}
+                  transition={{ duration: 1.2, ease: 'circOut' }}
+                >
+                   <div className="absolute inset-0 bg-[linear-gradient(90deg,transparent,rgba(255,255,255,0.3),transparent)] -translate-x-[100%] animate-[shimmer_2s_infinite]" />
+                </motion.div>
+              </div>
+              <span className="text-[11px] font-black text-slate-300 font-mono tracking-widest bg-white/5 px-3 py-1.5 rounded-lg border border-[#1e1b4b]">
+                {challenge.isPercent ? `${challenge.progress}%` : `${challenge.progress} / ${challenge.total}`}
+              </span>
+            </div>
           </div>
           
-          {isCompleted ? (
-            <motion.div 
-              initial={{ scale: 0 }}
-              animate={{ scale: 1 }}
-              className="text-[10px] uppercase tracking-[0.2em] text-emerald-400 font-black flex items-center gap-2 bg-emerald-500/10 px-4 py-2 rounded-xl border border-emerald-500/30 shadow-[0_0_15px_rgba(16,185,129,0.1)]"
-            >
-               <Award className="w-3.5 h-3.5" /> Manifestado
-            </motion.div>
-          ) : (
-            <button className="text-[10px] uppercase tracking-[0.2em] text-slate-500 font-black px-4 py-2 rounded-xl border border-[#1e1b4b] bg-black/40 hover:bg-indigo-600/20 hover:text-indigo-400 hover:border-indigo-500/30 transition-all">
-               Trabalhar Aura
-            </button>
-          )}
+          <div className="flex flex-row md:flex-col items-center md:items-end justify-between md:justify-center shrink-0 md:border-l border-[#1e1b4b] pt-6 md:pt-0 md:pl-10 space-y-4">
+            <div className="flex flex-col items-end">
+               <span className="text-[9px] text-slate-500 uppercase tracking-[0.3em] font-black mb-2 px-1">Recompensa Arcana</span>
+               <div className="group/xp flex items-center gap-2.5 px-6 py-3 rounded-2xl bg-amber-500/10 border border-amber-500/20 text-amber-500 font-black shadow-[0_15px_25px_-10px_rgba(245,158,11,0.2)] transition-all hover:scale-110 cursor-pointer">
+                  <Star className="w-5 h-5 fill-amber-500 group-hover/xp:rotate-180 transition-transform duration-700" /> 
+                  <span className="text-lg">+{challenge.xp} XP</span>
+               </div>
+            </div>
+            
+            {isCompleted ? (
+              <motion.div 
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                className="text-[10px] uppercase tracking-[0.2em] text-emerald-400 font-black flex items-center gap-2 bg-emerald-500/10 px-4 py-2 rounded-xl border border-emerald-500/30 shadow-[0_0_15px_rgba(16,185,129,0.1)]"
+              >
+                 <Award className="w-3.5 h-3.5" /> Manifestado
+              </motion.div>
+            ) : (
+              <button className="text-[10px] uppercase tracking-[0.2em] text-slate-500 font-black px-4 py-2 rounded-xl border border-[#1e1b4b] bg-black/40 hover:bg-indigo-600/20 hover:text-indigo-400 hover:border-indigo-500/30 transition-all">
+                 Trabalhar Aura
+              </button>
+            )}
+          </div>
         </div>
-      </div>
+      </PageCard>
     </motion.div>
   );
 }

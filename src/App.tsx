@@ -442,17 +442,13 @@ export default function App() {
             data.grimoireEntries.forEach((entry: any) => saveGrimoireEntryLocal(entry));
           }
           if (data.savedBirthChart) setSavedBirthChart(data.savedBirthChart);
-          if (data.user && data.user.plan && data.user.plan !== currentUser.plan) {
-            setCurrentUser((prev: any) => ({
-              ...prev,
-              plan: data.user.plan,
-              planExpiresAt: data.user.planExpiresAt || null,
-              isPaid: data.user.isPaid
-            }));
+          if (data.user || data.profile) {
+            setCurrentUser((prev: any) => {
+              const freshUser = { ...prev, ...(data.profile || {}), ...(data.user || {}) };
+              localStorage.setItem('oracle_user', JSON.stringify(freshUser));
+              return freshUser;
+            });
           }
-          // Atualizar oracle_user no localStorage com dados frescos do servidor
-          const freshUser = { ...currentUser, ...(data.user || {}) };
-          localStorage.setItem('oracle_user', JSON.stringify(freshUser));
         }
       } catch (err) {
         console.warn("Offline, loading from IndexedDB");
@@ -563,6 +559,13 @@ export default function App() {
           },
           body: JSON.stringify(next)
         }).catch(err => console.error("Erro ao salvar perfil no PostgreSQL:", err));
+        
+        setCurrentUser((prevUser: any) => {
+          if (!prevUser) return prevUser;
+          const freshUser = { ...prevUser, ...next };
+          localStorage.setItem('oracle_user', JSON.stringify(freshUser));
+          return freshUser;
+        });
       }
       return next;
     });

@@ -2,8 +2,9 @@ import React from 'react';
 import { motion } from 'motion/react';
 import { 
   Shield, Lock, Share2, CheckCircle2, Book, 
-  Users, Image as ImageIcon, ChevronRight 
+  Users, Image as ImageIcon, ChevronRight, Heart, Lightbulb 
 } from 'lucide-react';
+import { PageCard } from '../ui/PageCard';
 
 interface GuidelinesViewProps {
   setView?: (view: string) => void;
@@ -13,7 +14,7 @@ export function GuidelinesView({ setView }: GuidelinesViewProps) {
   return (
     <div className="w-full px-4 md:px-8 mx-auto py-10">
       <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="space-y-12 pb-20">
-        <div className="glass-panel p-10 rounded-[3rem] border border-[#1e1b4b] bg-black/40">
+        <PageCard className="p-10 rounded-[3rem] border border-[#1e1b4b] bg-black/40">
           <div className="flex items-center gap-4 mb-8">
             <div className="w-14 h-14 rounded-2xl bg-indigo-500/10 border border-[#312e81] flex items-center justify-center">
               <Shield className="w-7 h-7 text-indigo-400" />
@@ -54,6 +55,25 @@ export function GuidelinesView({ setView }: GuidelinesViewProps) {
               </div>
             </section>
 
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {[
+                { icon: Heart, title: "Empatia e Respeito", desc: "Trate todos os membros com consideração. Cada jornada é única e merece respeito, independentemente do nível de experiência." },
+                { icon: Shield, title: "Ambiente Seguro", desc: "Mantenha o círculo protegido. Não toleramos assédio, discriminação ou qualquer forma de abuso em nossa comunidade." },
+                { icon: Lightbulb, title: "Compartilhar Conhecimento", desc: "Ensine o que sabe e aprenda o que não sabe. A egrégora se fortalece através da troca mútua de experiências." },
+                { icon: Users, title: "Colaboração", desc: "Busque parcerias, participe dos debates e apoie as iniciativas dos outros membros do círculo." }
+              ].map((value, i) => (
+                <PageCard key={i} className="p-6 rounded-3xl bg-indigo-500/5 border border-[#1e1b4b] flex items-start gap-4">
+                  <div className="w-10 h-10 rounded-xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center shrink-0">
+                    <value.icon className="w-5 h-5 text-indigo-400" />
+                  </div>
+                  <div>
+                    <h4 className="text-sm font-bold text-slate-200 mb-1">{value.title}</h4>
+                    <p className="text-sm text-slate-400 leading-relaxed">{value.desc}</p>
+                  </div>
+                </PageCard>
+              ))}
+            </div>
+
             <section className="space-y-6">
               <h3 className="text-xl text-slate-100 font-serif flex items-center gap-2">
                 <div className="w-1.5 h-1.5 rounded-full bg-indigo-500" /> Propriedade Intelectual & Copyright
@@ -61,12 +81,12 @@ export function GuidelinesView({ setView }: GuidelinesViewProps) {
               <p className="text-slate-400 leading-relaxed">
                 O Santuário respeita a sacralidade da criação. Todo conteúdo publicado (Ecos) permanece sob a aura de seu criador originário.
               </p>
-              <div className="glass-panel p-6 rounded-3xl border border-[#1e1b4b] bg-indigo-500/5 flex items-start gap-4">
+              <PageCard className="p-6 rounded-3xl border border-[#1e1b4b] bg-indigo-500/5 flex items-start gap-4">
                 <Lock className="w-8 h-8 text-indigo-400 shrink-0" />
                 <div className="text-sm text-slate-300 leading-relaxed font-medium">
                   <span className="text-indigo-300 font-bold">© 2026 Oracle Sanctum:</span> A arquitetura visual, os algoritmos radiestésicos e a interface de usuário são protegidos por leis internacionais de propriedade intelectual e selos de proteção teúrgica. A reprodução sem permissão escrita viola as leis físicas e kármicas.
                 </div>
-              </div>
+              </PageCard>
             </section>
 
             <section className="space-y-6">
@@ -117,7 +137,7 @@ export function GuidelinesView({ setView }: GuidelinesViewProps) {
               <CheckCircle2 className="w-4 h-4" /> Aceitar Todos os Termos
             </button>
           </div>
-        </div>
+        </PageCard>
       </motion.div>
       <style>{`
         .gold-text { background: linear-gradient(to right, #fde68a, #f59e0b, #fde68a); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }

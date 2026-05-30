@@ -6,6 +6,7 @@ import {
   Users, MapPin, Search, MessageSquare, Zap,
   LifeBuoy, HelpCircle, PhoneCall, FileText, AlertOctagon, CheckCircle2, Clock, Trash2, ShieldAlert
 } from 'lucide-react';
+import { PageCard } from '../ui/PageCard';
 
 const FAQS = [
   { q: 'Minha aura não está subindo de nível, o que fazer?', a: 'O nível de aura é uma manifestação da sua ressonância espiritual com a egrégora. Ele depende da qualidade dos seus Ecos (posts) e do engajamento genuíno. Posts vazios não atraem luz, apenas sombra.', tag: 'Progresso' },
@@ -155,24 +156,24 @@ export function SupportView({ currentUser }: { currentUser: any }) {
 
         {/* Support Actions Quick Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-16">
-          <div className="glass-panel p-6 rounded-2xl border border-[#312e81] bg-indigo-950/10 flex items-center gap-5 group hover:bg-indigo-500/10 transition-all">
-            <div className="w-14 h-14 rounded-2xl bg-indigo-500/15 border border-indigo-500/30 flex items-center justify-center group-hover:scale-115 transition-transform">
+          <PageCard className="p-6 rounded-2xl border-[#312e81] bg-indigo-950/10 flex items-center gap-5 group hover:bg-indigo-500/10 transition-all cursor-pointer">
+            <div className="w-14 h-14 rounded-2xl bg-indigo-500/15 border border-indigo-500/30 flex items-center justify-center group-hover:scale-110 transition-transform">
               <PhoneCall className="w-6 h-6 text-indigo-400" />
             </div>
             <div>
               <h4 className="text-lg font-serif text-slate-100">Chamado Auditivo de Suporte</h4>
               <p className="text-xs text-slate-400 font-light mt-1">Conecte-se auditivamente com um Mestre de Suporte em tempo real.</p>
             </div>
-          </div>
-          <div className="glass-panel p-6 rounded-2xl border border-amber-500/20 bg-amber-950/10 flex items-center gap-5 group hover:bg-amber-950/10 transition-all">
-            <div className="w-14 h-14 rounded-2xl bg-amber-500/15 border border-amber-500/30 flex items-center justify-center group-hover:scale-115 transition-transform">
+          </PageCard>
+          <PageCard className="p-6 rounded-2xl border-amber-500/20 bg-amber-950/10 flex items-center gap-5 group hover:bg-amber-950/10 transition-all cursor-pointer">
+            <div className="w-14 h-14 rounded-2xl bg-amber-500/15 border border-amber-500/30 flex items-center justify-center group-hover:scale-110 transition-transform">
               <Zap className="w-6 h-6 text-amber-400" />
             </div>
             <div>
               <h4 className="text-lg font-serif text-slate-100">Urgência Crítica na Aura</h4>
               <p className="text-xs text-slate-400 font-light mt-1">Abra um chamado instantâneo prioritário para corrigir erros de carregamento na conta.</p>
             </div>
-          </div>
+          </PageCard>
         </div>
 
         {/* Main Bento Support Layout */}
@@ -187,7 +188,7 @@ export function SupportView({ currentUser }: { currentUser: any }) {
                 <h3 className="text-2xl font-serif text-slate-200">Oráculo Presencial (Chat de Suporte)</h3>
               </div>
               
-              <div className="glass-panel overflow-hidden rounded-[2.5rem] border border-[#1e1b4b] bg-black/50 flex flex-col h-[550px] shadow-2xl relative">
+              <PageCard className="overflow-hidden rounded-[2.5rem] border border-[#1e1b4b] bg-black/50 flex flex-col h-[550px] shadow-2xl relative p-0">
                 {/* Chat Header */}
                 <div className="p-4 bg-indigo-950/80 backdrop-blur-xl flex items-center justify-between z-10 border-b border-[#1e1b4b]">
                   <div className="flex items-center gap-4">
@@ -268,7 +269,7 @@ export function SupportView({ currentUser }: { currentUser: any }) {
                     <Send className="w-4 h-4 ml-0.5" />
                   </button>
                 </div>
-              </div>
+              </PageCard>
             </div>
 
             {/* Tomos de Auxílio FAQ */}
@@ -311,7 +312,7 @@ export function SupportView({ currentUser }: { currentUser: any }) {
           <div className="lg:col-span-5 space-y-8">
             
             {/* Create support Ticket Card */}
-            <div className="glass-panel p-6 rounded-3xl border border-[#312e81] bg-indigo-950/10 relative overflow-hidden">
+            <PageCard className="p-6 rounded-3xl border border-[#312e81] bg-indigo-950/10 relative overflow-hidden">
               <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none" />
               <h3 className="text-xl font-serif text-slate-200 mb-4 flex items-center gap-2">
                 <FileText className="w-5 h-5 text-indigo-400" />
@@ -380,7 +381,7 @@ export function SupportView({ currentUser }: { currentUser: any }) {
                   <Send className="w-3.5 h-3.5" /> Enviar ao Altar Celestial
                 </button>
               </form>
-            </div>
+            </PageCard>
 
             {/* Active Tickets Monitor */}
             <div className="space-y-4">

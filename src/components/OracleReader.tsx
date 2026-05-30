@@ -8,6 +8,7 @@ import Markdown from 'react-markdown';
 import { SectionLock } from './ui/SectionLock';
 import { usePlan } from '../hooks/usePlan';
 import { AdBanner } from './AdBanner';
+import { PageCard } from './ui/PageCard';
 
 export function OracleReader({ profile, setProfile, addGrimoireEntry, currentUser }: any) {
   const [activeMode, setActiveMode] = useState<'normal' | 'study'>('study');
@@ -178,7 +179,7 @@ export function OracleReader({ profile, setProfile, addGrimoireEntry, currentUse
         </button>
       </div>
 
-      <div className="glass-panel p-8 rounded-[2.5rem] border-[#1e1b4b] mb-8 relative overflow-hidden group">
+      <PageCard className="p-8 rounded-[2.5rem] mb-8 relative overflow-hidden group">
         {isLocked && (
           <div className="absolute inset-0 z-30 bg-black/75 backdrop-blur-[3px] flex flex-col items-center justify-center rounded-[2.5rem] p-6 text-center">
             <Lock className="w-14 h-14 text-rose-400 mb-4 opacity-80" />
@@ -344,7 +345,7 @@ export function OracleReader({ profile, setProfile, addGrimoireEntry, currentUse
             </div>
           )}
         </div>
-      </div>
+      </PageCard>
 
       <AnimatePresence>
         {loading && (
@@ -352,12 +353,12 @@ export function OracleReader({ profile, setProfile, addGrimoireEntry, currentUse
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="glass-panel p-10 rounded-[2.5rem] flex flex-col items-center justify-center text-center py-16"
           >
-            <Loader2 className="w-12 h-12 text-indigo-400 animate-spin mb-6" />
-            <motion.h4 
-              animate={{ opacity: [0.5, 1, 0.5] }}
-              transition={{ repeat: Infinity, duration: 2 }}
+            <PageCard className="p-10 rounded-[2.5rem] flex flex-col items-center justify-center text-center py-16">
+              <Loader2 className="w-12 h-12 text-indigo-400 animate-spin mb-6" />
+              <motion.h4 
+                animate={{ opacity: [0.5, 1, 0.5] }}
+                transition={{ repeat: Infinity, duration: 2 }}
               className="text-lg font-serif text-indigo-300 italic mb-2"
             >
               "Conectando com a egrégora cósmica..."
@@ -365,6 +366,7 @@ export function OracleReader({ profile, setProfile, addGrimoireEntry, currentUse
             <p className="text-xs text-slate-500 max-w-xs uppercase tracking-widest">
               Sintonizando as vibrações das cartas e de seu progresso pessoal...
             </p>
+            </PageCard>
           </motion.div>
         )}
 
@@ -372,10 +374,10 @@ export function OracleReader({ profile, setProfile, addGrimoireEntry, currentUse
           <motion.div 
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
-            className="glass-panel p-8 rounded-[2.5rem] relative overflow-hidden space-y-8"
           >
-            {/* XP Badge */}
-            <div className="absolute top-0 right-0 p-6 flex flex-col items-end gap-1">
+            <PageCard className="p-8 rounded-[2.5rem] relative overflow-hidden space-y-8">
+              {/* XP Badge */}
+              <div className="absolute top-0 right-0 p-6 flex flex-col items-end gap-1">
                <span className="bg-amber-500/10 text-amber-400 text-[10px] font-black uppercase tracking-widest px-4 py-2 rounded-full border border-amber-500/20 shadow-lg">
                  🚀 +100 XP Concedido
                </span>
@@ -478,6 +480,7 @@ export function OracleReader({ profile, setProfile, addGrimoireEntry, currentUse
                 <Save className="w-4 h-4 text-indigo-400 animate-pulse" /> Salvo com louvor em seu Grimório
               </p>
             </div>
+            </PageCard>
           </motion.div>
         )}
       </AnimatePresence>
