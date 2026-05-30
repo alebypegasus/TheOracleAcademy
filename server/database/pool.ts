@@ -665,6 +665,17 @@ export function executeMockQuery(sql: string, params: any[] = []): { rows: any[]
       return { rows: [newPost] };
     }
 
+    // 21.5 UPDATE community_posts SET likes = likes + 1
+    if (norm.includes('update community_posts set likes = likes + 1')) {
+      const postId = Number(params[0]);
+      const post = fallbackDB.community_posts.find(p => Number(p.id) === postId);
+      if (post) {
+        post.likes = (post.likes || 0) + 1;
+        return { rows: [{ likes: post.likes }] };
+      }
+      return { rows: [{ likes: 1 }] };
+    }
+
     // 22. SELECT COUNT(*) FROM (any table) (Intercepted at the top of executeMockQuery)
 
     // 23. SELECT * FROM birth_charts WHERE user_id = $1

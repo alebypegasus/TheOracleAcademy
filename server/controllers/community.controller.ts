@@ -157,7 +157,7 @@ export class CommunityController {
         [post.user_id, `Sua postagem ("${briefContent}") recebeu uma nova curtida na comunidade!`]
       );
 
-      return res.json({ likes: result.rows[0].likes });
+      return res.json({ likes: result.rows[0]?.likes ?? 0 });
     } catch (err) {
       console.error("Like Post Controller Error:", err);
       return res.status(500).json({ error: "Erro ao ressoar simpatia cósmica" });

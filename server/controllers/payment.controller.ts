@@ -15,6 +15,19 @@ export class PaymentController {
     }
   }
 
+  // 1b. POST /api/payments/create-preference
+  public static async createCartPreference(req: AuthenticatedRequest, res: Response) {
+    const userId = req.headers["x-user-id"] || req.user?.id || "1";
+    const { itemIds } = req.body;
+    try {
+      const result = await PaymentService.createCartPreference(itemIds, Number(userId));
+      return res.json(result);
+    } catch (err: any) {
+      console.error("Create Cart Preference Controller Error:", err);
+      return res.status(500).json({ error: err.message || "Erro ao gerar preferência do carrinho" });
+    }
+  }
+
   // 2. POST /api/payments/webhook (processes MP approvals)
   public static async webhook(req: Request, res: Response) {
     try {

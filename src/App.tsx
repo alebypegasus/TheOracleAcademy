@@ -325,6 +325,8 @@ function AppContent({
                   setCurrentUser={setCurrentUser} 
                   savedBirthChart={savedBirthChart}
                   setSavedBirthChart={setSavedBirthChart}
+                  profile={profile}
+                  setProfile={setProfile}
                 />
               </motion.div>
             } />

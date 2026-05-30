@@ -268,3 +268,14 @@ CREATE TABLE IF NOT EXISTS lesson_audios (
   audio_data BYTEA NOT NULL,
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
+
+-- 24. Ads Campaigns Table
+CREATE TABLE IF NOT EXISTS ads_campaigns (
+  id SERIAL PRIMARY KEY,
+  title TEXT NOT NULL,
+  image_url TEXT NOT NULL,
+  link_url TEXT NOT NULL,
+  placement TEXT NOT NULL,
+  is_active BOOLEAN DEFAULT TRUE,
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);

@@ -1,0 +1,47 @@
+type User @table {
+  displayName: String!
+  createdAt: Timestamp!
+  email: String
+  photoUrl: String
+  bio: String
+}
+
+type OracleSystem @table {
+  name: String!
+  createdAt: Timestamp!
+  description: String
+  originCulture: String
+  associatedTraditions: [String]
+}
+
+type OracleComponent @table {
+  oracleSystem: OracleSystem!
+  name: String!
+  componentType: String!
+  createdAt: Timestamp!
+  description: String
+  symbolism: String
+  keywords: [String]
+}
+
+type StudyNote @table {
+  user: User!
+  oracleComponent: OracleComponent
+  oracleSystem: OracleSystem
+  title: String!
+  content: String!
+  createdAt: Timestamp!
+  updatedAt: Timestamp!
+  isPublic: Boolean
+  tags: [String]
+}
+
+type PracticeSession @table {
+  user: User!
+  oracleSystem: OracleSystem!
+  sessionDate: Date!
+  createdAt: Timestamp!
+  notes: String
+  outcomeReflection: String
+  componentsUsed: [UUID]
+}

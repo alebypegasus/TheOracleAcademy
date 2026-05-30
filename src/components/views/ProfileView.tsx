@@ -4,6 +4,7 @@ import { motion } from "motion/react";
 import { CertificatesView } from './CertificatesView';
 import { WorkspaceView } from './WorkspaceView';
 import { PageCard } from '../ui/PageCard';
+import { getAuthHeaders } from '../../services/api';
 
 export function getAutoMagicDetails(xp: number = 100) {
   if (xp < 150) {
@@ -44,11 +45,15 @@ export function ProfileView({
   setCurrentUser,
   savedBirthChart,
   setSavedBirthChart,
+  profile,
+  setProfile,
 }: {
   currentUser: any;
   setCurrentUser: any;
   savedBirthChart?: any;
   setSavedBirthChart?: any;
+  profile?: any;
+  setProfile?: any;
 }) {
   const [isSyncingProfile, setIsSyncingProfile] = useState(false);
   const [userBadges, setUserBadges] = useState<any[]>([]);
@@ -100,6 +105,56 @@ export function ProfileView({
     location: autoDetails.location,
   });
 
+  // Keep form data synchronized when fresh user fields load from backend sync on boot
+  useEffect(() => {
+    if (currentUser) {
+      const activeAutoDetails = getAutoMagicDetails(currentUser.xp || 100);
+      setFormData({
+        name: currentUser.name || "",
+        nickname: currentUser.nickname || "",
+        email: currentUser.email || "",
+        phone: currentUser.phone || "",
+        zipCode: currentUser.zipCode || "",
+        address: currentUser.address || "",
+        description: currentUser.description || "",
+        portfolio: currentUser.portfolio || "",
+        website: currentUser.website || "",
+        whatsapp: currentUser.whatsapp || "",
+        telegram: currentUser.telegram || "",
+        facebook: currentUser.facebook || "",
+        instagram: currentUser.instagram || "",
+        x_twitter: currentUser.x_twitter || "",
+        otherNet: currentUser.otherNet || "",
+        showPhone: currentUser.showPhone ?? false,
+        showAddress: currentUser.showAddress ?? false,
+        avatar: currentUser.avatar || "https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=150",
+        authorTitle: activeAutoDetails.authorTitle,
+        grau: activeAutoDetails.grau,
+        location: activeAutoDetails.location,
+      });
+    }
+  }, [
+    currentUser?.name, 
+    currentUser?.avatar, 
+    currentUser?.xp, 
+    currentUser?.nickname, 
+    currentUser?.email,
+    currentUser?.phone, 
+    currentUser?.zipCode, 
+    currentUser?.address, 
+    currentUser?.description,
+    currentUser?.portfolio,
+    currentUser?.website,
+    currentUser?.whatsapp,
+    currentUser?.telegram,
+    currentUser?.facebook,
+    currentUser?.instagram,
+    currentUser?.x_twitter,
+    currentUser?.otherNet,
+    currentUser?.showPhone,
+    currentUser?.showAddress
+  ]);
+
   const handleGoogleProfileSync = async () => {
     try {
       setIsSyncingProfile(true);
@@ -146,8 +201,34 @@ export function ProfileView({
         updates.description = data.biographies[0].value || "";
       }
 
-      setFormData(prev => ({ ...prev, ...updates }));
-      alert("Sucesso! Seus dados foram preenchidos com as informações do Google.");
+      const activeAutoDetails = getAutoMagicDetails(currentUser?.xp || 100);
+      const finalPayload = {
+        ...formData,
+        ...updates,
+        ...activeAutoDetails
+      };
+
+      const saveRes = await fetch("/api/profile/update", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          ...getAuthHeaders(currentUser.id)
+        },
+        body: JSON.stringify(finalPayload),
+      });
+
+      if (saveRes.ok) {
+        setFormData(prev => ({ ...prev, ...updates }));
+        const updatedUser = { ...currentUser, ...finalPayload };
+        setCurrentUser(updatedUser);
+        localStorage.setItem('oracle_user', JSON.stringify(updatedUser));
+        if (setProfile) {
+          setProfile(updatedUser);
+        }
+        alert("Sucesso! Seus dados foram sincronizados com o Google e salvos com segurança no Santuário!");
+      } else {
+        throw new Error("Erro ao persistir sincronização no banco de dados.");
+      }
     } catch (err) {
       console.error(err);
       alert("Falha ao recuperar dados do Google Contacts. Verifique se o seu perfil do Google possui as informações ou tente conectar novamente.");
@@ -183,7 +264,7 @@ export function ProfileView({
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "x-user-id": currentUser.id.toString(),
+          ...getAuthHeaders(currentUser.id)
         },
         body: JSON.stringify(finalPayload),
       });
@@ -191,6 +272,9 @@ export function ProfileView({
         const updatedUser = { ...currentUser, ...finalPayload };
         setCurrentUser(updatedUser);
         localStorage.setItem('oracle_user', JSON.stringify(updatedUser));
+        if (setProfile) {
+          setProfile(updatedUser);
+        }
         alert("Perfil místico sincronizado com as estrelas!");
       } else {
         const errorData = await res.json();
@@ -300,7 +384,7 @@ export function ProfileView({
             {currentUser?.isPaid ? (
               <>
                 <div className="absolute top-0 right-0 w-32 h-32 bg-amber-500/10 rounded-full blur-[40px] pointer-events-none" />
-                <h3 className="text-lg font-serif text-amber-400 mb-4 uppercase tracking-widest text-sm drop-shadow-[0_0_8px_rgba(245,158,11,0.5)]">
+                <h3 className="text-sm font-serif text-amber-400 mb-4 uppercase tracking-widest drop-shadow-[0_0_8px_rgba(245,158,11,0.5)]">
                   Plano Premium Ativo
                 </h3>
 
@@ -340,7 +424,7 @@ export function ProfileView({
               </>
             ) : (
               <>
-                <h3 className="text-lg font-serif text-slate-200 mb-4 uppercase tracking-widest text-sm">
+                <h3 className="text-sm font-serif text-slate-200 mb-4 uppercase tracking-widest">
                   Seu Plano
                 </h3>
 
@@ -392,7 +476,7 @@ export function ProfileView({
           {/* Certificates Shortcut Section - now a tab button */}
           <PageCard className="p-6 rounded-2xl flex flex-col gap-4">
             <div>
-              <h3 className="text-lg font-serif text-slate-200 mb-2 uppercase tracking-widest text-sm">
+              <h3 className="text-sm font-serif text-slate-200 mb-2 uppercase tracking-widest">
                 Meus Certificados
               </h3>
               <p className="text-xs text-slate-400 mb-4">
@@ -430,7 +514,7 @@ export function ProfileView({
           {/* Gamification Badge Widget */}
           <PageCard className="p-6 rounded-2xl flex flex-col gap-6" id="gamification-badges">
             <div>
-              <h3 className="text-lg font-serif text-slate-200 mb-1 uppercase tracking-widest text-sm flex items-center gap-2">
+              <h3 className="text-sm font-serif text-slate-200 mb-1 uppercase tracking-widest flex items-center gap-2">
                 <Trophy className="w-5 h-5 text-amber-400" /> Selos de Maestria
               </h3>
               <p className="text-xs text-slate-400">
@@ -519,7 +603,7 @@ export function ProfileView({
         <div className="col-span-2 space-y-6">
           <PageCard className="p-6 md:p-8 rounded-2xl">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 border-b border-[#1e1b4b] pb-4">
-              <h3 className="text-xl font-serif text-slate-200 uppercase tracking-widest text-sm">
+              <h3 className="text-sm font-serif text-slate-200 uppercase tracking-widest">
                 Informações Pessoais & Altar Místico
               </h3>
               <button
@@ -579,7 +663,7 @@ export function ProfileView({
                   name="avatar"
                   value={formData.avatar}
                   onChange={handleChange}
-                  className="w-full bg-black/20 border border-[#1e1b4b] rounded-xl py-2 px-4 text-sm text-slate-200 outline-none focus:border-indigo-500/50 text-xs"
+                  className="w-full bg-black/20 border border-[#1e1b4b] rounded-xl py-2 px-4 text-xs text-slate-200 outline-none focus:border-indigo-500/50"
                 />
               </div>
               <div className="bg-indigo-950/20 border border-[#1e1b4b] p-4 rounded-xl">
@@ -672,7 +756,7 @@ export function ProfileView({
               ></textarea>
             </div>
 
-            <h3 className="text-xl font-serif text-slate-200 mb-6 uppercase tracking-widest text-sm border-b border-[#1e1b4b] pb-4 mt-8">
+            <h3 className="text-sm font-serif text-slate-200 mb-6 uppercase tracking-widest border-b border-[#1e1b4b] pb-4 mt-8">
               Redes, Portfólio & Contato
             </h3>
 
@@ -789,7 +873,7 @@ export function ProfileView({
             {/* SAVED BIRTH CHART SECTION */}
             <PageCard className="mt-8 p-6 md:p-8 rounded-2xl border-amber-500/20 bg-gradient-to-r from-slate-950 via-[#120e29] to-slate-950 relative overflow-hidden text-left">
               <div className="absolute top-0 right-0 w-48 h-48 bg-amber-500/5 rounded-full blur-3xl" />
-              <h3 className="text-xl font-serif text-amber-400 mb-6 uppercase tracking-widest text-sm border-b border-amber-500/20 pb-4 flex items-center gap-2 font-bold">
+              <h3 className="text-sm font-serif text-amber-400 mb-6 uppercase tracking-widest border-b border-amber-500/20 pb-4 flex items-center gap-2 font-bold">
                 🔮 Seu Mapa Astral Permanente
               </h3>
 
@@ -855,7 +939,7 @@ export function ProfileView({
 
             {/* BADGES SECTION */}
             <PageCard className="mt-8 p-6 md:p-8 rounded-2xl border-[#312e81] bg-gradient-to-r from-[#0d091e] to-[#120e29] relative overflow-hidden text-left">
-              <h3 className="text-xl font-serif text-indigo-400 mb-6 uppercase tracking-widest text-sm border-b border-[#312e81] pb-4 flex items-center gap-2 font-bold">
+              <h3 className="text-sm font-serif text-indigo-400 mb-6 uppercase tracking-widest border-b border-[#312e81] pb-4 flex items-center gap-2 font-bold">
                 🏅 Insígnias & Conquistas
               </h3>
               

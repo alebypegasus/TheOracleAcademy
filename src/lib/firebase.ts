@@ -6,7 +6,7 @@ import firebaseConfig from '../../firebase-applet-config.json';
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
-export const db = getFirestore(app, firebaseConfig.firestoreDatabaseId);
+export const db = getFirestore(app, (firebaseConfig as any).firestoreDatabaseId);
 export const auth = getAuth(app);
 export const messaging = getMessaging(app);
 
@@ -29,7 +29,7 @@ export const requestForToken = async () => {
   try {
     const permission = await Notification.requestPermission();
     if (permission === 'granted') {
-      const currentToken = await getToken(messaging, { vapidKey: import.meta.env.VITE_FIREBASE_VAPID_KEY });
+      const currentToken = await getToken(messaging, { vapidKey: (import.meta as any).env.VITE_FIREBASE_VAPID_KEY });
       if (currentToken) return currentToken;
     }
   } catch (err) {
@@ -42,8 +42,8 @@ export const onMessageListener = () =>
     onMessage(messaging, (payload) => resolve(payload));
   });
 
-// In-memory access token cache
-let cachedAccessToken: string | null = null;
+// In-memory access token cache with localStorage persistence
+let cachedAccessToken: string | null = localStorage.getItem('oracle_google_access_token');
 let isSigningIn = false;
 
 // Initialize connection validation on boot
@@ -93,6 +93,9 @@ export const googleSignIn = async (): Promise<{ user: User; accessToken: string 
       throw new Error('Não foi possível obter o token de acesso do Google Workspace.');
     }
     cachedAccessToken = credential.accessToken;
+    if (cachedAccessToken) {
+      localStorage.setItem('oracle_google_access_token', cachedAccessToken);
+    }
     return { user: result.user, accessToken: cachedAccessToken };
   } catch (error: any) {
     console.error('Google Sign-In Error:', error);
@@ -114,6 +117,11 @@ export const getAccessToken = async (): Promise<string | null> => {
  */
 export const setCachedAccessToken = (token: string | null) => {
   cachedAccessToken = token;
+  if (token) {
+    localStorage.setItem('oracle_google_access_token', token);
+  } else {
+    localStorage.removeItem('oracle_google_access_token');
+  }
 };
 
 /**
@@ -122,4 +130,5 @@ export const setCachedAccessToken = (token: string | null) => {
 export const googleLogout = async () => {
   await auth.signOut();
   cachedAccessToken = null;
+  localStorage.removeItem('oracle_google_access_token');
 };

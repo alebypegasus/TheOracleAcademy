@@ -31,6 +31,9 @@ apiRouter.use("/system", globalSettingsRoutes);
 apiRouter.get("/user/sync", authMiddleware, AuthController.syncUserState);
 apiRouter.post("/profile/update", authMiddleware, AuthController.updateProfile);
 apiRouter.post("/settings/update", authMiddleware, AuthController.updateSettings);
+apiRouter.get("/database-status", async (req: Request, res: Response) => {
+  return res.json({ useFallback });
+});
 
 // --- ADDITIONAL PROFILE ROUTES ---
 apiRouter.get("/profile/badges", authMiddleware, async (req: AuthenticatedRequest, res: Response) => {

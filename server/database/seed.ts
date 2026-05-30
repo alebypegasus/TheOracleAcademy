@@ -260,6 +260,15 @@ export async function initDB() {
           details JSONB DEFAULT '{}',
           created_at TIMESTAMPTZ DEFAULT NOW()
         );
+        CREATE TABLE IF NOT EXISTS ads_campaigns (
+          id SERIAL PRIMARY KEY,
+          title TEXT NOT NULL,
+          image_url TEXT NOT NULL,
+          link_url TEXT NOT NULL,
+          placement TEXT NOT NULL,
+          is_active BOOLEAN DEFAULT TRUE,
+          created_at TIMESTAMPTZ DEFAULT NOW()
+        );
       `;
     }
 

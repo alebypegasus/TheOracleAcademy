@@ -109,6 +109,99 @@ export class PaymentService {
     }
   }
 
+  // 1b. Create Cart Preference for Multiple Items
+  public static async createCartPreference(itemIds: string[], userId: number): Promise<{ init_point: string; preferenceId: string }> {
+    if (!itemIds || itemIds.length === 0) {
+      throw new Error("Seu carrinho místico está vazio.");
+    }
+    const ids = itemIds.map(Number);
+    let checkoutItems: any[] = [];
+
+    if (!useFallback) {
+      const res = await query(
+        "SELECT id, user_id, title, price, author_name FROM marketplace_items WHERE id = ANY($1::int[])",
+        [ids]
+      );
+      checkoutItems = res.rows.map(row => ({
+        id: row.id.toString(),
+        userId: row.user_id,
+        title: row.title,
+        price: parseFloat(row.price),
+        authorName: row.author_name
+      }));
+    } else {
+      checkoutItems = fallbackDB.marketplace_items.filter(i => ids.includes(Number(i.id)));
+    }
+
+    if (checkoutItems.length === 0) {
+      throw new Error("Nenhum item válido encontrado no catálogo.");
+    }
+
+    const totalCost = checkoutItems.reduce((sum, item) => sum + Number(item.price), 0);
+    const tax = Number((totalCost * 0.05).toFixed(2)); // 5% platform tax
+    const finalAmount = Number((totalCost + tax).toFixed(2));
+
+    const mpConfig = this.getMPConfig();
+
+    if (!mpConfig || !Preference) {
+      console.warn("[Payment] Mercado Pago SDK unavailable. Using simulated local checkout.");
+      const mockPrefId = `pref_mock_${Date.now()}`;
+      const mockInitPoint = `${process.env.APP_URL || "http://localhost:3000"}/#/subscription?prefId=${mockPrefId}&price=${finalAmount}&title=${encodeURIComponent("Carrinho de Livros Místicos")}`;
+      
+      for (const item of checkoutItems) {
+        await this.logTransaction(userId, "compra", Number(item.price), 0, 0, item.title, "pendente");
+      }
+      return { init_point: mockInitPoint, preferenceId: mockPrefId };
+    }
+
+    try {
+      const preference = new Preference(mpConfig);
+      const mpItems = checkoutItems.map(item => ({
+        id: "oracle-item-id-" + item.id,
+        title: item.title,
+        quantity: 1,
+        unit_price: Number(item.price),
+        currency_id: "BRL"
+      }));
+
+      if (tax > 0) {
+        mpItems.push({
+          id: "oracle-platform-tax",
+          title: "Taxa de Processamento do Altar",
+          quantity: 1,
+          unit_price: tax,
+          currency_id: "BRL"
+        });
+      }
+
+      const response = await preference.create({
+        body: {
+          items: mpItems,
+          external_reference: `cart:${ids.join(",")}:${userId}`,
+          back_urls: {
+            success: `${process.env.APP_URL || "http://localhost:3000"}/#/subscription?success=true`,
+            failure: `${process.env.APP_URL || "http://localhost:3000"}/#/subscription?failure=true`,
+            pending: `${process.env.APP_URL || "http://localhost:3000"}/#/subscription?pending=true`
+          },
+          auto_return: "approved"
+        }
+      });
+
+      for (const item of checkoutItems) {
+        await this.logTransaction(userId, "compra", Number(item.price), 0, 0, item.title, "pendente");
+      }
+
+      return { init_point: response.init_point, preferenceId: response.id };
+    } catch (err: any) {
+      console.error("[Payment] Error generating MP preference for cart:", err);
+      const mockPrefId = `pref_mock_${Date.now()}`;
+      return { 
+        init_point: `${process.env.APP_URL || "http://localhost:3000"}/#/subscription?prefId=${mockPrefId}&price=${finalAmount}&title=${encodeURIComponent("Carrinho de Livros Místicos")}`,
+        preferenceId: mockPrefId 
+      };
+    }
+  }
+
   // 2. Validate Credentials Status
   public static validateCredentials(): { status: string; message: string } {
     const token = process.env.MERCADO_PAGO_ACCESS_TOKEN || "";
@@ -295,6 +388,141 @@ export class PaymentService {
     if (externalRef.startsWith('sub:')) {
       const [, plan, cycle, userIdStr] = externalRef.split(':');
       await this.activatePlan(Number(userIdStr), plan, cycle, paymentId, paymentAmount);
+      return;
+    }
+
+    // Process Cart Purchase Webhook
+    if (externalRef.startsWith('cart:')) {
+      const [, itemIdsStr, userIdStr] = externalRef.split(':');
+      const targetUserId = Number(userIdStr);
+      const targetItemIds = itemIdsStr.split(',').map(Number);
+      
+      let checkoutItems: any[] = [];
+      if (!useFallback) {
+        const res = await query("SELECT id, user_id, title, price, author_name FROM marketplace_items WHERE id = ANY($1::int[])", [targetItemIds]);
+        checkoutItems = res.rows.map(row => ({
+          id: row.id.toString(),
+          userId: row.user_id,
+          title: row.title,
+          price: parseFloat(row.price),
+          authorName: row.author_name
+        }));
+      } else {
+        checkoutItems = fallbackDB.marketplace_items.filter(i => targetItemIds.includes(Number(i.id)));
+      }
+
+      if (!useFallback) {
+        await query("UPDATE users SET is_paid = true WHERE id = $1", [targetUserId]);
+      } else {
+        const u = fallbackDB.users.find(x => x.id === targetUserId);
+        if (u) u.is_paid = true;
+      }
+
+      const commissionRate = 15; // 15% platform split
+
+      for (const item of checkoutItems) {
+        const itemPrice = Number(item.price);
+        const platformCommission = Number((itemPrice * (commissionRate / 100)).toFixed(2));
+        const sellerEarnings = Number((itemPrice - platformCommission).toFixed(2));
+
+        if (!useFallback) {
+          const buyerTxId = await this.logTransaction(
+            targetUserId,
+            "saque",
+            itemPrice,
+            platformCommission,
+            0,
+            `Adquiriu: ${item.title}`,
+            "concluído"
+          );
+
+          await this.logTransaction(
+            item.userId,
+            "compra",
+            itemPrice,
+            platformCommission,
+            sellerEarnings,
+            `Vendeu: ${item.title}`,
+            "concluído"
+          );
+
+          await query(
+            "UPDATE sellers SET balance = balance + $1 WHERE user_id = $2",
+            [sellerEarnings, item.userId]
+          );
+
+          await query(
+            "INSERT INTO purchases (user_id, item_id, amount, transaction_id, status) VALUES ($1, $2, $3, $4, 'concluído')",
+            [targetUserId, Number(item.id), itemPrice, buyerTxId]
+          );
+
+          await query(
+            "INSERT INTO notifications (user_id, text, type) VALUES ($1, $2, 'challenge')",
+            [item.userId, `Seu item "${item.title}" foi comprado via Mercado Pago! R$ ${sellerEarnings.toFixed(2)} (líquido) adicionados ao saldo.`]
+          );
+        } else {
+          fallbackDB.transactions.push({
+            id: fallbackDB.transactions.length + 1,
+            user_id: targetUserId,
+            type: "saque",
+            amount: itemPrice,
+            commission_platform: platformCommission,
+            amount_seller: 0,
+            title: `Adquiriu: ${item.title}`,
+            status: "concluído",
+            date: new Date().toISOString()
+          });
+
+          fallbackDB.transactions.push({
+            id: fallbackDB.transactions.length + 1,
+            user_id: item.userId,
+            type: "compra",
+            amount: itemPrice,
+            commission_platform: platformCommission,
+            amount_seller: sellerEarnings,
+            title: `Vendeu: ${item.title}`,
+            status: "concluído",
+            date: new Date().toISOString()
+          });
+
+          const seller = fallbackDB.sellers.find(s => Number(s.user_id) === item.userId);
+          if (seller) {
+            seller.balance = Number(seller.balance) + sellerEarnings;
+          }
+
+          fallbackDB.purchases.push({
+            id: fallbackDB.purchases.length + 1,
+            user_id: targetUserId,
+            item_id: Number(item.id),
+            amount: itemPrice,
+            status: "concluído",
+            created_at: new Date().toISOString()
+          });
+        }
+      }
+
+      if (!useFallback) {
+        await query(
+          "UPDATE transactions SET status = 'concluído' WHERE user_id = $1 AND status = 'pendente'",
+          [targetUserId]
+        );
+        await query(
+          "INSERT INTO notifications (user_id, text, type) VALUES ($1, $2, 'challenge')",
+          [targetUserId, `✨ Sua compra de ${checkoutItems.length} itens místicos no Mercado foi concluída com sucesso!`]
+        );
+      } else {
+        fallbackDB.transactions
+          .filter(t => t.user_id === targetUserId && t.status === "pendente")
+          .forEach(t => t.status = "concluído");
+        fallbackDB.notifications.push({
+          id: fallbackDB.notifications.length + 1,
+          user_id: targetUserId,
+          text: `✨ Sua compra de ${checkoutItems.length} itens místicos no Mercado foi concluída com sucesso!`,
+          is_read: false,
+          created_at: new Date().toISOString(),
+          type: "challenge"
+        });
+      }
       return;
     }
 

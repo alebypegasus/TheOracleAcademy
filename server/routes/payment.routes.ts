@@ -5,6 +5,7 @@ import { authMiddleware } from "../middlewares/auth.middleware";
 const router = Router();
 
 router.post("/checkout", authMiddleware, PaymentController.checkout);
+router.post("/create-preference", authMiddleware, PaymentController.createCartPreference);
 router.post("/webhook", PaymentController.webhook); // Webhooks are unprotected by design so MP can call it
 router.get("/balance", authMiddleware, PaymentController.getBalance);
 router.get("/transactions", authMiddleware, PaymentController.getTransactions);

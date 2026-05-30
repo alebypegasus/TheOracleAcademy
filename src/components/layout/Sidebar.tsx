@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
   Home, BookOpen, Library, Layers, Trophy, FileBadge, Users,
@@ -10,6 +10,14 @@ import { Tooltip } from '../ui/Tooltip';
 
 export function Sidebar({ currentPath, themePreference, setThemePreference, colorTheme, setColorTheme, profile, onNavigate, onLogout, currentUser, className, onMobileClose }: any) {
   const [isExpanded, setIsExpanded] = useState(false);
+  const [dbFallback, setDbFallback] = useState<boolean | null>(null);
+
+  useEffect(() => {
+    fetch('/api/database-status')
+      .then(r => r.json())
+      .then(data => setDbFallback(data.useFallback))
+      .catch(() => setDbFallback(true));
+  }, []);
 
   const navGroups = [
     {
@@ -144,6 +152,41 @@ export function Sidebar({ currentPath, themePreference, setThemePreference, colo
           </div>
         ))}
       </nav>
+
+      {/* Database Connection Status Indicator */}
+      <div className="px-3 py-2 border-t border-slate-200/50 dark:border-[#1e1b4b]">
+        <AnimatePresence>
+          {isExpanded ? (
+            <motion.div 
+              key="db-expanded"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className={cn(
+                "flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-semibold select-none border transition-all duration-300",
+                dbFallback === false 
+                  ? "bg-emerald-500/5 border-emerald-500/20 text-emerald-400 shadow-[0_0_15px_rgba(16,185,129,0.05)]" 
+                  : "bg-amber-500/5 border-amber-500/20 text-amber-400 shadow-[0_0_15px_rgba(245,158,11,0.05)]"
+              )}
+            >
+              <span className="relative flex h-2 w-2">
+                <span className={cn("animate-ping absolute inline-flex h-full w-full rounded-full opacity-75", dbFallback === false ? "bg-emerald-400" : "bg-amber-400")}></span>
+                <span className={cn("relative inline-flex rounded-full h-2 w-2", dbFallback === false ? "bg-emerald-500" : "bg-amber-500")}></span>
+              </span>
+              <span className="truncate tracking-wider uppercase text-[8px]">
+                {dbFallback === false ? "Conexão Astral Estável" : "Santuário Temporário"}
+              </span>
+            </motion.div>
+          ) : (
+            <div key="db-collapsed" className="flex justify-center py-1">
+              <span className="relative flex h-3.5 w-3.5">
+                <span className={cn("animate-ping absolute inline-flex h-full w-full rounded-full opacity-75", dbFallback === false ? "bg-emerald-400" : "bg-amber-400")}></span>
+                <span className={cn("relative inline-flex rounded-full h-3.5 w-3.5 border-2 border-black/40", dbFallback === false ? "bg-emerald-500" : "bg-amber-500")} title={dbFallback === false ? "Conexão Astral Estável" : "Santuário Temporário"}></span>
+              </span>
+            </div>
+          )}
+        </AnimatePresence>
+      </div>
 
       <div className="border-t border-slate-200/50 dark:border-[#1e1b4b] p-3 flex flex-col gap-3">
         <AnimatePresence>
